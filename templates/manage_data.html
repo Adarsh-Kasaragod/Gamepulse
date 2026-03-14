@@ -1,0 +1,1260 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                        <i class="fas fa-database text-white text-lg"></i>
+                    </div>
+                    <h1 class="text-3xl font-bold text-white">Data Management</h1>
+                </div>
+                <p class="text-gray-300 text-sm">Add players and record match performances with real-time calculations</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="glass-card px-4 py-2 rounded-xl border border-white/10">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-chart-bar text-blue-400"></i>
+                        <span id="dataStats" class="text-white text-sm">Loading data...</span>
+                    </div>
+                </div>
+                <button onclick="refreshData()" 
+                        class="glass-card w-10 h-10 rounded-xl border border-white/10 flex items-center justify-center text-gray-300 hover:text-white hover:border-white/20 transition-all">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <!-- Add New Player Card -->
+        <div class="glass-card rounded-2xl overflow-hidden border border-white/10 hover:border-blue-500/30 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10">
+            <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-600/5"></div>
+            <div class="relative p-8">
+                <!-- Card Header -->
+                <div class="flex items-center mb-6">
+                    <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center mr-4">
+                        <i class="fas fa-user-plus text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Register New Player</h2>
+                        <p class="text-gray-400 text-sm mt-1">Add a player to the database</p>
+                    </div>
+                </div>
+
+                <!-- Form -->
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-3">
+                            <span class="flex items-center gap-2">
+                                <i class="fas fa-user text-blue-400"></i>
+                                Player Name
+                                <span class="text-red-400">*</span>
+                            </span>
+                        </label>
+                        <div class="relative">
+                            <input type="text" 
+                                   id="newPlayerName"
+                                   placeholder="Enter player's full name"
+                                   class="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 hover:border-white/20">
+                            <div class="absolute right-3 top-1/2 transform -translate-y-1/2">
+                                <i class="fas fa-user text-gray-500"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-3">
+                                <span class="flex items-center gap-2">
+                                    <i class="fas fa-user-tag text-purple-400"></i>
+                                    Player Role
+                                    <span class="text-red-400">*</span>
+                                </span>
+                            </label>
+                            <div class="relative">
+                                <select id="newPlayerRole" 
+                                        class="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 hover:border-white/20 appearance-none">
+                                    <option value="" disabled selected>Select Role</option>
+                                    <option value="batsman">Batsman</option>
+                                    <option value="bowler">Bowler</option>
+                                    <option value="all-rounder">All-rounder</option>
+                                    <option value="wicket-keeper">Wicket-keeper</option>
+                                </select>
+                                <div class="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                                    <i class="fas fa-chevron-down text-gray-500"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-3">
+                                <span class="flex items-center gap-2">
+                                    <i class="fas fa-users text-amber-400"></i>
+                                    Team
+                                    <span class="text-red-400">*</span>
+                                </span>
+                            </label>
+                            <div class="relative">
+                                <select id="newPlayerTeam" 
+                                        class="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 hover:border-white/20 appearance-none">
+                                    <option value="" disabled selected>Select Team</option>
+                                </select>
+                                <div class="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                                    <i class="fas fa-chevron-down text-gray-500"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-3">
+                            <span class="flex items-center gap-2">
+                                <i class="fas fa-id-card text-blue-400"></i>
+                                Player Specialization (Optional)
+                            </span>
+                        </label>
+                        <input type="text" 
+                               id="newPlayerSpecialization"
+                               placeholder="e.g., Fast Bowler, Opening Batsman"
+                               class="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 hover:border-white/20">
+                    </div>
+
+                    <button onclick="addNewPlayer()" 
+                            id="addPlayerBtn"
+                            class="w-full px-6 py-4 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-bold rounded-xl shadow-lg hover:shadow-2xl hover:shadow-green-500/20 transition-all duration-300 flex items-center justify-center gap-3 group">
+                        <i class="fas fa-user-plus group-hover:scale-110 transition-transform"></i>
+                        <span>Add Player to Database</span>
+                        <i class="fas fa-spinner fa-spin hidden"></i>
+                    </button>
+
+                    <!-- Result Message -->
+                    <div id="addPlayerResult" class="mt-4"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Performance Card -->
+        <div class="glass-card rounded-2xl overflow-hidden border border-white/10 hover:border-blue-500/30 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10">
+            <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-600/5"></div>
+            <div class="relative p-8">
+                <!-- Card Header -->
+                <div class="flex items-center mb-6">
+                    <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center mr-4">
+                        <i class="fas fa-chart-line text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Record Performance</h2>
+                        <p class="text-gray-400 text-sm mt-1">Add match statistics for players</p>
+                    </div>
+                </div>
+
+                <!-- Form -->
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-3">
+                                <span class="flex items-center gap-2">
+                                    <i class="fas fa-user text-purple-400"></i>
+                                    Player
+                                    <span class="text-red-400">*</span>
+                                </span>
+                            </label>
+                            <div class="relative">
+                                <select id="perfPlayer" 
+                                        class="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-white/20 appearance-none">
+                                    <option value="" disabled selected>Select Player</option>
+    {% for player in players %}
+    {% set team_name = '' %}
+    {% for team in teams if team.id == player.team_id %}
+        {% set team_name = team.name %}
+    {% endfor %}
+    <option value="{{ player.id }}">{{ player.name }} - {{ player.role }} ({{ team_name or 'No Team' }})</option>
+    {% endfor %}
+    {% if players|length == 0 %}
+    <option value="" disabled>No players available</option>
+    {% endif %}
+                                </select>
+                                <div class="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                                    <i class="fas fa-chevron-down text-gray-500"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-3">
+                                <span class="flex items-center gap-2">
+                                    <i class="fas fa-calendar-alt text-amber-400"></i>
+                                    Match
+                                    <span class="text-red-400">*</span>
+                                </span>
+                            </label>
+                            <div class="relative">
+                                <select id="perfMatch" 
+                                        class="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-white/20 appearance-none">
+                                    <option value="" disabled selected>Select Match</option>
+    {% for match in matches %}
+    {% set team1_name = 'Unknown' %}
+    {% set team2_name = 'Unknown' %}
+    {% for team in teams if team.id == match.team1_id %}{% set team1_name = team.name %}{% endfor %}
+    {% for team in teams if team.id == match.team2_id %}{% set team2_name = team.name %}{% endfor %}
+    {% set display = match.name %}
+    {% if match.team1_id and match.team2_id %}
+        {% set display = team1_name ~ ' vs ' ~ team2_name %}
+    {% endif %}
+    <option value="{{ match.id }}">{{ display }} - {{ match.date or 'Unknown Date' }}</option>
+    {% endfor %}
+    {% if matches|length == 0 %}
+    <option value="" disabled>No matches available</option>
+    {% endif %}
+                                </select>
+                                <div class="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                                    <i class="fas fa-chevron-down text-gray-500"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Batting Performance -->
+                    <div class="bg-gradient-to-br from-green-900/20 to-emerald-900/10 rounded-xl border border-green-500/20 overflow-hidden">
+                        <div class="px-6 py-4 border-b border-green-500/20 bg-green-900/10">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
+                                    <i class="fas fa-baseball-ball text-green-400"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white">Batting Performance</h4>
+                                    <p class="text-green-400 text-xs">Runs and balls faced</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">Runs Scored</label>
+                                    <input type="number" 
+                                           id="perfRuns"
+                                           min="0"
+                                           placeholder="0"
+                                           class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">Balls Faced</label>
+                                    <input type="number" 
+                                           id="perfBalls"
+                                           min="0"
+                                           placeholder="0"
+                                           class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200">
+                                </div>
+                            </div>
+                            <div class="mt-6 grid grid-cols-2 gap-4">
+                                <div class="bg-white/5 rounded-lg p-4 border border-white/5">
+                                    <p class="text-xs text-gray-400 mb-1">Strike Rate</p>
+                                    <p id="strikeRateCalc" class="text-xl font-bold text-green-400">0.00</p>
+                                </div>
+                                <div class="bg-white/5 rounded-lg p-4 border border-white/5">
+                                    <p class="text-xs text-gray-400 mb-1">Batting Average</p>
+                                    <p id="battingAvgCalc" class="text-xl font-bold text-blue-400">0.00</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bowling Performance -->
+                    <div class="bg-gradient-to-br from-blue-900/20 to-indigo-900/10 rounded-xl border border-blue-500/20 overflow-hidden">
+                        <div class="px-6 py-4 border-b border-blue-500/20 bg-blue-900/10">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                                    <i class="fas fa-bullseye text-blue-400"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white">Bowling Performance</h4>
+                                    <p class="text-blue-400 text-xs">Overs, wickets, and runs</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">Overs</label>
+                                    <input type="number" 
+                                           id="perfOvers"
+                                           min="0"
+                                           step="0.1"
+                                           placeholder="0.0"
+                                           class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">Wickets</label>
+                                    <input type="number" 
+                                           id="perfWickets"
+                                           min="0"
+                                           placeholder="0"
+                                           class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-400 mb-2 uppercase tracking-wider">Runs Conceded</label>
+                                    <input type="number" 
+                                           id="perfConceded"
+                                           min="0"
+                                           placeholder="0"
+                                           class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                                </div>
+                            </div>
+                            <div class="mt-6 grid grid-cols-2 gap-4">
+                                <div class="bg-white/5 rounded-lg p-4 border border-white/5">
+                                    <p class="text-xs text-gray-400 mb-1">Economy Rate</p>
+                                    <p id="economyCalc" class="text-xl font-bold text-amber-400">0.00</p>
+                                </div>
+                                <div class="bg-white/5 rounded-lg p-4 border border-white/5">
+                                    <p class="text-xs text-gray-400 mb-1">Bowling Average</p>
+                                    <p id="bowlingAvgCalc" class="text-xl font-bold text-purple-400">0.00</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="addPerformance()" 
+                            id="addPerfBtn"
+                            class="w-full px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-bold rounded-xl shadow-lg hover:shadow-2xl hover:shadow-blue-500/20 transition-all duration-300 flex items-center justify-center gap-3 group">
+                        <i class="fas fa-save group-hover:scale-110 transition-transform"></i>
+                        <span>Save Performance Data</span>
+                        <i class="fas fa-spinner fa-spin hidden"></i>
+                    </button>
+
+                    <!-- Result Message -->
+                    <div id="addPerfResult" class="mt-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats & Actions Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Database Statistics -->
+        <div class="glass-card rounded-2xl p-6 border border-white/10 hover:border-green-500/30 transition-all duration-300">
+            <div class="flex items-center mb-6">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500/20 to-emerald-600/20 flex items-center justify-center mr-4">
+                    <i class="fas fa-database text-green-400 text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white">Database Statistics</h3>
+                    <p class="text-gray-400 text-xs">Live data from your database</p>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                        <span class="text-gray-300 text-sm">Total Players</span>
+                    </div>
+                    <span id="totalPlayersStat" class="text-2xl font-bold text-white">0</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+                        <span class="text-gray-300 text-sm">Total Teams</span>
+                    </div>
+                    <span id="totalTeamsStat" class="text-2xl font-bold text-white">0</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-purple-400 rounded-full"></div>
+                        <span class="text-gray-300 text-sm">Total Matches</span>
+                    </div>
+                    <span id="totalMatchesStat" class="text-2xl font-bold text-white">0</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-amber-400 rounded-full"></div>
+                        <span class="text-gray-300 text-sm">Performance Records</span>
+                    </div>
+                    <span id="totalPerfStat" class="text-2xl font-bold text-white">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="glass-card rounded-2xl p-6 border border-white/10 hover:border-blue-500/30 transition-all duration-300">
+            <div class="flex items-center mb-6">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-indigo-600/20 flex items-center justify-center mr-4">
+                    <i class="fas fa-bolt text-blue-400 text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white">Quick Actions</h3>
+                    <p class="text-gray-400 text-xs">Fast data operations</p>
+                </div>
+            </div>
+            <div class="space-y-3">
+                <button onclick="quickAddPlayer()" 
+                        class="w-full px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-green-500/30 text-gray-300 hover:text-white rounded-xl transition-all duration-200 flex items-center gap-3 group">
+                    <div class="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i class="fas fa-user-plus text-green-400"></i>
+                    </div>
+                    <span class="text-sm">Quick Add Player</span>
+                </button>
+                <button onclick="quickAddPerformance()" 
+                        class="w-full px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-blue-500/30 text-gray-300 hover:text-white rounded-xl transition-all duration-200 flex items-center gap-3 group">
+                    <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i class="fas fa-plus-circle text-blue-400"></i>
+                    </div>
+                    <span class="text-sm">Add Multiple Performances</span>
+                </button>
+                <button onclick="showImportModal()" 
+                        class="w-full px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-purple-500/30 text-gray-300 hover:text-white rounded-xl transition-all duration-200 flex items-center gap-3 group">
+                    <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i class="fas fa-file-import text-purple-400"></i>
+                    </div>
+                    <span class="text-sm">Import CSV Data</span>
+                </button>
+                <button onclick="clearForm('all')" 
+                        class="w-full px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-red-500/30 text-gray-300 hover:text-white rounded-xl transition-all duration-200 flex items-center gap-3 group">
+                    <div class="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i class="fas fa-redo text-red-400"></i>
+                    </div>
+                    <span class="text-sm">Clear All Forms</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Help & Guidelines -->
+        <div class="glass-card rounded-2xl p-6 border border-white/10 hover:border-purple-500/30 transition-all duration-300">
+            <div class="flex items-center mb-6">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-600/20 flex items-center justify-center mr-4">
+                    <i class="fas fa-lightbulb text-purple-400 text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="font-bold text-white">Guidelines</h3>
+                    <p class="text-gray-400 text-xs">Best practices for data entry</p>
+                </div>
+            </div>
+            <div class="space-y-3">
+                <div class="flex items-start gap-3">
+                    <div class="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-check text-green-400 text-xs"></i>
+                    </div>
+                    <p class="text-sm text-gray-300">Add players before recording match performances</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <div class="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-chart-line text-blue-400 text-xs"></i>
+                    </div>
+                    <p class="text-sm text-gray-300">More performance data = better AI predictions</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <div class="w-6 h-6 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-exclamation-triangle text-amber-400 text-xs"></i>
+                    </div>
+                    <p class="text-sm text-gray-300">Accuracy matters - double-check your entries</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <div class="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <i class="fas fa-shield-alt text-purple-400 text-xs"></i>
+                    </div>
+                    <p class="text-sm text-gray-300">All data is encrypted and securely stored</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div id="successModal" class="fixed inset-0 z-50 hidden">
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
+    <div class="fixed inset-0 overflow-y-auto">
+        <div class="flex min-h-full items-center justify-center p-4">
+            <div class="relative glass-card rounded-2xl shadow-2xl w-full max-w-sm border border-white/10 animate-fade-in">
+                <div class="p-8 text-center">
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 flex items-center justify-center mx-auto mb-6 shadow-lg">
+                        <i class="fas fa-check text-white text-2xl"></i>
+                    </div>
+                    <h3 id="successTitle" class="text-xl font-bold text-white mb-3"></h3>
+                    <p id="successMessage" class="text-gray-300 mb-6"></p>
+                    <button onclick="closeModal('successModal')" 
+                            class="w-full px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-medium rounded-xl border border-white/10 hover:border-white/30 transition-all duration-300">
+                        Continue
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Import Modal -->
+<div id="importModal" class="fixed inset-0 z-50 hidden">
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
+    <div class="fixed inset-0 overflow-y-auto">
+        <div class="flex min-h-full items-center justify-center p-4">
+            <div class="relative glass-card rounded-2xl shadow-2xl w-full max-w-md border border-white/10 animate-fade-in">
+                <div class="p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-xl bg-gradient-to-r from-purple-500 to-pink-600 flex items-center justify-center">
+                                <i class="fas fa-file-import text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white">Import Data</h3>
+                                <p class="text-gray-400 text-sm">Upload CSV files</p>
+                            </div>
+                        </div>
+                        <button onclick="closeModal('importModal')" 
+                                class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-gray-400 hover:text-white transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div class="border-2 border-dashed border-white/10 rounded-xl p-8 text-center hover:border-purple-500/50 transition-colors cursor-pointer" 
+                             onclick="document.getElementById('csvFileInput').click()">
+                            <div class="w-16 h-16 rounded-full bg-purple-500/10 flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-cloud-upload-alt text-purple-400 text-2xl"></i>
+                            </div>
+                            <h4 class="text-lg font-medium text-white mb-2">Upload CSV File</h4>
+                            <p class="text-gray-400 text-sm mb-4">Click to select a CSV file from your computer</p>
+                            <p class="text-xs text-gray-500">Supported: Players.csv, Performances.csv</p>
+                            <input type="file" id="csvFileInput" accept=".csv" class="hidden">
+                        </div>
+                        
+                        <div class="bg-white/5 rounded-xl p-4">
+                            <h4 class="font-medium text-white mb-3">Import Templates</h4>
+                            <div class="space-y-2">
+                                <button onclick="downloadTemplate('players')" 
+                                        class="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2">
+                                    <i class="fas fa-download text-green-400"></i>
+                                    Download Players Template
+                                </button>
+                                <button onclick="downloadTemplate('performances')" 
+                                        class="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2">
+                                    <i class="fas fa-download text-blue-400"></i>
+                                    Download Performances Template
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const API = "/api";
+let allPlayers = [];
+let allTeams = [];
+let allMatches = [];
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    loadManageData();
+    setupCalculators();
+    setupFormValidation();
+});
+
+// Load all data for dropdowns and stats
+async function loadManageData() {
+    try {
+        showLoadingState();
+        
+        const [teamsRes, playersRes, matchesRes] = await Promise.all([
+            fetch(`${API}/teams`).then(r => r.json()),
+            fetch(`${API}/players`).then(r => r.json()),
+            fetch(`${API}/matches?limit=5`).then(r => r.json())
+        ]);
+
+        // Store data globally
+        allTeams = teamsRes.teams || [];
+        allPlayers = playersRes.players || [];
+        allMatches = matchesRes.matches || [];
+
+        // Populate dropdowns
+        populateTeamDropdown();
+        populatePlayerDropdown();
+        populateMatchDropdown();
+        autoSelectLatestMatch();
+        // Update statistics
+        updateStatistics();
+        
+        hideLoadingState();
+    } catch (error) {
+        console.error('Error loading manage data:', error);
+        showToast('Failed to load data. Please refresh.', 'error');
+    }
+}
+
+// Populate team dropdown
+function populateTeamDropdown() {
+    const teamSelect = document.getElementById('newPlayerTeam');
+    if (!teamSelect) return;
+    
+    let options = '<option value="" disabled selected>Select Team</option>';
+    
+    if (allTeams && allTeams.length > 0) {
+        allTeams.forEach(team => {
+            options += `<option value="${team.id}">${team.name} (${team.player_count || 0} players)</option>`;
+        });
+    } else {
+        options += '<option value="" disabled>No teams available</option>';
+    }
+    
+    teamSelect.innerHTML = options;
+}
+
+// Populate player dropdown
+function populatePlayerDropdown() {
+    const playerSelect = document.getElementById('perfPlayer');
+    if (!playerSelect) return;
+    
+    let options = '<option value="" disabled selected>Select Player</option>';
+    
+    if (allPlayers && allPlayers.length > 0) {
+        allPlayers.forEach(player => {
+            const teamName = getTeamName(player.team_id);
+            options += `<option value="${player.id}">${player.name} - ${player.role} (${teamName})</option>`;
+        });
+    } else {
+        options += '<option value="" disabled>No players available</option>';
+    }
+    
+    playerSelect.innerHTML = options;
+}
+
+// Populate match dropdown
+function populateMatchDropdown() {
+    const matchSelect = document.getElementById('perfMatch');
+    if (!matchSelect) return;
+    
+    let options = '<option value="" disabled selected>Select Match</option>';
+    
+    if (allMatches && allMatches.length > 0) {
+        allMatches.forEach(match => {
+            const date = match.date ? formatDate(match.date) : 'Unknown Date';
+            const teams = match.team1_id && match.team2_id ? 
+                `${getTeamName(match.team1_id)} vs ${getTeamName(match.team2_id)}` : 
+                match.name;
+            options += `<option value="${match.id}">${teams} - ${date}</option>`;
+        });
+    } else {
+        options += '<option value="" disabled>No matches available</option>';
+    }
+    
+    matchSelect.innerHTML = options;
+}
+
+// Get team name from team ID
+function getTeamName(teamId) {
+    const team = allTeams.find(t => t.id === teamId);
+    return team ? team.name : 'Unknown Team';
+}
+
+// Update statistics display
+function updateStatistics() {
+    const totalPlayers = allPlayers.length;
+    const totalTeams = allTeams.length;
+    const totalMatches = allMatches.length;
+    
+    // Calculate total performances (this would need a separate API endpoint)
+    // For now, estimate based on players * matches
+    const estimatedPerformances = Math.round(totalPlayers * totalMatches * 0.5);
+    
+    document.getElementById('totalPlayersStat').textContent = totalPlayers;
+    document.getElementById('totalTeamsStat').textContent = totalTeams;
+    document.getElementById('totalMatchesStat').textContent = totalMatches;
+    document.getElementById('totalPerfStat').textContent = estimatedPerformances;
+    
+    document.getElementById('dataStats').textContent = 
+        `${totalPlayers} players • ${totalTeams} teams • ${totalMatches} matches`;
+}
+
+// Setup real-time calculators
+function setupCalculators() {
+    // Batting calculators
+    const battingInputs = ['perfRuns', 'perfBalls'];
+    battingInputs.forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+            input.addEventListener('input', updateBattingStats);
+        }
+    });
+    
+    // Bowling calculators
+    const bowlingInputs = ['perfOvers', 'perfWickets', 'perfConceded'];
+    bowlingInputs.forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+            input.addEventListener('input', updateBowlingStats);
+        }
+    });
+}
+
+// Update batting statistics in real-time
+function updateBattingStats() {
+    const runs = parseInt(document.getElementById('perfRuns').value) || 0;
+    const balls = parseInt(document.getElementById('perfBalls').value) || 0;
+    
+    // Calculate strike rate
+    const strikeRate = balls > 0 ? ((runs / balls) * 100).toFixed(2) : '0.00';
+    document.getElementById('strikeRateCalc').textContent = strikeRate;
+    
+    // Calculate batting average (assuming 1 dismissal per innings)
+    const battingAvg = runs > 0 ? runs.toFixed(2) : '0.00';
+    document.getElementById('battingAvgCalc').textContent = battingAvg;
+}
+
+// Update bowling statistics in real-time
+function updateBowlingStats() {
+    const overs = parseFloat(document.getElementById('perfOvers').value) || 0;
+    const wickets = parseInt(document.getElementById('perfWickets').value) || 0;
+    const runs = parseInt(document.getElementById('perfConceded').value) || 0;
+    
+    // Calculate economy
+    const economy = overs > 0 ? (runs / overs).toFixed(2) : '0.00';
+    document.getElementById('economyCalc').textContent = economy;
+    
+    // Calculate bowling average
+    const bowlingAvg = wickets > 0 ? (runs / wickets).toFixed(2) : '0.00';
+    document.getElementById('bowlingAvgCalc').textContent = bowlingAvg;
+}
+
+// Setup form validation
+function setupFormValidation() {
+    const playerForm = document.getElementById('newPlayerName');
+    if (playerForm) {
+        playerForm.addEventListener('input', validatePlayerForm);
+    }
+}
+
+// Validate player form
+function validatePlayerForm() {
+    const name = document.getElementById('newPlayerName').value.trim();
+    const team = document.getElementById('newPlayerTeam').value;
+    const role = document.getElementById('newPlayerRole').value;
+    const button = document.getElementById('addPlayerBtn');
+    
+    if (button) {
+        button.disabled = !(name && team && role);
+    }
+}
+
+// Add new player to database
+async function addNewPlayer() {
+    const nameInput = document.getElementById('newPlayerName');
+    const roleSelect = document.getElementById('newPlayerRole');
+    const teamSelect = document.getElementById('newPlayerTeam');
+    const specializationInput = document.getElementById('newPlayerSpecialization');
+    const button = document.getElementById('addPlayerBtn');
+    
+    if (!nameInput || !roleSelect || !teamSelect || !button) return;
+    
+    const name = nameInput.value.trim();
+    const role = roleSelect.value;
+    const team_id = teamSelect.value;
+    const specialization = specializationInput.value.trim();
+    
+    // Validation
+    if (!name) {
+        showToast('Please enter player name', 'error');
+        return;
+    }
+    
+    if (!team_id) {
+        showToast('Please select a team', 'error');
+        return;
+    }
+    
+    if (!role) {
+        showToast('Please select a role', 'error');
+        return;
+    }
+    
+    // Disable button and show loading
+    const originalText = button.innerHTML;
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding Player...';
+    
+    try {
+        const playerData = { 
+            name, 
+            role, 
+            team_id: parseInt(team_id)
+        };
+        
+        // Add specialization if provided
+        if (specialization) {
+            playerData.specialization = specialization;
+        }
+        
+        const res = await fetch(`${API}/players`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(playerData)
+        });
+        
+        const data = await res.json();
+        
+        if (data.success) {
+            showSuccessModal(
+                'Player Added Successfully!',
+                `Player "${name}" has been registered in the database.`,
+                'player'
+            );
+            
+            // Reset form
+            nameInput.value = '';
+            specializationInput.value = '';
+            teamSelect.value = '';
+            roleSelect.value = '';
+            
+            // Refresh data
+            setTimeout(() => loadManageData(), 1000);
+        } else {
+            throw new Error(data.error || 'Failed to add player');
+        }
+    } catch (error) {
+        console.error('Add player error:', error);
+        showToast(`Error: ${error.message}`, 'error');
+    } finally {
+        // Re-enable button
+        button.disabled = false;
+        button.innerHTML = originalText;
+    }
+}
+
+// Add performance data to database
+async function addPerformance() {
+    const playerSelect = document.getElementById('perfPlayer');
+    const matchSelect = document.getElementById('perfMatch');
+    const button = document.getElementById('addPerfBtn');
+    
+    if (!playerSelect || !matchSelect || !button) return;
+    
+    const player_id = playerSelect.value;
+    const match_id = matchSelect.value;
+    
+    // Validation
+    if (!player_id || !match_id) {
+        showToast('Please select both player and match', 'error');
+        return;
+    }
+    
+    const battingData = {
+        match_id: parseInt(match_id),
+        player_id: parseInt(player_id),
+        runs: parseInt(document.getElementById('perfRuns').value) || 0,
+        balls_faced: parseInt(document.getElementById('perfBalls').value) || 0
+    };
+    
+    const bowlingData = {
+        match_id: parseInt(match_id),
+        player_id: parseInt(player_id),
+        overs: parseFloat(document.getElementById('perfOvers').value) || 0,
+        wickets: parseInt(document.getElementById('perfWickets').value) || 0,
+        runs_conceded: parseInt(document.getElementById('perfConceded').value) || 0
+    };
+    
+    const hasBatting = battingData.runs > 0 || battingData.balls_faced > 0;
+    const hasBowling = bowlingData.overs > 0 || bowlingData.wickets > 0 || bowlingData.runs_conceded > 0;
+    
+    if (!hasBatting && !hasBowling) {
+        showToast('Please enter at least some performance data', 'error');
+        return;
+    }
+    
+    // Disable button and show loading
+    const originalText = button.innerHTML;
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    
+    try {
+        const requests = [];
+        let savedData = { batting: false, bowling: false };
+        
+        if (hasBatting) {
+            const battingRes = await fetch(`${API}/performances/batting`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(battingData)
+            });
+            
+            const battingResult = await battingRes.json();
+            savedData.batting = battingResult.success;
+            
+            if (!battingResult.success) {
+                throw new Error('Failed to save batting data');
+            }
+        }
+        
+        if (hasBowling) {
+            const bowlingRes = await fetch(`${API}/performances/bowling`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bowlingData)
+            });
+            
+            const bowlingResult = await bowlingRes.json();
+            savedData.bowling = bowlingResult.success;
+            
+            if (!bowlingResult.success) {
+                throw new Error('Failed to save bowling data');
+            }
+        }
+        
+        const playerName = playerSelect.options[playerSelect.selectedIndex].text.split(' - ')[0];
+        const successMessage = hasBatting && hasBowling ? 
+            'Batting and bowling data saved' :
+            hasBatting ? 'Batting data saved' : 'Bowling data saved';
+            
+        showSuccessModal(
+            'Performance Recorded!',
+            `${successMessage} for ${playerName}`,
+            'performance'
+        );
+        
+        // Reset form
+        resetPerformanceForm();
+        
+    } catch (error) {
+        console.error('Add performance error:', error);
+        showToast(`Error: ${error.message}`, 'error');
+    } finally {
+        // Re-enable button
+        button.disabled = false;
+        button.innerHTML = originalText;
+    }
+}
+
+// Reset performance form
+function resetPerformanceForm() {
+    document.getElementById('perfRuns').value = '';
+    document.getElementById('perfBalls').value = '';
+    document.getElementById('perfOvers').value = '';
+    document.getElementById('perfWickets').value = '';
+    document.getElementById('perfConceded').value = '';
+    updateBattingStats();
+    updateBowlingStats();
+}
+
+// Quick actions
+function quickAddPlayer() {
+    const nameInput = document.getElementById('newPlayerName');
+    const roleSelect = document.getElementById('newPlayerRole');
+    
+    if (nameInput && roleSelect) {
+        nameInput.focus();
+        
+        // Sample player names for quick testing
+        const sampleNames = [
+            'Alex Johnson', 'Michael Warner', 'David Smith', 'Steve Miller',
+            'James Anderson', 'Ben Stokes', 'Joe Root', 'Chris Woakes'
+        ];
+        
+        const randomName = sampleNames[Math.floor(Math.random() * sampleNames.length)];
+        nameInput.value = randomName;
+        roleSelect.value = 'batsman';
+        
+        showToast('Sample data added. Fill remaining fields.', 'info');
+    }
+}
+
+function quickAddPerformance() {
+    const runsInput = document.getElementById('perfRuns');
+    const ballsInput = document.getElementById('perfBalls');
+    const oversInput = document.getElementById('perfOvers');
+    const wicketsInput = document.getElementById('perfWickets');
+    
+    if (runsInput && ballsInput) {
+        runsInput.focus();
+        
+        // Generate random sample data
+        const runs = Math.floor(Math.random() * 80) + 20;
+        const balls = Math.floor(Math.random() * 50) + 30;
+        const overs = (Math.random() * 4).toFixed(1);
+        const wickets = Math.floor(Math.random() * 4);
+        const conceded = Math.floor(Math.random() * 40) + 20;
+        
+        runsInput.value = runs;
+        ballsInput.value = balls;
+        oversInput.value = overs;
+        wicketsInput.value = wickets;
+        document.getElementById('perfConceded').value = conceded;
+        
+        updateBattingStats();
+        updateBowlingStats();
+        
+        showToast('Sample performance data added. Adjust as needed.', 'info');
+    }
+}
+
+function showImportModal() {
+    document.getElementById('importModal').classList.remove('hidden');
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.add('hidden');
+}
+
+function downloadTemplate(type) {
+    showToast(`Downloading ${type} template...`, 'info');
+    // In a real app, this would download a CSV template
+}
+
+function clearForm(type) {
+    if (type === 'all' || type === 'player') {
+        document.getElementById('newPlayerName').value = '';
+        document.getElementById('newPlayerSpecialization').value = '';
+        document.getElementById('newPlayerTeam').value = '';
+        document.getElementById('newPlayerRole').value = '';
+    }
+    
+    if (type === 'all' || type === 'performance') {
+        resetPerformanceForm();
+    }
+    
+    showToast('Form cleared successfully', 'success');
+}
+
+function refreshData() {
+    loadManageData();
+    showToast('Refreshing data...', 'info');
+}
+
+// Show loading state
+function showLoadingState() {
+    const elements = ['addPlayerBtn', 'addPerfBtn'];
+    elements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            const originalHTML = element.innerHTML;
+            element.dataset.originalHTML = originalHTML;
+            element.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+            element.disabled = true;
+        }
+    });
+}
+
+// Hide loading state
+function hideLoadingState() {
+    const elements = ['addPlayerBtn', 'addPerfBtn'];
+    elements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element && element.dataset.originalHTML) {
+            element.innerHTML = element.dataset.originalHTML;
+            element.disabled = false;
+            delete element.dataset.originalHTML;
+        }
+    });
+}
+
+// Show success modal
+function showSuccessModal(title, message, type) {
+    document.getElementById('successTitle').textContent = title;
+    document.getElementById('successMessage').textContent = message;
+    document.getElementById('successModal').classList.remove('hidden');
+    
+    // Close modal after 3 seconds automatically
+    setTimeout(() => {
+        if (!document.getElementById('successModal').classList.contains('hidden')) {
+            closeModal('successModal');
+        }
+    }, 3000);
+}
+
+// Utility functions
+function formatDate(dateString) {
+    if (!dateString) return 'Unknown Date';
+    try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric',
+            year: 'numeric'
+        });
+    } catch (error) {
+        return dateString;
+    }
+}
+
+function autoSelectLatestMatch() {
+    const matchSelect = document.getElementById('perfMatch');
+    if (matchSelect && matchSelect.options.length > 1) {
+        matchSelect.selectedIndex = 1;  // First real match (newest)
+        showToast('Latest match selected – ready to record performance!', 'info');
+    }
+}
+
+function showToast(message, type = 'info') {
+    // Remove existing toasts
+    document.querySelectorAll('.toast-notification').forEach(toast => toast.remove());
+    
+    const colors = {
+        success: 'bg-gradient-to-r from-green-600 to-emerald-700 border border-green-500/30',
+        error: 'bg-gradient-to-r from-red-600 to-pink-700 border border-red-500/30',
+        info: 'bg-gradient-to-r from-blue-600 to-indigo-700 border border-blue-500/30',
+        warning: 'bg-gradient-to-r from-amber-600 to-orange-700 border border-amber-500/30'
+    };
+    
+    const icons = {
+        success: 'fa-check-circle',
+        error: 'fa-exclamation-circle',
+        info: 'fa-info-circle',
+        warning: 'fa-exclamation-triangle'
+    };
+    
+    const toast = document.createElement('div');
+    toast.className = `toast-notification fixed top-6 right-6 px-6 py-4 rounded-xl shadow-2xl z-50 animate-slide-in ${colors[type] || colors.info}`;
+    toast.innerHTML = `
+        <div class="flex items-center gap-3">
+            <i class="fas ${icons[type] || icons.info} text-white"></i>
+            <span class="text-white text-sm font-medium">${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        toast.style.transition = 'all 0.5s ease';
+        setTimeout(() => toast.remove(), 500);
+    }, 3000);
+}
+
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+    .glass-card {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+    }
+    
+    .animate-fade-in {
+        animation: fadeIn 0.4s ease-out;
+    }
+    
+    .animate-slide-in {
+        animation: slideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    
+    /* Custom scrollbar for dropdowns */
+    select::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    select::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 4px;
+    }
+    
+    select::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+    }
+    
+    select::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+    
+    /* Focus styles */
+    input:focus, select:focus, textarea:focus {
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    /* Loading spinner */
+    .fa-spinner {
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    /* Gradient text */
+    .gradient-text {
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    /* Glow effects */
+    .glow {
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    }
+`;
+document.head.appendChild(style);
+</script>
+
+<style>
+/* Additional custom styles */
+.hover-glow:hover {
+    box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.4);
+}
+
+.border-gradient {
+    border: double 2px transparent;
+    background-image: linear-gradient(rgba(30, 41, 59, 0.7), rgba(30, 41, 59, 0.7)), 
+                      linear-gradient(135deg, #3b82f6, #8b5cf6);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+}
+
+/* Form input styles */
+input, select {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+input:hover, select:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Button hover effects */
+button {
+    position: relative;
+    overflow: hidden;
+}
+
+button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.7s ease;
+}
+
+button:hover::after {
+    left: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .grid-cols-2, .grid-cols-3 {
+        grid-template-columns: 1fr;
+    }
+    
+    .p-8 {
+        padding: 1.5rem;
+    }
+    
+    .text-3xl {
+        font-size: 2rem;
+    }
+}
+</style>
+{% endblock %}

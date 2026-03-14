@@ -1,0 +1,1906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Cricket Coach Pro - Elite Performance Platform{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Montserrat', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif']
+                    },
+                    colors: {
+                        primary: { 
+                            50: '#f0f9ff', 100: '#e0f2fe', 200: '#bae6fd', 
+                            300: '#7dd3fc', 400: '#38bdf8', 500: '#0ea5e9', 
+                            600: '#0284c7', 700: '#0369a1', 800: '#075985', 
+                            900: '#0c4a6e'
+                        },
+                        cricket: {
+                            green: '#10b981',
+                            blue: '#2563eb',
+                            gold: '#f59e0b',
+                            purple: '#7c3aed',
+                            red: '#dc2626',
+                            turquoise: '#06b6d4'
+                        },
+                        dark: {
+                            900: '#0a0a0a',
+                            800: '#1a1a1a',
+                            700: '#2a2a2a',
+                            600: '#3a3a3a',
+                            500: '#4a4a4a'
+                        },
+                        gradient: {
+                            start: '#667eea',
+                            mid: '#764ba2',
+                            end: '#f093fb'
+                        }
+                    },
+                    animation: { 
+                        'fade-in': 'fadeIn 0.6s ease-out', 
+                        'slide-up': 'slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1)', 
+                        'slide-down': 'slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                        'pulse-slow': 'pulse 4s infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'shimmer': 'shimmer 3s infinite linear',
+                        'gradient': 'gradientShift 8s ease infinite',
+                        'neon-glow': 'neonPulse 2s ease-in-out infinite',
+                        'spin-slow': 'spin 20s linear infinite',
+                        'marquee': 'marquee 25s linear infinite',
+                        'bounce-slow': 'bounce 3s infinite'
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        slideUp: { '0%': { transform: 'translateY(30px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+                        slideDown: { '0%': { transform: 'translateY(-30px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
+                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-20px)' } },
+                        shimmer: { '0%': { backgroundPosition: '-500px 0' }, '100%': { backgroundPosition: '500px 0' } },
+                        gradientShift: { 
+                            '0%, 100%': { backgroundPosition: '0% 50%' },
+                            '50%': { backgroundPosition: '100% 50%' } 
+                        },
+                        neonPulse: {
+                            '0%, 100%': { opacity: 1, filter: 'drop-shadow(0 0 5px currentColor)' },
+                            '50%': { opacity: 0.8, filter: 'drop-shadow(0 0 20px currentColor)' }
+                        },
+                        marquee: {
+                            '0%': { transform: 'translateX(100%)' },
+                            '100%': { transform: 'translateX(-100%)' }
+                        }
+                    },
+                    boxShadow: { 
+                        'glass': '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+                        'glass-hover': '0 12px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+                        'neu': '20px 20px 60px #d1d9e6, -20px -20px 60px #ffffff',
+                        'neu-inset': 'inset 2px 2px 5px #d1d9e6, inset -3px -3px 7px #ffffff',
+                        'premium': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                        'glow': '0 0 30px rgba(37, 99, 235, 0.4)',
+                        'glow-green': '0 0 30px rgba(16, 185, 129, 0.4)'
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+                        'mesh-gradient': 'radial-gradient(at 40% 20%, hsla(240,100%,70%,0.2) 0px, transparent 50%), radial-gradient(at 80% 0%, hsla(189,100%,56%,0.1) 0px, transparent 50%), radial-gradient(at 0% 50%, hsla(355,100%,93%,0.1) 0px, transparent 50%), radial-gradient(at 80% 50%, hsla(340,100%,76%,0.1) 0px, transparent 50%), radial-gradient(at 0% 100%, hsla(269,100%,77%,0.1) 0px, transparent 50%), radial-gradient(at 80% 100%, hsla(242,100%,70%,0.1) 0px, transparent 50%), radial-gradient(at 0% 0%, hsla(343,100%,76%,0.1) 0px, transparent 50%)',
+                        'stadium-lights': 'linear-gradient(45deg, rgba(255,255,255,0.03) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.03) 50%, rgba(255,255,255,0.03) 75%, transparent 75%, transparent)',
+                        'carbon-fiber': 'linear-gradient(27deg, #151515 5px, transparent 5px) 0 5px, linear-gradient(207deg, #151515 5px, transparent 5px) 10px 0px, linear-gradient(27deg, #222 5px, transparent 5px) 0px 10px, linear-gradient(207deg, #222 5px, transparent 5px) 10px 5px, linear-gradient(90deg, #1b1b1b 10px, transparent 10px), linear-gradient(#1d1d1b 25%, #1a1a1a 25%, #1a1a1a 50%, transparent 50%, transparent 75%, #242424 75%, #242424)'
+                    },
+                    backdropBlur: {
+                        'xs': '2px',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a2a2a 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><defs><radialGradient id="g"><stop offset="0%" stop-color="%230ea5e9" stop-opacity="0.1"/><stop offset="100%" stop-color="%230ea5e9" stop-opacity="0"/></radialGradient></defs><ellipse cx="100" cy="100" rx="80" ry="80" fill="url(%23g)"/></svg>'),
+                          url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><defs><radialGradient id="g2"><stop offset="0%" stop-color="%2310b981" stop-opacity="0.05"/><stop offset="100%" stop-color="%2310b981" stop-opacity="0"/></radialGradient></defs><ellipse cx="150" cy="50" rx="60" ry="60" fill="url(%23g2)"/></svg>');
+            background-size: 40%, 30%;
+            background-position: -10% -10%, 110% 110%;
+            background-repeat: no-repeat;
+            z-index: -1;
+        }
+        
+        /* Glass morphism effects */
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.36);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .glass-panel:hover {
+            background: rgba(30, 41, 59, 0.7);
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.45);
+            transform: translateY(-4px);
+        }
+        
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(20px) saturate(200%);
+            -webkit-backdrop-filter: blur(20px) saturate(200%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        /* Gradient text effects */
+        .gradient-text {
+            background: linear-gradient(90deg, #38bdf8 0%, #818cf8 25%, #c084fc 50%, #f472b6 75%, #fb923c 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 3s linear infinite;
+        }
+        
+        .gradient-text-static {
+            background: linear-gradient(90deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Stunning button styles */
+        .btn-glow {
+            background: linear-gradient(90deg, #2563eb 0%, #7c3aed 100%);
+            box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-glow:hover {
+            box-shadow: 0 8px 30px rgba(37, 99, 235, 0.6);
+            transform: translateY(-2px);
+        }
+        
+        .btn-glow::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.7s ease;
+        }
+        
+        .btn-glow:hover::after {
+            left: 100%;
+        }
+        
+        /* Animated border effect */
+        .animated-border {
+            position: relative;
+            background: linear-gradient(90deg, #0ea5e9, #8b5cf6, #10b981, #f59e0b);
+            background-size: 300% 300%;
+            animation: gradientShift 3s ease infinite;
+            padding: 2px;
+            border-radius: 12px;
+        }
+        
+        .animated-border > div {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 10px;
+            padding: 1.5rem;
+        }
+        
+        /* Player card with 3D effect */
+        .player-card {
+            perspective: 1000px;
+            transition: transform 0.6s ease;
+        }
+        
+        .player-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .player-card:hover .player-card-inner {
+            transform: rotateY(10deg) rotateX(5deg) translateY(-10px);
+        }
+        
+        /* Custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #2563eb, #7c3aed);
+            border-radius: 10px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #1d4ed8, #6d28d9);
+        }
+        
+        /* Cricket pitch background */
+        .pitch-bg {
+            background: linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.9)),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="20" y="40" width="60" height="20" fill="none" stroke="%2310b981" stroke-width="0.3"/><circle cx="50" cy="50" r="5" fill="none" stroke="%2310b981" stroke-width="0.3"/><line x1="50" y1="40" x2="50" y2="60" stroke="%2310b981" stroke-width="0.3"/><line x1="20" y1="50" x2="80" y2="50" stroke="%2310b981" stroke-width="0.3"/></svg>');
+            background-size: 200px;
+            background-position: center;
+        }
+        
+        /* Live indicator */
+        .live-indicator {
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        
+        .live-indicator::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            background: #ef4444;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 10px #ef4444;
+        }
+        
+        /* Stats counter animation */
+        .counter {
+            font-variant-numeric: tabular-nums;
+        }
+        
+        /* Shimmer loading effect */
+        .shimmer {
+            background: linear-gradient(90deg, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.05) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+        
+        /* Floating animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0); }
+            33% { transform: translateY(-15px) rotate(2deg); }
+            66% { transform: translateY(-5px) rotate(-2deg); }
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        /* Neon glow for important elements */
+        .neon-glow {
+            animation: neonPulse 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 8px currentColor);
+        }
+        
+        /* Dashboard grid layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        @media (min-width: 1280px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            }
+        }
+        
+        /* Navigation tabs */
+        .nav-tab {
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .nav-tab::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            border-radius: 3px 3px 0 0;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-tab:hover::after,
+        .nav-tab.active::after {
+            width: 80%;
+        }
+        
+        /* Scoreboard effect */
+        .scoreboard {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9));
+            border: 2px solid;
+            border-image: linear-gradient(45deg, #0ea5e9, #10b981, #f59e0b) 1;
+            box-shadow: inset 0 0 20px rgba(14, 165, 233, 0.2);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .glass-panel {
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+            }
+        }
+        
+        /* Selection highlight */
+        .selection-highlight {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .selection-highlight::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.1), transparent);
+            transition: left 0.7s ease;
+        }
+        
+        .selection-highlight:hover::before {
+            left: 100%;
+        }
+        
+        /* Ripple effect */
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ripple::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+        
+        .ripple:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+        
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(40, 40);
+                opacity: 0;
+            }
+        }
+        
+        /* Cricket ball loader */
+        .cricket-loader {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #dc2626, #f59e0b);
+            position: relative;
+            animation: spin 1.5s linear infinite;
+        }
+        
+        .cricket-loader::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            background: #1a1a1a;
+            border-radius: 50%;
+        }
+        
+        .cricket-loader::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 2px;
+            background: #dc2626;
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Ambient background particles -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute top-1/4 left-1/4 w-1 h-1 bg-blue-500 rounded-full animate-pulse-slow" style="animation-delay: 0s;"></div>
+        <div class="absolute top-1/3 right-1/4 w-1 h-1 bg-green-500 rounded-full animate-pulse-slow" style="animation-delay: 1s;"></div>
+        <div class="absolute bottom-1/3 left-1/3 w-1 h-1 bg-purple-500 rounded-full animate-pulse-slow" style="animation-delay: 2s;"></div>
+        <div class="absolute bottom-1/4 right-1/3 w-1 h-1 bg-yellow-500 rounded-full animate-pulse-slow" style="animation-delay: 3s;"></div>
+    </div>
+    
+    <!-- Top Status Bar -->
+    <div class="glass-nav fixed top-0 left-0 right-0 z-40">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-between items-center py-3">
+                <div class="flex items-center space-x-6">
+                    <div class="flex items-center space-x-2 neon-glow text-blue-400">
+                        <i class="fas fa-satellite-dish"></i>
+                        <span class="text-sm font-semibold">LIVE CONNECTED</span>
+                    </div>
+                    <div class="hidden md:flex items-center space-x-6">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-users text-blue-400"></i>
+                            <span class="text-xs text-gray-300">Teams:</span>
+                            <span id="liveTeamCount" class="font-bold text-white">0</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-user text-green-400"></i>
+                            <span class="text-xs text-gray-300">Players:</span>
+                            <span id="livePlayerCount" class="font-bold text-white">0</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <!-- <i class="fas fa-chart-line text-yellow-400"></i> -->
+                            <!-- <span class="text-xs text-gray-300">Avg Score:</span> -->
+                            <!-- <span id="liveAvgScore" class="font-bold text-white"></span> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="live-indicator flex items-center space-x-2">
+                        <span class="text-sm font-semibold text-white">REAL-TIME</span>
+                    </div>
+                    <button onclick="refreshStats()" class="p-2 glass-panel rounded-xl hover:bg-blue-500/20 transition">
+                        <i class="fas fa-sync-alt text-gray-300"></i>
+                    </button>
+                    <button onclick="toggleTheme()" class="p-2 glass-panel rounded-xl hover:bg-blue-500/20 transition" id="themeToggle">
+                        <i class="fas fa-moon text-gray-300"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="container mx-auto px-4 py-8 max-w-7xl pt-20">
+        <!-- Hero Header -->
+        <header class="text-center mb-12 animate-fade-in">
+            <div class="relative mb-8">
+                <div class="absolute -inset-4 bg-gradient-to-r from-blue-600 via-purple-600 to-green-600 rounded-3xl blur-xl opacity-30"></div>
+                <div class="relative glass-panel rounded-3xl p-8 overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -translate-y-16 translate-x-16"></div>
+                    <div class="absolute bottom-0 left-0 w-40 h-40 bg-green-500/10 rounded-full translate-y-20 -translate-x-20"></div>
+                    
+                    <div class="relative z-10">
+                        <div class="flex flex-col md:flex-row items-center justify-center gap-6 mb-6">
+                            <div class="relative">
+                                <div class="cricket-loader"></div>
+                            </div>
+                            <div>
+                                <h1 class="text-5xl md:text-6xl font-bold font-heading mb-2">
+                                    <span class="gradient-text">CRICKET COACH</span>
+                                    <span class="text-white"> PRO</span>
+                                </h1>
+                                <p class="text-xl text-gray-300 max-w-2xl mx-auto font-light">
+                                    Elite Performance Analytics & AI-Driven Strategy Platform
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-wrap justify-center gap-4 mt-8">
+                            <span class="px-4 py-2 glass-panel rounded-full text-sm flex items-center">
+                                <i class="fas fa-microchip text-blue-400 mr-2"></i>
+                                AI-Powered Insights
+                            </span>
+                            <span class="px-4 py-2 glass-panel rounded-full text-sm flex items-center">
+                                <i class="fas fa-bolt text-yellow-400 mr-2"></i>
+                                Real-Time Analytics
+                            </span>
+                            <span class="px-4 py-2 glass-panel rounded-full text-sm flex items-center">
+                                <i class="fas fa-chart-network text-green-400 mr-2"></i>
+                                Advanced Metrics
+                            </span>
+                            <span class="px-4 py-2 glass-panel rounded-full text-sm flex items-center">
+                                <i class="fas fa-robot text-purple-400 mr-2"></i>
+                                Predictive Modeling
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="dashboard-grid mb-10">
+                <div class="animated-border">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-400">ACTIVE TEAMS</p>
+                            <p class="text-3xl font-bold text-white counter" id="activeTeams">0</p>
+                            <div class="flex items-center mt-2">
+                                <i class="fas fa-arrow-up text-green-400 mr-1"></i>
+                                <span class="text-sm text-gray-300">Loading...</span>
+                            </div>
+                        </div>
+                        <div class="w-14 h-14 rounded-full bg-blue-500/20 flex items-center justify-center">
+                            <i class="fas fa-users text-blue-400 text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="animated-border">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-400">TOTAL PLAYERS</p>
+                            <p class="text-3xl font-bold text-white counter" id="totalPlayers">0</p>
+                            <div class="flex items-center mt-2">
+                                <i class="fas fa-arrow-up text-green-400 mr-1"></i>
+                                <span class="text-sm text-gray-300">Loading...</span>
+                            </div>
+                        </div>
+                        <div class="w-14 h-14 rounded-full bg-green-500/20 flex items-center justify-center">
+                            <i class="fas fa-user text-green-400 text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="animated-border">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-400">AVG PLAYER RATING</p>
+                            <p class="text-3xl font-bold text-white" id="avgRating">0.0</p>
+                            <div class="flex items-center mt-2">
+                                <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                <span class="text-sm text-gray-300">Loading...</span>
+                            </div>
+                        </div>
+                        <div class="w-14 h-14 rounded-full bg-yellow-500/20 flex items-center justify-center">
+                            <i class="fas fa-star text-yellow-400 text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="animated-border">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-400">MATCHES</p>
+                            <p class="text-3xl font-bold text-white" id="liveMatches">0</p>
+                            <div class="flex items-center mt-2">
+                                <i class="fas fa-broadcast-tower text-red-400 mr-1 animate-pulse"></i>
+                                <span class="text-sm text-gray-300">Checking...</span>
+                            </div>
+                        </div>
+                        <div class="w-14 h-14 rounded-full bg-purple-500/20 flex items-center justify-center">
+                            <i class="fas fa-broadcast-tower text-purple-400 text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Navigation -->
+        <nav class="glass-panel rounded-2xl p-2 mb-10">
+            <div class="flex flex-wrap justify-center gap-1">
+                <a href="{{ url_for('dashboard') }}" 
+                   class="nav-tab px-6 py-4 text-base font-medium rounded-xl transition-all duration-300 flex items-center group
+                          {% if request.endpoint == 'dashboard' %}active bg-gradient-to-r from-blue-500/10 to-blue-600/10 text-white border border-blue-500/20
+                          {% else %}text-gray-400 hover:text-white hover:bg-white/5{% endif %}">
+                    <i class="fas fa-tachometer-alt-fast mr-3 group-hover:scale-110 transition-transform"></i>
+                    Dashboard
+                    {% if request.endpoint == 'dashboard' %}
+                    <span class="ml-2 w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
+                    {% endif %}
+                </a>
+                
+                <a href="{{ url_for('teams_page') }}" 
+                   class="nav-tab px-6 py-4 text-base font-medium rounded-xl transition-all duration-300 flex items-center group
+                          {% if request.endpoint == 'teams_page' %}active bg-gradient-to-r from-green-500/10 to-green-600/10 text-white border border-green-500/20
+                          {% else %}text-gray-400 hover:text-white hover:bg-white/5{% endif %}">
+                    <i class="fas fa-users mr-3 group-hover:scale-110 transition-transform"></i>
+                    Teams
+                    <span class="ml-2 px-2 py-1 text-xs font-bold bg-green-500/20 text-green-400 rounded-full" id="teamCountBadge">0</span>
+                </a>
+                
+                <a href="{{ url_for('players_page') }}" 
+                   class="nav-tab px-6 py-4 text-base font-medium rounded-xl transition-all duration-300 flex items-center group
+                          {% if request.endpoint == 'players_page' %}active bg-gradient-to-r from-purple-500/10 to-purple-600/10 text-white border border-purple-500/20
+                          {% else %}text-gray-400 hover:text-white hover:bg-white/5{% endif %}">
+                    <i class="fas fa-user mr-3 group-hover:scale-110 transition-transform"></i>
+                    Players
+                    <span class="ml-2 px-2 py-1 text-xs font-bold bg-purple-500/20 text-purple-400 rounded-full" id="playerCountBadge">0</span>
+                </a>
+                
+                <a href="{{ url_for('analytics_page') }}" 
+                   class="nav-tab px-6 py-4 text-base font-medium rounded-xl transition-all duration-300 flex items-center group
+                          {% if request.endpoint == 'analytics_page' %}active bg-gradient-to-r from-red-500/10 to-red-600/10 text-white border border-red-500/20
+                          {% else %}text-gray-400 hover:text-white hover:bg-white/5{% endif %}">
+                    <i class="fas fa-chart-network mr-3 group-hover:scale-110 transition-transform"></i>
+                    Analytics
+                    <i class="fas fa-bolt ml-2 text-xs text-yellow-400 animate-pulse"></i>
+                </a>
+                
+                <a href="{{ url_for('recommendations_page') }}" 
+                   class="nav-tab px-6 py-4 text-base font-medium rounded-xl transition-all duration-300 flex items-center group
+                          {% if request.endpoint == 'recommendations_page' %}active bg-gradient-to-r from-yellow-500/10 to-yellow-600/10 text-white border border-yellow-500/20
+                          {% else %}text-gray-400 hover:text-white hover:bg-white/5{% endif %}">
+                    <i class="fas fa-robot mr-3 group-hover:scale-110 transition-transform"></i>
+                    AI Assistant
+                    <span class="ml-2 w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
+                </a>
+                
+                <a href="{{ url_for('manage_data_page') }}" 
+                   class="nav-tab px-6 py-4 text-base font-medium rounded-xl transition-all duration-300 flex items-center group
+                          {% if request.endpoint == 'manage_data_page' %}active bg-gradient-to-r from-gray-500/10 to-gray-600/10 text-white border border-gray-500/20
+                          {% else %}text-gray-400 hover:text-white hover:bg-white/5{% endif %}">
+                    <i class="fas fa-cog mr-3 group-hover:rotate-180 transition-transform duration-700"></i>
+                    Management
+                </a>
+            </div>
+        </nav>
+        
+        <!-- Main Content Area -->
+        <main class="animate-fade-in">
+            <!-- Breadcrumb -->
+            <div class="mb-8">
+                <nav class="flex" aria-label="Breadcrumb">
+                    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                        <li class="inline-flex items-center">
+                            <a href="{{ url_for('dashboard') }}" class="inline-flex items-center text-sm font-medium text-gray-400 hover:text-white transition">
+                                <i class="fas fa-home mr-2"></i>
+                                Home
+                            </a>
+                        </li>
+                        {% block breadcrumb %}{% endblock %}
+                    </ol>
+                </nav>
+            </div>
+            
+            <!-- Page Content -->
+            <div class="animate-slide-up">
+                {% block content %}
+                <!-- Default Dashboard Content -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Left Column -->
+                    <div class="lg:col-span-2 space-y-8">
+                        <!-- Performance Overview -->
+                        <div class="glass-panel rounded-2xl p-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <h2 class="text-2xl font-bold text-white">Performance Overview</h2>
+                                <div class="flex space-x-2">
+                                    <button onclick="loadLast7Days()" class="px-4 py-2 text-sm glass-panel rounded-lg hover:bg-blue-500/20 transition">Last 7 Days</button>
+                                    <button onclick="loadLast30Days()" class="px-4 py-2 text-sm bg-blue-500/20 text-blue-400 rounded-lg">Last 30 Days</button>
+                                </div>
+                            </div>
+                            <div class="h-64">
+                                <canvas id="performanceChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <!-- Top Players -->
+                        <div class="glass-panel rounded-2xl p-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <h2 class="text-2xl font-bold text-white">Top Performers</h2>
+                                <button onclick="loadTopPlayers()" class="px-4 py-2 text-sm glass-panel rounded-lg hover:bg-blue-500/20 transition">
+                                    <i class="fas fa-sync-alt mr-1"></i> Refresh
+                                </button>
+                            </div>
+                            <div id="topPlayersContainer" class="space-y-4">
+                                <!-- Dynamic content will be loaded here -->
+                                <div class="text-center py-8">
+                                    <div class="cricket-loader mx-auto mb-4"></div>
+                                    <p class="text-gray-400">Loading player data...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column -->
+                    <div class="space-y-8">
+                        <!-- Live Matches -->
+                        <div class="glass-panel rounded-2xl p-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <h2 class="text-2xl font-bold text-white flex items-center">
+                                    <i class="fas fa-broadcast-tower text-red-400 mr-2 animate-pulse"></i>
+                                    Recent Matches
+                                </h2>
+                                <button onclick="loadLiveMatches()" class="px-4 py-2 text-sm glass-panel rounded-lg hover:bg-red-500/20 transition">
+                                    <i class="fas fa-sync-alt mr-1"></i> Refresh
+                                </button>
+                            </div>
+                            <div id="liveMatchesContainer" class="space-y-4">
+                                <!-- Dynamic content will be loaded here -->
+                                <div class="text-center py-4">
+                                    <div class="inline-block cricket-loader mb-3"></div>
+                                    <p class="text-gray-400">Loading match data...</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Actions -->
+                        <div class="glass-panel rounded-2xl p-6">
+                            <h2 class="text-2xl font-bold text-white mb-6">Quick Actions</h2>
+                            <div class="grid grid-cols-2 gap-4">
+                                <button onclick="window.location.href='{{ url_for('create_team_page') }}'" class="p-4 glass-panel rounded-xl hover:bg-blue-500/20 transition flex flex-col items-center justify-center">
+                                    <i class="fas fa-users text-blue-400 text-2xl mb-2"></i>
+                                    <span class="text-sm font-medium text-white">New Team</span>
+                                </button>
+                                <button onclick="showPlayerModal()" class="p-4 glass-panel rounded-xl hover:bg-green-500/20 transition flex flex-col items-center justify-center">
+                                    <i class="fas fa-user-plus text-green-400 text-2xl mb-2"></i>
+                                    <span class="text-sm font-medium text-white">Add Player</span>
+                                </button>
+                                <button onclick="generateReport()" class="p-4 glass-panel rounded-xl hover:bg-yellow-500/20 transition flex flex-col items-center justify-center">
+                                    <i class="fas fa-file-export text-yellow-400 text-2xl mb-2"></i>
+                                    <span class="text-sm font-medium text-white">Export Data</span>
+                                </button>
+                                <button onclick="askAISuggestion()" class="p-4 glass-panel rounded-xl hover:bg-purple-500/20 transition flex flex-col items-center justify-center">
+                                    <i class="fas fa-robot text-purple-400 text-2xl mb-2"></i>
+                                    <span class="text-sm font-medium text-white">AI Advice</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endblock %}
+            </div>
+        </main>
+    </div>
+    
+    <!-- AI Assistant Floating Widget -->
+    <div id="aiAssistant" class="fixed bottom-6 right-6 z-30 animate-fade-in">
+        <div class="relative group">
+            <button onclick="toggleAIAssistant()" class="w-16 h-16 btn-glow rounded-full shadow-2xl flex items-center justify-center text-white animate-float">
+                <i class="fas fa-robot text-2xl"></i>
+            </button>
+            <div class="absolute bottom-20 right-0 w-80 glass-panel rounded-2xl p-4 shadow-2xl hidden group-hover:block transition-all duration-300">
+                <div class="flex items-center mb-3">
+                    <i class="fas fa-robot text-purple-400 text-xl mr-2"></i>
+                    <span class="font-bold text-white">Cricket AI Assistant</span>
+                </div>
+                <p id="aiMessage" class="text-gray-300 text-sm mb-3">Ready to optimize your team performance. How can I help?</p>
+                <div class="flex space-x-2">
+                    <button onclick="askAISuggestion()" class="flex-1 px-3 py-2 text-sm glass-panel rounded-lg hover:bg-purple-500/20 transition">
+                        <i class="fas fa-lightbulb mr-1"></i> Get Tip
+                    </button>
+                    <button onclick="analyzePerformance()" class="flex-1 px-3 py-2 text-sm glass-panel rounded-lg hover:bg-blue-500/20 transition">
+                        <i class="fas fa-chart-line mr-1"></i> Analyze
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Live Notification Bar -->
+    <div id="liveNotification" class="fixed top-16 left-0 right-0 z-30 px-4 hidden">
+        <div class="container mx-auto">
+            <div class="bg-gradient-to-r from-blue-600/20 to-purple-600/20 border border-blue-500/30 rounded-xl p-3 backdrop-blur-lg animate-slide-down">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <i class="fas fa-info-circle text-blue-400 mr-2"></i>
+                        <span id="notificationText" class="text-white text-sm">New match data has been synchronized</span>
+                    </div>
+                    <button onclick="hideNotification()" class="text-gray-400 hover:text-white">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Enhanced initialization with real data
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Initialize with real data
+            await initializeLiveStats();
+            await initPerformanceChart();
+            await loadTopPlayers();
+            await loadLiveMatches();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Start live updates
+            startLiveUpdates();
+            
+            // Show welcome message
+            setTimeout(() => {
+                showNotification('Welcome to Cricket Coach Pro Elite! Real-time analytics initialized.', 'info');
+                speakAIAssistant('Welcome coach! Ready to optimize team performance.');
+            }, 1000);
+        });
+        
+        async function initPerformanceChart() {
+            try {
+                // Fetch recent match data from API
+                const res = await fetch('/api/matches?limit=7');
+                const data = await res.json();
+
+                if (!data.success || !data.matches || data.matches.length === 0) {
+                    console.warn("No match data available → using fallback");
+                    // Fallback data
+                    renderChartWithData(
+                        ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], 
+                        [45, 52, 48, 55, 53, 60, 58], 
+                        [7.2, 6.8, 7.5, 6.2, 6.9, 5.8, 6.1]
+                    );
+                    return;
+                }
+
+                // Process real match data
+                const matches = data.matches;
+                
+                // Sort by date
+                matches.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                // Get labels from dates
+                const labels = matches.map((m, i) => {
+                    if (m.date) {
+                        const d = new Date(m.date);
+                        return d.toLocaleDateString('en-US', { weekday: 'short' });
+                    }
+                    return `Match ${i+1}`;
+                });
+
+                // Calculate metrics from match scores
+                const avgRuns = matches.map(m => {
+                    if (m.score1) {
+                        // Parse score like "162/4" to get runs
+                        const runs = parseInt(m.score1.split('/')[0]);
+                        return isNaN(runs) ? 150 : runs;
+                    }
+                    return 150; // Default
+                });
+
+                const avgEconomy = matches.map(m => {
+                    // Use run_rate if available, otherwise calculate from overs
+                    return m.run_rate1 || 7.0;
+                });
+
+                // Pad data if needed
+                while (labels.length < 7) {
+                    labels.unshift(`Prev ${7 - labels.length}`);
+                    avgRuns.unshift(avgRuns[0] || 150);
+                    avgEconomy.unshift(avgEconomy[0] || 7.0);
+                }
+
+                renderChartWithData(labels, avgRuns, avgEconomy);
+
+            } catch (error) {
+                console.error("Failed to load real performance data:", error);
+                // Fallback data
+                renderChartWithData(
+                    ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], 
+                    [45, 52, 48, 55, 53, 60, 58], 
+                    [7.2, 6.8, 7.5, 6.2, 6.9, 5.8, 6.1]
+                );
+            }
+        }
+        
+        function renderChartWithData(labels, battingData, economyData) {
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (window.performanceChart) {
+                window.performanceChart.destroy();
+            }
+            
+            window.performanceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Avg Runs per Match',
+                        data: battingData,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }, {
+                        label: 'Avg Economy Rate',
+                        data: economyData,
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#f8fafc',
+                                font: { family: 'Inter' }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                            titleColor: '#f3f4f6',
+                            bodyColor: '#d1d5db'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: '#94a3b8' }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function loadLast7Days() {
+            // You can implement specific logic for 7 days
+            initPerformanceChart();
+            showNotification('Loading last 7 days data...', 'info');
+        }
+        
+        function loadLast30Days() {
+            // You can implement specific logic for 30 days
+            initPerformanceChart();
+            showNotification('Loading last 30 days data...', 'info');
+        }
+        
+        function animateCounter(elementId, start, end, duration) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                element.textContent = value;
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+        
+        async function initializeLiveStats() {
+            try {
+                // Fetch all stats in parallel
+                const [teamsRes, playersRes, matchesRes] = await Promise.all([
+                    fetch('/api/teams').then(r => r.json()),
+                    fetch('/api/players').then(r => r.json()),
+                    fetch('/api/matches?limit=10').then(r => r.json())
+                ]);
+
+                if (teamsRes.success && playersRes.success && matchesRes.success) {
+                    const teamCount = teamsRes.teams.length;
+                    const playerCount = playersRes.count || playersRes.players.length;
+                    const matchCount = matchesRes.count || matchesRes.matches.length;
+
+                    // Calculate average score from matches
+                    let totalScore = 0;
+                    let matchWithScores = 0;
+                    if (matchesRes.matches && matchesRes.matches.length > 0) {
+                        matchesRes.matches.forEach(match => {
+                            if (match.score1) {
+                                const score = parseInt(match.score1.split('/')[0]);
+                                if (!isNaN(score)) {
+                                    totalScore += score;
+                                    matchWithScores++;
+                                }
+                            }
+                        });
+                    }
+                    const avgScore = matchWithScores > 0 ? (totalScore / matchWithScores).toFixed(1) : '0.0';
+
+                    // Update live top bar
+                    document.getElementById('liveTeamCount').textContent = teamCount;
+                    document.getElementById('livePlayerCount').textContent = playerCount;
+                    // document.getElementById('liveAvgScore').innerHTML = avgScore;
+
+                    // Update quick stats with animation
+                    animateCounter('activeTeams', 0, teamCount, 1500);
+                    animateCounter('totalPlayers', 0, playerCount, 1500);
+                    document.getElementById('avgRating').textContent = '8.2'; // Placeholder for real rating
+                    document.getElementById('liveMatches').textContent = matchCount;
+                    
+                    // Update navigation badges
+                    document.getElementById('teamCountBadge').textContent = teamCount;
+                    document.getElementById('playerCountBadge').textContent = playerCount;
+                    
+                    showNotification(`Loaded ${teamCount} teams, ${playerCount} players, and ${matchCount} matches`, 'success');
+                }
+            } catch (error) {
+                console.error("Failed to load real stats:", error);
+                showNotification('Failed to load statistics. Using fallback data.', 'error');
+                // Use fallback values
+                animateCounter('activeTeams', 0, 5, 1500);
+                animateCounter('totalPlayers', 0, 25, 1500);
+            }
+        }
+        
+        async function loadTopPlayers() {
+            try {
+                const res = await fetch('/api/players');
+                const data = await res.json();
+                
+                const container = document.getElementById('topPlayersContainer');
+                if (!container) return;
+                
+                if (!data.success || !data.players || data.players.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="fas fa-users text-gray-400 text-4xl mb-3"></i>
+                            <p class="text-gray-400">No players found</p>
+                            <button onclick="window.location.href='{{ url_for('players_page') }}'" class="mt-3 px-4 py-2 text-sm glass-panel rounded-lg hover:bg-blue-500/20 transition">
+                                <i class="fas fa-user-plus mr-1"></i> Add Players
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Update container with real player data
+                container.innerHTML = '';
+                
+                // Take top 3 players or all if less than 3
+                const topPlayers = data.players.slice(0, 3);
+                
+                topPlayers.forEach((player, index) => {
+                    // Get initials for avatar
+                    const initials = player.name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                    
+                    const playerDiv = document.createElement('div');
+                    playerDiv.className = 'flex items-center p-4 glass-panel rounded-xl hover:bg-white/5 transition cursor-pointer selection-highlight';
+                    playerDiv.innerHTML = `
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold mr-4">
+                            ${initials}
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-bold text-white">${player.name}</h3>
+                            <div class="flex items-center mt-1">
+                                <span class="px-2 py-1 text-xs font-bold bg-green-500/20 text-green-400 rounded mr-2">${player.role || 'Player'}</span>
+                                <span class="text-sm text-gray-400">Team: ${player.team_id || 'N/A'}</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-bold text-white">${(8.0 + Math.random() * 2).toFixed(1)}</div>
+                            <div class="text-xs text-gray-400">Rating</div>
+                        </div>
+                    `;
+                    
+                    // Add click event to view player details
+                    playerDiv.addEventListener('click', () => {
+                        window.location.href = `/players/${player.id}`;
+                    });
+                    
+                    container.appendChild(playerDiv);
+                });
+                
+                // If there are more players, add a view all button
+                if (data.players.length > 3) {
+                    const viewAllDiv = document.createElement('div');
+                    viewAllDiv.className = 'text-center pt-4';
+                    viewAllDiv.innerHTML = `
+                        <button onclick="window.location.href='{{ url_for('players_page') }}'" class="px-4 py-2 text-sm glass-panel rounded-lg hover:bg-blue-500/20 transition">
+                            View All ${data.players.length} Players <i class="fas fa-arrow-right ml-1"></i>
+                        </button>
+                    `;
+                    container.appendChild(viewAllDiv);
+                }
+                
+            } catch (error) {
+                console.error("Failed to load top players:", error);
+                const container = document.getElementById('topPlayersContainer');
+                if (container) {
+                    container.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="fas fa-exclamation-triangle text-yellow-400 text-4xl mb-3"></i>
+                            <p class="text-gray-400">Failed to load players</p>
+                            <button onclick="loadTopPlayers()" class="mt-3 px-4 py-2 text-sm glass-panel rounded-lg hover:bg-yellow-500/20 transition">
+                                <i class="fas fa-redo mr-1"></i> Retry
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+        }
+        
+        async function loadLiveMatches() {
+            try {
+                const res = await fetch('/api/matches?limit=2');
+                const data = await res.json();
+                
+                const container = document.getElementById('liveMatchesContainer');
+                if (!container) return;
+                
+                if (!data.success || !data.matches || data.matches.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-4">
+                            <i class="fas fa-baseball-ball text-gray-400 text-3xl mb-2"></i>
+                            <p class="text-gray-400">No matches found</p>
+                            <button onclick="window.location.href='{{ url_for('create_match_data') }}'" class="mt-2 px-3 py-1 text-xs glass-panel rounded-lg hover:bg-green-500/20 transition">
+                                <i class="fas fa-plus mr-1"></i> Add Match
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Update container with real match data
+                container.innerHTML = '';
+                
+                data.matches.forEach((match, index) => {
+                    const matchDiv = document.createElement('div');
+                    matchDiv.className = 'p-4 scoreboard rounded-xl';
+                    
+                    // Format date
+                    const matchDate = match.date ? new Date(match.date).toLocaleDateString() : 'Recent';
+                    
+                    // Parse scores
+                    const score1 = match.score1 || '0/0';
+                    const score2 = match.score2 || '0/0';
+                    const runRate1 = match.run_rate1 || 0.0;
+                    const runRate2 = match.run_rate2 || 0.0;
+                    
+                    matchDiv.innerHTML = `
+                        <div class="flex justify-between items-center mb-3">
+                            <div class="text-sm font-semibold text-white">${match.type || 'T20'} • ${matchDate}</div>
+                            <div class="px-2 py-1 bg-${match.result ? 'green' : 'red'}-500/20 text-${match.result ? 'green' : 'red'}-400 text-xs font-bold rounded">
+                                ${match.result || 'IN PROGRESS'}
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center mb-2">
+                            <div class="flex items-center">
+                                <div class="w-6 h-6 rounded-full bg-blue-500 mr-2"></div>
+                                <span class="font-medium text-white">${match.team1_id ? `Team ${match.team1_id}` : 'Team A'}</span>
+                            </div>
+                            <span class="font-bold text-white">${score1}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <div class="w-6 h-6 rounded-full bg-green-500 mr-2"></div>
+                                <span class="font-medium text-white">${match.team2_id ? `Team ${match.team2_id}` : 'Team B'}</span>
+                            </div>
+                            <span class="font-bold text-white">${score2}</span>
+                        </div>
+                        <div class="mt-3 text-center">
+                            <div class="text-xs text-gray-400">RR: ${runRate1.toFixed(1)} | ${runRate2.toFixed(1)}</div>
+                        </div>
+                    `;
+                    
+                    container.appendChild(matchDiv);
+                });
+                
+                // Add view all button if there are more matches
+                if (data.count > 2) {
+                    const viewAllDiv = document.createElement('div');
+                    viewAllDiv.className = 'text-center pt-2';
+                    viewAllDiv.innerHTML = `
+                        <button onclick="window.location.href='{{ url_for('analytics_page') }}'" class="px-3 py-1 text-xs glass-panel rounded-lg hover:bg-purple-500/20 transition">
+                            View All ${data.count} Matches <i class="fas fa-arrow-right ml-1"></i>
+                        </button>
+                    `;
+                    container.appendChild(viewAllDiv);
+                }
+                
+            } catch (error) {
+                console.error("Failed to load live matches:", error);
+                const container = document.getElementById('liveMatchesContainer');
+                if (container) {
+                    container.innerHTML = `
+                        <div class="text-center py-4">
+                            <i class="fas fa-exclamation-triangle text-yellow-400 text-3xl mb-2"></i>
+                            <p class="text-gray-400">Failed to load matches</p>
+                            <button onclick="loadLiveMatches()" class="mt-2 px-3 py-1 text-xs glass-panel rounded-lg hover:bg-yellow-500/20 transition">
+                                <i class="fas fa-redo mr-1"></i> Retry
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+        }
+        
+        function refreshStats() {
+            showNotification('Refreshing live statistics...', 'info');
+            initializeLiveStats();
+            loadTopPlayers();
+            loadLiveMatches();
+            initPerformanceChart();
+            
+            // Add refresh animation
+            const refreshBtn = event.currentTarget;
+            refreshBtn.classList.add('rotate-180');
+            setTimeout(() => refreshBtn.classList.remove('rotate-180'), 500);
+        }
+        
+        function toggleTheme() {
+            const isDark = document.body.classList.contains('dark');
+            const themeToggle = document.getElementById('themeToggle');
+            
+            if (isDark) {
+                document.body.classList.remove('dark');
+                document.body.style.background = 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%)';
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                showNotification('Switched to light mode', 'info');
+            } else {
+                document.body.classList.add('dark');
+                document.body.style.background = 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2a2a2a 100%)';
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                showNotification('Switched to dark mode', 'info');
+            }
+        }
+        
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('liveNotification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            
+            // Set color based on type
+            const notificationDiv = notification.querySelector('div');
+            notificationDiv.classList.remove('from-blue-600/20', 'to-purple-600/20', 'from-green-600/20', 'to-green-600/20', 'from-red-600/20', 'to-red-600/20');
+            
+            if (type === 'success') {
+                notificationDiv.classList.add('from-green-600/20', 'to-green-600/20');
+            } else if (type === 'error') {
+                notificationDiv.classList.add('from-red-600/20', 'to-red-600/20');
+            } else {
+                notificationDiv.classList.add('from-blue-600/20', 'to-purple-600/20');
+            }
+            
+            notification.classList.remove('hidden');
+            setTimeout(() => {
+                hideNotification();
+            }, 5000);
+        }
+        
+        function hideNotification() {
+            document.getElementById('liveNotification').classList.add('hidden');
+        }
+        
+//         function toggleAIAssistant() {
+//     document.getElementById('chatbotModal').classList.remove('hidden');
+// }
+// function closeChatbot() {
+//     document.getElementById('chatbotModal').classList.add('hidden');
+// }
+
+
+// async function sendChatMessage() {
+//     const input = document.getElementById('chatInput');
+//     const message = input.value.trim();
+//     if (!message) return;
+
+//     const chatBox = document.getElementById('chatMessages');
+
+//     // User bubble
+//     chatBox.innerHTML += `
+//         <div class="text-right">
+//             <div class="inline-block bg-blue-600/30 px-3 py-2 rounded-lg text-white">
+//                 ${message}
+//             </div>
+//         </div>
+//     `;
+
+//     input.value = '';
+//     chatBox.scrollTop = chatBox.scrollHeight;
+
+//     // AI typing indicator
+//     const typingId = `typing-${Date.now()}`;
+//     chatBox.innerHTML += `
+//         <div id="${typingId}" class="text-gray-400">
+//             <i class="fas fa-circle-notch fa-spin mr-1"></i> AI is thinking...
+//         </div>
+//     `;
+//     chatBox.scrollTop = chatBox.scrollHeight;
+
+//     try {
+//         const res = await fetch('/api/chat', {
+//             method: 'POST',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({ message })
+//         });
+
+//         const data = await res.json();
+//         document.getElementById(typingId).remove();
+
+//         chatBox.innerHTML += `
+//             <div class="text-left">
+//                 <div class="inline-block bg-purple-600/20 px-3 py-2 rounded-lg text-white">
+//                     ${data.reply || 'Sorry, I could not respond.'}
+//                 </div>
+//             </div>
+//         `;
+//     } catch (err) {
+//         document.getElementById(typingId).remove();
+//         chatBox.innerHTML += `
+//             <div class="text-red-400">
+//                 ⚠️ Failed to contact AI service
+//             </div>
+//         `;
+//     }
+
+//     chatBox.scrollTop = chatBox.scrollHeight;
+// }
+
+        
+        function speakAIAssistant(message) {
+            const aiMessage = document.getElementById('aiMessage');
+            aiMessage.textContent = message;
+            
+            // Show the assistant
+            const assistant = document.getElementById('aiAssistant').querySelector('.group-hover\\:block');
+            assistant.classList.remove('hidden');
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                assistant.classList.add('hidden');
+            }, 5000);
+        }
+        
+        async function askAISuggestion() {
+            // First, fetch real data for AI suggestions
+            try {
+                const [teamsRes, playersRes] = await Promise.all([
+                    fetch('/api/teams').then(r => r.json()),
+                    fetch('/api/players').then(r => r.json())
+                ]);
+
+                if (teamsRes.success && playersRes.success) {
+                    const teamCount = teamsRes.teams.length;
+                    const playerCount = playersRes.players.length;
+                    
+                    const suggestions = [
+                        `You have ${teamCount} teams and ${playerCount} players. Consider analyzing individual player performance metrics.`,
+                        "Your middle-order batsmen show variation in strike rates. Consider promoting aggressive hitters.",
+                        "Analysis shows variation in bowling economy. Practice consistent line and length.",
+                        "Fielding efficiency data suggests room for improvement in catching drills.",
+                        `Data from ${teamCount} teams suggests varying strategies for different match conditions.`
+                    ];
+                    
+                    const randomSuggestion = suggestions[Math.floor(Math.random() * suggestions.length)];
+                    speakAIAssistant(randomSuggestion);
+                    showNotification('AI suggestion generated based on your data', 'info');
+                }
+            } catch (error) {
+                console.error("Failed to fetch data for AI suggestions:", error);
+                speakAIAssistant("I need more data to provide specific suggestions. Please add more player and match information.");
+            }
+        }
+        
+       async function analyzePerformance() {
+    showNotification('Analyzing team performance patterns with real data...', 'info');
+
+    try {
+        // Fetch real data in parallel
+        const [playersRes, matchesRes] = await Promise.all([
+            fetch('/api/players').then(r => r.json()),
+            fetch('/api/matches?limit=10').then(r => r.json())
+        ]);
+
+        if (!playersRes.success || !matchesRes.success) {
+            throw new Error("Failed to load data");
+        }
+
+        const players = playersRes.players || [];
+        const matches = matchesRes.matches || [];
+
+        if (players.length === 0) {
+            speakAIAssistant("No players found yet. Please add teams and players to get meaningful insights.");
+            return;
+        }
+
+        if (matches.length === 0) {
+            speakAIAssistant("No matches recorded yet. Once you add performances, I can provide detailed analysis.");
+            return;
+        }
+
+        // === REAL CALCULATIONS ===
+        let totalRuns = 0;
+        let totalBalls = 0;
+        let totalWickets = 0;
+        let totalOvers = 0;
+        let totalConceded = 0;
+        let batsmenCount = 0;
+        let bowlersCount = 0;
+
+        const recentForm = []; // Last 5 matches performance
+
+        players.forEach(player => {
+            if (player.total_runs > 0) {
+                totalRuns += player.total_runs;
+                totalBalls += player.total_balls_faced || 0;
+                batsmenCount++;
+            }
+            if (player.total_wickets > 0) {
+                totalWickets += player.total_wickets;
+                totalOvers += player.total_overs || 0;
+                totalConceded += player.total_runs_conceded || 0;
+                bowlersCount++;
+            }
+        });
+
+        // Batting metrics
+        const avgBattingAvg = batsmenCount > 0 
+            ? (players.filter(p => p.batting_average > 0).reduce((sum, p) => sum + p.batting_average, 0) / batsmenCount).toFixed(1)
+            : "N/A";
+        const avgStrikeRate = totalBalls > 0 ? ((totalRuns / totalBalls) * 100).toFixed(1) : "N/A";
+
+        // Bowling metrics
+        const avgEconomy = totalOvers > 0 ? (totalConceded / totalOvers).toFixed(2) : "N/A";
+        const avgBowlingAvg = totalWickets > 0 ? (totalConceded / totalWickets).toFixed(1) : "N/A";
+
+        // Find top performer
+        const topBatsman = players.reduce((best, p) => 
+            (p.total_runs > (best?.total_runs || 0)) ? p : best, null);
+        const topBowler = players.reduce((best, p) => 
+            (p.total_wickets > (best?.total_wickets || 0)) ? p : best, null);
+
+        // === GENERATE SMART AI INSIGHTS ===
+        const insights = [];
+
+        if (avgStrikeRate !== "N/A" && parseFloat(avgStrikeRate) < 120) {
+            insights.push("Your team's strike rate is below 120 — consider more aggressive batting in powerplay and death overs.");
+        } else if (avgStrikeRate !== "N/A" && parseFloat(avgStrikeRate) > 140) {
+            insights.push("Excellent strike rate! Your batsmen are playing aggressively — maintain this momentum.");
+        }
+
+        if (avgEconomy !== "N/A" && parseFloat(avgEconomy) > 8.0) {
+            insights.push("Bowling economy is high (>8). Focus on yorkers in death overs and better field placement.");
+        } else if (avgEconomy !== "N/A" && parseFloat(avgEconomy) < 6.5) {
+            insights.push("Outstanding bowling economy! Your bowlers are restricting runs effectively.");
+        }
+
+        if (topBatsman) {
+            insights.push(`Top performer: ${topBatsman.name} with ${topBatsman.total_runs} runs.`);
+        }
+        if (topBowler) {
+            insights.push(`${topBowler.name} leads the attack with ${topBowler.total_wickets} wickets.`);
+        }
+
+        if (matches.length < 5) {
+            insights.push("Add more match performances for deeper trend analysis.");
+        }
+
+        // Final message
+        let message = "Analysis complete based on real data:\n\n";
+        message += `• Average Batting: ${avgBattingAvg} | Strike Rate: ${avgStrikeRate}\n`;
+        message += `• Bowling Economy: ${avgEconomy} | Average: ${avgBowlingAvg}\n\n`;
+        message += insights.length > 0 ? insights.join("\n• ") : "Solid foundation — keep building performance data!";
+
+        speakAIAssistant(message);
+
+        setTimeout(() => {
+            showNotification('Real performance analysis complete!', 'success');
+        }, 1500);
+
+    } catch (error) {
+        console.error("Analysis failed:", error);
+        speakAIAssistant("Unable to analyze performance right now. Please check your connection and try again.");
+        showNotification('Analysis failed — check console', 'error');
+    }
+}
+        
+        function generateReport() {
+            showNotification('Generating comprehensive performance report...', 'info');
+            setTimeout(() => {
+                showNotification('Report generated successfully! Ready to download.', 'success');
+                // In a real app, this would trigger a download
+                // For now, simulate download
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({
+                    timestamp: new Date().toISOString(),
+                    message: "Cricket Coach Pro Performance Report"
+                }, null, 2));
+                const downloadAnchor = document.createElement('a');
+                downloadAnchor.setAttribute("href", dataStr);
+                downloadAnchor.setAttribute("download", "cricket-report-" + new Date().toISOString().split('T')[0] + ".json");
+                document.body.appendChild(downloadAnchor);
+                downloadAnchor.click();
+                downloadAnchor.remove();
+            }, 3000);
+        }
+        
+        function showPlayerModal() {
+            // This would show a modal in a real app
+            showNotification('Player creation modal would open here. Redirecting to players page.', 'info');
+            setTimeout(() => {
+                window.location.href = "{{ url_for('players_page') }}";
+            }, 1000);
+        }
+        
+        function setupEventListeners() {
+            // Add ripple effect to buttons
+            document.querySelectorAll('.ripple').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const x = e.clientX - e.target.getBoundingClientRect().left;
+                    const y = e.clientY - e.target.getBoundingClientRect().top;
+                    
+                    const ripple = document.createElement('span');
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    ripple.classList.add('ripple-effect');
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+            
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.key === 'k') {
+                    e.preventDefault();
+                    showNotification('Quick search activated. Feature coming soon!', 'info');
+                }
+                if (e.key === 'Escape') {
+                    hideNotification();
+                    document.querySelectorAll('[class*="modal"]').forEach(modal => {
+                        modal.classList.add('hidden');
+                    });
+                }
+                if (e.ctrlKey && e.key === 'r') {
+                    e.preventDefault();
+                    refreshStats();
+                }
+            });
+            
+            // Add hover effects to cards
+            document.querySelectorAll('.selection-highlight').forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-4px)';
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0)';
+                });
+            });
+            
+            // Add click events to dashboard cards
+            document.querySelectorAll('.animated-border').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    if (!e.target.closest('button')) {
+                        const title = card.querySelector('p.text-sm').textContent;
+                        showNotification(`Viewing ${title.toLowerCase()} details`, 'info');
+                    }
+                });
+            });
+        }
+        
+        function startLiveUpdates() {
+            // Simulate live data updates
+            setInterval(() => {
+                // Update live match count randomly
+                const liveMatches = document.getElementById('liveMatches');
+                if (liveMatches) {
+                    const current = parseInt(liveMatches.textContent) || 0;
+                    if (Math.random() > 0.7 && current < 10) {
+                        const newValue = current + 1;
+                        liveMatches.textContent = newValue;
+                        liveMatches.classList.add('animate-pulse');
+                        setTimeout(() => liveMatches.classList.remove('animate-pulse'), 1000);
+                        
+                        if (Math.random() > 0.5) {
+                            showNotification(`Match update: ${newValue} matches in system`, 'info');
+                        }
+                    }
+                }
+            }, 30000);
+            
+            // Update timestamp every minute
+            setInterval(() => {
+                const now = new Date();
+                document.querySelectorAll('.timestamp').forEach(el => {
+                    el.textContent = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                });
+            }, 60000);
+            
+            // Auto-refresh data every 2 minutes
+            setInterval(() => {
+                if (document.visibilityState === 'visible') {
+                    initializeLiveStats();
+                }
+            }, 120000);
+        }
+        
+        // Add floating particles effect
+        function createFloatingParticles() {
+            const container = document.querySelector('.fixed.inset-0');
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.className = `absolute w-1 h-1 bg-${['blue','green','purple','yellow'][i%4]}-500/30 rounded-full`;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.animation = `float ${6 + Math.random() * 6}s ease-in-out infinite`;
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                container.appendChild(particle);
+            }
+        }
+        
+        // Initialize particles
+        createFloatingParticles();
+        
+        // Performance monitoring
+        window.addEventListener('load', () => {
+            const loadTime = window.performance.timing.domContentLoadedEventEnd - window.performance.timing.navigationStart;
+            console.log(`Cricket Coach Pro loaded in ${loadTime}ms`);
+            
+            if (loadTime > 2000) {
+                showNotification('Performance optimized. All systems ready.', 'info');
+            }
+        });
+        
+        // Mobile touch gestures
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+        
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+        
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const swipeDistance = touchEndX - touchStartX;
+            
+            if (Math.abs(swipeDistance) > swipeThreshold) {
+                if (swipeDistance > 0 && window.location.pathname !== '/dashboard') {
+                    window.history.back();
+                } else if (swipeDistance < 0) {
+                    // Could implement forward navigation or custom action
+                }
+            }
+        }
+        
+        // Add this to handle page visibility changes
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                // Refresh data when user returns to the tab
+                initializeLiveStats();
+            }
+        });
+    </script>
+<!-- <div id="chatbotModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm">
+    <div class="flex items-end md:items-center justify-center min-h-screen p-4">
+        <div class="glass-panel w-full max-w-md rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-slide-up">
+
+            <div class="flex items-center justify-between px-4 py-3 border-b border-white/10">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-robot text-purple-400"></i>
+                    <span class="font-bold text-white">Cricket AI Chat</span>
+                </div>
+                <button onclick="closeChatbot()" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div id="chatMessages"
+                 class="flex-1 p-4 space-y-3 overflow-y-auto custom-scrollbar text-sm">
+                <div class="text-gray-300">
+                    👋 Hi Coach! Ask me about players, form, strategy, or analytics.
+                </div>
+            </div>
+
+            <div class="border-t border-white/10 p-3 flex items-center space-x-2">
+                <input
+                    id="chatInput"
+                    type="text"
+                    placeholder="Ask something..."
+                    class="flex-1 px-3 py-2 rounded-lg bg-white/10 text-white placeholder-gray-400 focus:outline-none"
+                    onkeydown="if(event.key==='Enter') sendChatMessage()"
+                />
+                <button onclick="sendChatMessage()"
+                        class="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div> -->
+<!-- Chatbot Button -->
+<div class="fixed bottom-6 right-6 z-50">
+  <button id="chatToggle"
+    class="w-16 h-16 rounded-full btn-glow flex items-center justify-center shadow-xl animate-float">
+    <i class="fas fa-robot text-2xl text-white"></i>
+  </button>
+</div>
+
+<!-- Chatbot Window -->
+<div id="chatWindow"
+  class="hidden fixed bottom-28 right-6 w-96 max-w-[92vw] h-[420px]
+         glass-panel rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between px-4 py-3
+              bg-gradient-to-r from-purple-600/30 to-blue-600/30">
+    <div class="flex items-center gap-2">
+      <i class="fas fa-robot text-purple-300"></i>
+      <span class="font-bold text-white">Cricket AI Coach</span>
+    </div>
+    <button onclick="toggleChat()" class="text-gray-300 hover:text-white">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Messages -->
+  <div id="chatMessages"
+       class="flex-1 p-4 space-y-3 overflow-y-auto custom-scrollbar text-sm">
+
+    <!-- Bot welcome -->
+    <div class="flex items-start gap-2">
+      <div class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
+        <i class="fas fa-robot text-purple-300 text-xs"></i>
+      </div>
+      <div class="bg-blue-500/20 border border-blue-400/20 rounded-xl px-4 py-2 text-gray-100 max-w-[80%]">
+        👋 Hi! Ask me about players, teams, form, or match strategy.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Input -->
+  <div class="p-3 border-t border-white/10 bg-black/30">
+    <div class="flex gap-2">
+      <input id="chatInput"
+        type="text"
+        placeholder="Ask about your team..."
+        class="flex-1 px-4 py-2 rounded-xl bg-black/40 text-white
+               placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500">
+      <button onclick="sendChat()"
+        class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 transition text-white">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+
+</body><script>
+const chatWindow = document.getElementById('chatWindow');
+const chatMessages = document.getElementById('chatMessages');
+const chatInput = document.getElementById('chatInput');
+
+document.getElementById('chatToggle').onclick = toggleChat;
+
+function toggleChat() {
+  chatWindow.classList.toggle('hidden');
+  if (!chatWindow.classList.contains('hidden')) {
+    chatInput.focus();
+  }
+}
+
+
+
+function addLoading() {
+  const loader = document.createElement('div');
+  loader.id = 'chatLoader';
+  loader.className = 'mr-auto text-gray-400 animate-pulse';
+  loader.textContent = 'AI is thinking...';
+  chatMessages.appendChild(loader);
+}
+
+function removeLoading() {
+  const loader = document.getElementById('chatLoader');
+  if (loader) loader.remove();
+}
+
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  addChatMessage('user', msg);
+  input.value = '';
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg })
+    });
+
+    const data = await res.json();
+    addChatMessage('bot', data.reply || 'Not enough data available.');
+
+  } catch (e) {
+    addChatMessage('bot', '⚠️ AI service unavailable. Please try again.');
+  }
+}
+
+
+function addChatMessage(sender, text) {
+  const container = document.getElementById('chatMessages');
+  const isBot = sender === 'bot';
+
+  // Simple markdown-style bold support
+  const formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+  const message = document.createElement('div');
+  message.className = `flex items-start gap-2 ${isBot ? '' : 'justify-end'}`;
+
+  message.innerHTML = isBot
+    ? `
+      <div class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
+        <i class="fas fa-robot text-purple-300 text-xs"></i>
+      </div>
+      <div class="bg-blue-500/20 border border-blue-400/20
+                  rounded-xl px-4 py-2 text-gray-100 max-w-[80%] leading-relaxed">
+        ${formatted}
+      </div>
+    `
+    : `
+      <div class="bg-purple-600/30 border border-purple-500/30
+                  rounded-xl px-4 py-2 text-white max-w-[80%] leading-relaxed">
+        ${formatted}
+      </div>
+      <div class="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center">
+        <i class="fas fa-user text-white text-xs"></i>
+      </div>
+    `;
+
+  container.appendChild(message);
+  container.scrollTop = container.scrollHeight;
+}
+
+
+chatInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') sendChat();
+});
+</script>
+
+
+</html>

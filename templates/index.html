@@ -1,0 +1,1061 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="glass-panel rounded-2xl p-6 relative overflow-hidden group cursor-pointer selection-highlight">
+            <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
+            <div class="relative z-10">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-400 mb-1">Total Teams</p>
+                        <p class="text-3xl font-bold text-white" id="totalTeams">...</p>
+                    </div>
+                    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500/20 to-blue-600/20 flex items-center justify-center">
+                        <i class="fas fa-users text-blue-400 text-2xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-xs">
+                    <i class="fas fa-sync-alt text-gray-400 mr-1 animate-spin"></i>
+                    <span class="text-gray-400">Loading...</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="glass-panel rounded-2xl p-6 relative overflow-hidden group cursor-pointer selection-highlight">
+            <div class="absolute -inset-1 bg-gradient-to-r from-green-600 to-emerald-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
+            <div class="relative z-10">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-400 mb-1">Total Players</p>
+                        <p class="text-3xl font-bold text-white" id="totalPlayers">...</p>
+                    </div>
+                    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-green-500/20 to-green-600/20 flex items-center justify-center">
+                        <i class="fas fa-user text-green-400 text-2xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-xs">
+                    <i class="fas fa-sync-alt text-gray-400 mr-1 animate-spin"></i>
+                    <span class="text-gray-400">Loading...</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="glass-panel rounded-2xl p-6 relative overflow-hidden group cursor-pointer selection-highlight">
+            <div class="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
+            <div class="relative z-10">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-400 mb-1">Total Matches</p>
+                        <p class="text-3xl font-bold text-white" id="totalMatches">...</p>
+                    </div>
+                    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500/20 to-purple-600/20 flex items-center justify-center">
+                        <i class="fas fa-calendar-alt text-purple-400 text-2xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-xs">
+                    <i class="fas fa-sync-alt text-gray-400 mr-1 animate-spin"></i>
+                    <span class="text-gray-400">Loading...</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="glass-panel rounded-2xl p-6 relative overflow-hidden group cursor-pointer selection-highlight">
+            <div class="absolute -inset-1 bg-gradient-to-r from-amber-600 to-yellow-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-500"></div>
+            <div class="relative z-10">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-400 mb-1">Avg. Rating</p>
+                        <p class="text-3xl font-bold text-white" id="avgRating">...</p>
+                    </div>
+                    <div class="w-14 h-14 rounded-full bg-gradient-to-br from-amber-500/20 to-amber-600/20 flex items-center justify-center">
+                        <i class="fas fa-star text-amber-400 text-2xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-xs">
+                    <i class="fas fa-sync-alt text-gray-400 mr-1 animate-spin"></i>
+                    <span class="text-gray-400">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    <!-- AI Assistant & Main Content Area -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        <!-- Left Column: AI Assistant & Quick Stats -->
+        <div class="lg:col-span-2">
+            <!-- AI Assistant Panel -->
+            <div class="glass-panel rounded-2xl overflow-hidden mb-8">
+                <div class="relative">
+                    <!-- Animated Background -->
+                    <div class="absolute inset-0 bg-gradient-to-r from-blue-900/20 via-purple-900/20 to-pink-900/20"></div>
+                    <div class="relative z-10 p-6">
+                        <div class="flex items-center mb-6">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mr-4">
+                                <i class="fas fa-robot text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-white">Cricket AI Assistant</h2>
+                                <p class="text-gray-400">Real-time performance optimization insights</p>
+                            </div>
+                        </div>
+                        
+                        <!-- AI Chat Interface -->
+                        <div id="aiChatContainer" class="space-y-4 mb-6 max-h-80 overflow-y-auto custom-scrollbar">
+                            <!-- <div class="flex items-start">
+                                <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center mr-3 flex-shrink-0">
+                                    <i class="fas fa-robot text-blue-400 text-sm"></i>
+                                </div>
+                                <div class="bg-gray-800/50 rounded-2xl rounded-tl-none p-4">
+                                    <p class="text-white">Welcome back, Coach! I've analyzed your recent match data and have some insights for you.</p>
+                                </div>
+                            </div> -->
+                            
+                            <!-- <div class="flex items-start justify-end">
+                                <div class="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl rounded-tr-none p-4 max-w-md">
+                                    <p class="text-white">Show me the top performers this week</p>
+                                </div>
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center ml-3 flex-shrink-0">
+                                    <i class="fas fa-user text-white text-sm"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center mr-3 flex-shrink-0">
+                                    <i class="fas fa-robot text-blue-400 text-sm"></i>
+                                </div>
+                                <div class="bg-gray-800/50 rounded-2xl rounded-tl-none p-4">
+                                    <p class="text-white mb-2">Based on this week's data:</p>
+                                    <ul class="space-y-2 text-sm">
+                                        <li class="flex items-center">
+                                            <i class="fas fa-baseball-ball text-green-400 mr-2"></i>
+                                            <span>Top batsmen based on average and strike rate</span>
+                                        </li>
+                                        <li class="flex items-center">
+                                            <i class="fas fa-bullseye text-blue-400 mr-2"></i>
+                                            <span>Best bowlers by wickets and economy</span>
+                                        </li>
+                                        <li class="flex items-center">
+                                            <i class="fas fa-chart-line text-amber-400 mr-2"></i>
+                                            <span>Team performance trends analysis</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div> -->
+                        </div>
+                        
+                        <!-- Quick AI Actions -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <button onclick="askAI('Analyze batting performance')" class="py-3 px-4 bg-gray-800/50 hover:bg-gray-800 rounded-xl transition duration-300 group">
+                                <i class="fas fa-baseball-ball text-blue-400 mb-2 block text-lg"></i>
+                                <span class="text-xs text-gray-300 group-hover:text-white">Batting</span>
+                            </button>
+                            <button onclick="askAI('Analyze bowling performance')" class="py-3 px-4 bg-gray-800/50 hover:bg-gray-800 rounded-xl transition duration-300 group">
+                                <i class="fas fa-bullseye text-green-400 mb-2 block text-lg"></i>
+                                <span class="text-xs text-gray-300 group-hover:text-white">Bowling</span>
+                            </button>
+                            <button onclick="askAI('Suggest team improvements')" class="py-3 px-4 bg-gray-800/50 hover:bg-gray-800 rounded-xl transition duration-300 group">
+                                <i class="fas fa-lightbulb text-amber-400 mb-2 block text-lg"></i>
+                                <span class="text-xs text-gray-300 group-hover:text-white">Suggestions</span>
+                            </button>
+                            <button onclick="askAI('Generate weekly report')" class="py-3 px-4 bg-gray-800/50 hover:bg-gray-800 rounded-xl transition duration-300 group">
+                                <i class="fas fa-file-alt text-purple-400 mb-2 block text-lg"></i>
+                                <span class="text-xs text-gray-300 group-hover:text-white">Report</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Performance Analytics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Batting Performance -->
+                <div class="glass-panel rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold text-white">Batting Leaders</h3>
+                        <span class="px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-bold rounded-full" id="battingStatus">Live</span>
+                    </div>
+                    <div class="space-y-4" id="battingLeaders">
+                        <div class="flex items-center justify-center py-8">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                            <span class="ml-3 text-gray-400">Loading top batsmen...</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bowling Performance -->
+                <div class="glass-panel rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold text-white">Bowling Leaders</h3>
+                        <span class="px-3 py-1 bg-green-500/20 text-green-400 text-xs font-bold rounded-full" id="bowlingStatus">Live</span>
+                    </div>
+                    <div class="space-y-4" id="bowlingLeaders">
+                        <div class="flex items-center justify-center py-8">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+                            <span class="ml-3 text-gray-400">Loading top bowlers...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Column: Quick Actions & System Status -->
+        <div class="space-y-8">
+            <!-- Quick Actions Panel -->
+            <div class="glass-panel rounded-2xl p-6">
+                <div class="flex items-center mb-6">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center mr-3">
+                        <i class="fas fa-bolt text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Quick Actions</h3>
+                        <p class="text-gray-400 text-sm">Frequently used actions</p>
+                    </div>
+                </div>
+                
+                <div class="space-y-3">
+                    <a href="/manage-data" class="flex items-center p-4 bg-gradient-to-r from-blue-500/10 to-blue-600/10 hover:from-blue-500/20 hover:to-blue-600/20 rounded-xl border border-blue-500/20 transition-all duration-300 group cursor-pointer">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-users text-white text-lg"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-white group-hover:text-blue-300">Create Team</h4>
+                            <p class="text-gray-400 text-sm">Setup new team with players</p>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 group-hover:text-blue-400 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                    
+                    <a href="/manage-data" class="flex items-center p-4 bg-gradient-to-r from-green-500/10 to-green-600/10 hover:from-green-500/20 hover:to-green-600/20 rounded-xl border border-green-500/20 transition-all duration-300 group cursor-pointer">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-user-plus text-white text-lg"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-white group-hover:text-green-300">Add Player</h4>
+                            <p class="text-gray-400 text-sm">Register new player</p>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 group-hover:text-green-400 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                    
+                    <a href="/analytics" class="flex items-center p-4 bg-gradient-to-r from-purple-500/10 to-purple-600/10 hover:from-purple-500/20 hover:to-purple-600/20 rounded-xl border border-purple-500/20 transition-all duration-300 group cursor-pointer">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-chart-network text-white text-lg"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-white group-hover:text-purple-300">View Analytics</h4>
+                            <p class="text-gray-400 text-sm">Performance insights</p>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 group-hover:text-purple-400 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                    
+                    <a href="/create-match" class="flex items-center p-4 bg-gradient-to-r from-red-500/10 to-red-600/10 hover:from-red-500/20 hover:to-red-600/20 rounded-xl border border-red-500/20 transition-all duration-300 group cursor-pointer">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-whistle text-white text-lg"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-white group-hover:text-red-300">Schedule Match</h4>
+                            <p class="text-gray-400 text-sm">Plan new match</p>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 group-hover:text-red-400 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- System Status Panel -->
+            <div class="glass-panel rounded-2xl p-6">
+                <h3 class="text-xl font-bold text-white mb-6">System Status</h3>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-4 bg-gray-800/30 rounded-xl">
+                        <div class="flex items-center">
+                            <div class="relative mr-4">
+                                <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                                    <i class="fas fa-server text-green-400"></i>
+                                </div>
+                                <div class="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-gray-900"></div>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-white">API Services</p>
+                                <p class="text-gray-400 text-sm">All endpoints active</p>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 bg-green-500/20 text-green-400 text-xs font-bold rounded-full">Live</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-4 bg-gray-800/30 rounded-xl">
+                        <div class="flex items-center">
+                            <div class="relative mr-4">
+                                <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
+                                    <i class="fas fa-database text-blue-400"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-white">Database</p>
+                                <p class="text-gray-400 text-sm" id="storageStatus">Checking...</p>
+                            </div>
+                        </div>
+                        <div class="w-20">
+                            <div class="h-2 bg-gray-700 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-blue-500 to-cyan-400" id="storageBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-4 bg-gray-800/30 rounded-xl">
+                        <div class="flex items-center">
+                            <div class="relative mr-4">
+                                <div class="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center">
+                                    <i class="fas fa-brain text-amber-400"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="font-semibold text-white">AI Engine</p>
+                                <p class="text-gray-400 text-sm" id="aiStatus">Initializing...</p>
+                            </div>
+                        </div>
+                        <div class="animate-pulse">
+                            <i class="fas fa-circle text-amber-400 text-xs"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between p-4 bg-gray-800/30 rounded-xl">
+                        <div class="flex items-center">
+                            <div class="relative mr-4">
+                                <!-- <div class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
+                                    <i class="fas fa-users text-purple-400"></i>
+                                </div> -->
+                            </div>
+                            <div>
+                                <p class="font-semibold text-white"></p>
+                                <p class="text-gray-400 text-sm hidden" id="activeUsers">Checking...</p>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-bold rounded-full hidden" id="userCount">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Activity -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="glass-panel rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-bold text-white">Recent Activity</h3>
+                <button onclick="loadMoreActivity()" class="text-sm text-blue-400 hover:text-blue-300 transition">.</button>
+            </div>
+            
+            <div class="space-y-4" id="recentActivity">
+                <div class="flex items-center justify-center py-8">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+                    <span class="ml-3 text-gray-400">Loading recent activity...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty column for future use -->
+        <div class="glass-panel rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-xl font-bold text-white">Create Match</h3>
+                <!-- <span class="px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-bold rounded-full">Soon</span> -->
+            </div>
+            <div class="text-center py-12">
+                <i class="fas fa-calendar-plus text-4xl text-gray-600 mb-4"></i>
+                <p class="text-gray-500">Create Some matches to see</p>
+                <p class="text-gray-400 text-sm mt-2">How well you Team is</p>
+                <a href="/create-match" class="inline-block mt-4 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:opacity-90 transition">Schedule Match</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Global state
+let liveUpdateInterval;
+
+// Main initialization function
+async function initializeDashboard() {
+    try {
+        await loadDashboardSummary();
+        startLiveUpdates();
+        setupStatsCardAnimations();
+    } catch (error) {
+        console.error('Error initializing dashboard:', error);
+        showErrorState();
+    }
+}
+
+// Load complete dashboard summary
+async function loadDashboardSummary() {
+    try {
+        const response = await fetch('/api/dashboard/summary');
+        if (!response.ok) {
+            throw new Error('Failed to fetch dashboard data');
+        }
+        
+        const data = await response.json();
+        if (!data.success) {
+            throw new Error(data.error || 'Failed to load dashboard');
+        }
+        
+        // Update all dashboard sections with real data
+        updateDashboardStats(data.stats);
+        updatePerformanceLeaders(data.leaders);
+        updateRecentActivity(data.recent_activity);
+        updateSystemStatus(data.system);
+        initAIChatWithData(data);
+        
+    } catch (error) {
+        console.error('Error loading dashboard summary:', error);
+        // Fallback to individual API calls
+        await loadDashboardStats();
+        await loadPerformanceLeaders();
+        await loadRecentActivity();
+        await updateSystemStatus();
+    }
+}
+
+// Update dashboard stats cards
+function updateDashboardStats(stats) {
+    // Uncomment these lines when you uncomment the stats cards in HTML
+    // document.getElementById('totalTeams').textContent = stats.total_teams;
+    // document.getElementById('totalPlayers').textContent = stats.total_players;
+    // document.getElementById('totalMatches').textContent = stats.total_matches;
+    // document.getElementById('avgRating').textContent = stats.avg_rating;
+    
+    updateStatCardsLoaded();
+}
+
+function updateStatCardsLoaded() {
+    const statCards = document.querySelectorAll('.selection-highlight');
+    statCards.forEach(card => {
+        const loadingEl = card.querySelector('.fa-sync-alt');
+        const textEl = card.querySelector('.text-xs span');
+        if (loadingEl && textEl) {
+            loadingEl.className = 'fas fa-check text-green-400 mr-1';
+            textEl.textContent = 'Updated just now';
+            textEl.className = 'text-green-400';
+        }
+    });
+}
+
+// Update performance leaders
+function updatePerformanceLeaders(leaders) {
+    renderBattingLeaders(leaders.batting || []);
+    renderBowlingLeaders(leaders.bowling || []);
+}
+
+function renderBattingLeaders(batsmen) {
+    const container = document.getElementById('battingLeaders');
+    const statusEl = document.getElementById('battingStatus');
+    
+    if (!batsmen || batsmen.length === 0) {
+        showNoDataState('battingLeaders', 'batting');
+        if (statusEl) statusEl.textContent = 'No Data';
+        return;
+    }
+    
+    container.innerHTML = '';
+    
+    batsmen.forEach((player, index) => {
+        const initials = getInitials(player.name);
+       const rating = player.rating ?? 0;
+
+        
+        const playerElement = document.createElement('div');
+        playerElement.className = 'flex items-center p-3 bg-gray-800/30 rounded-xl hover:bg-gray-800/50 transition duration-300 cursor-pointer group';
+        playerElement.innerHTML = `
+            <div class="flex items-center w-full">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 flex items-center justify-center text-white font-bold mr-4">
+                    ${initials}
+                </div>
+                <div class="flex-1">
+                    <h4 class="font-semibold text-white group-hover:text-blue-300 transition">${player.name}</h4>
+                    <div class="flex items-center text-xs text-gray-400 mt-1">
+                        <span class="mr-3">${player.total_runs || 0} runs</span>
+                        <span class="mr-3">Avg ${(player.batting_average || 0).toFixed(1)}</span>
+                        <span>SR ${(player.strike_rate || 0).toFixed(1)}</span>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-xl font-bold text-white">${rating.toFixed(1)}</div>
+                    <div class="text-xs text-gray-400">Rating</div>
+                </div>
+            </div>
+        `;
+        
+        playerElement.addEventListener('click', () => {
+            window.location.href = `/players?highlight=${player.id}`;
+        });
+        
+        container.appendChild(playerElement);
+    });
+    
+    if (statusEl) statusEl.textContent = `${batsmen.length} Players`;
+}
+
+function renderBowlingLeaders(bowlers) {
+    const container = document.getElementById('bowlingLeaders');
+    const statusEl = document.getElementById('bowlingStatus');
+    
+    if (!bowlers || bowlers.length === 0) {
+        showNoDataState('bowlingLeaders', 'bowling');
+        if (statusEl) statusEl.textContent = 'No Data';
+        return;
+    }
+    
+    container.innerHTML = '';
+    
+    bowlers.forEach((player, index) => {
+        const initials = getInitials(player.name);
+        const rating = player.rating || calculateBowlingRating(player);
+        
+        const playerElement = document.createElement('div');
+        playerElement.className = 'flex items-center p-3 bg-gray-800/30 rounded-xl hover:bg-gray-800/50 transition duration-300 cursor-pointer group';
+        playerElement.innerHTML = `
+            <div class="flex items-center w-full">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-r from-green-500 to-emerald-400 flex items-center justify-center text-white font-bold mr-4">
+                    ${initials}
+                </div>
+                <div class="flex-1">
+                    <h4 class="font-semibold text-white group-hover:text-green-300 transition">${player.name}</h4>
+                    <div class="flex items-center text-xs text-gray-400 mt-1">
+                        <span class="mr-3">${player.total_wickets || 0} wkts</span>
+                        <span class="mr-3">Avg ${(player.bowling_average || 0).toFixed(1)}</span>
+                        <span>Econ ${(player.economy_rate || 0).toFixed(1)}</span>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-xl font-bold text-white">${rating.toFixed(1)}</div>
+                    <div class="text-xs text-gray-400">Rating</div>
+                </div>
+            </div>
+        `;
+        
+        playerElement.addEventListener('click', () => {
+            window.location.href = `/players?highlight=${player.id}`;
+        });
+        
+        container.appendChild(playerElement);
+    });
+    
+    if (statusEl) statusEl.textContent = `${bowlers.length} Players`;
+}
+
+// Update recent activity
+function updateRecentActivity(activities) {
+    const container = document.getElementById('recentActivity');
+    
+    if (!activities || activities.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-8">
+                <i class="fas fa-info-circle text-3xl text-gray-600 mb-3"></i>
+                <p class="text-gray-500">No recent activity</p>
+                <p class="text-gray-400 text-sm mt-2">Create teams and matches to see activity</p>
+            </div>`;
+        return;
+    }
+    
+    container.innerHTML = '';
+    
+    activities.forEach(activity => {
+        const element = createActivityElement(activity.type, activity.text, activity.time);
+        container.appendChild(element);
+    });
+}
+
+function createActivityElement(type, text, time) {
+    const icons = {
+        'match': { icon: 'calendar-plus', color: 'blue' },
+        'player': { icon: 'user-plus', color: 'green' },
+        'team': { icon: 'users', color: 'purple' },
+        'analysis': { icon: 'chart-line', color: 'amber' },
+        'prediction': { icon: 'robot', color: 'purple' },
+        'system': { icon: 'cog', color: 'gray' },
+        'ai': { icon: 'brain', color: 'pink' }
+    };
+    
+    const config = icons[type] || { icon: 'info-circle', color: 'gray' };
+    
+    const div = document.createElement('div');
+    div.className = 'flex items-center p-3 bg-gray-800/30 rounded-xl hover:bg-gray-800/50 transition duration-300';
+    div.innerHTML = `
+        <div class="w-10 h-10 rounded-full bg-${config.color}-500/20 flex items-center justify-center mr-4">
+            <i class="fas fa-${config.icon} text-${config.color}-400"></i>
+        </div>
+        <div class="flex-1">
+            <p class="text-sm font-medium text-white">${text}</p>
+            <p class="text-xs text-gray-400">${type.charAt(0).toUpperCase() + type.slice(1)} activity</p>
+        </div>
+        <span class="text-xs text-gray-500">${time}</span>
+    `;
+    
+    return div;
+}
+
+// Update system status
+function updateSystemStatus(systemData) {
+    if (systemData) {
+        // Update storage
+        const storageBar = document.getElementById('storageBar');
+        const storageText = document.getElementById('storageStatus');
+        if (storageBar && storageText) {
+            storageBar.style.width = `${systemData.storage_used}%`;
+            storageText.textContent = `${systemData.storage_available}% available`;
+        }
+        
+        // Update AI status
+        const aiStatus = document.getElementById('aiStatus');
+        if (aiStatus) {
+            aiStatus.textContent = systemData.ai_status;
+        }
+        
+        // Update active users
+        const activeUsers = document.getElementById('activeUsers');
+        const userCount = document.getElementById('userCount');
+        if (activeUsers && userCount) {
+            activeUsers.textContent = `${systemData.active_sessions} users online`;
+            userCount.textContent = systemData.active_sessions.toString();
+        }
+    } else {
+        // Fallback to individual update
+        updateLiveSystemStatus();
+    }
+}
+
+async function updateLiveSystemStatus() {
+    try {
+        const response = await fetch('/api/dashboard/live');
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                // Update active users
+                const activeUsers = document.getElementById('activeUsers');
+                const userCount = document.getElementById('userCount');
+                if (activeUsers && userCount) {
+                    activeUsers.textContent = `${data.live_data.active_sessions} users online`;
+                    userCount.textContent = data.live_data.active_sessions.toString();
+                }
+                
+                // Update storage
+                const storageBar = document.getElementById('storageBar');
+                const storageText = document.getElementById('storageStatus');
+                if (storageBar && storageText) {
+                    storageBar.style.width = `${data.live_data.storage_used}%`;
+                    storageText.textContent = `${100 - data.live_data.storage_used}% available`;
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error updating live system status:', error);
+    }
+}
+
+// Initialize AI chat with real data
+function initAIChatWithData(dashboardData) {
+    const container = document.getElementById('aiChatContainer');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    // Welcome message
+    addDashboardChatMessage('bot', "Welcome back, Coach! I've analyzed your latest team data. Ready to dive into insights?");
+
+    if (dashboardData.leaders && dashboardData.leaders.batting.length > 0) {
+        const battingSummary = dashboardData.leaders.batting
+            .slice(0, 2)
+            .map(p => `${p.name} (${p.total_runs || 0} runs, Avg ${(p.batting_average || 0).toFixed(1)})`)
+            .join(', ');
+
+        const bowlingSummary = dashboardData.leaders.bowling
+            .slice(0, 2)
+            .map(p => `${p.name} (${p.total_wickets || 0} wkts)`)
+            .join(', ');
+
+        addDashboardChatMessage('bot', `
+            <p class="mb-2">Here's your current performance snapshot:</p>
+            <ul class="space-y-2 text-sm">
+                <li class="flex items-center">
+                    <i class="fas fa-baseball-ball text-green-400 mr-2"></i>
+                    <strong>Top Batters:</strong> ${battingSummary || 'No batting data yet'}
+                </li>
+                <li class="flex items-center">
+                    <i class="fas fa-bullseye text-blue-400 mr-2"></i>
+                    <strong>Top Bowlers:</strong> ${bowlingSummary || 'No bowling data yet'}
+                </li>
+                <li class="flex items-center">
+                    <i class="fas fa-chart-line text-amber-400 mr-2"></i>
+                    <strong>Team Stats:</strong> ${dashboardData.stats.total_teams} teams • ${dashboardData.stats.total_players} players • ${dashboardData.stats.total_matches} matches
+                </li>
+            </ul>
+            <p class="mt-3 text-blue-400">Try asking me about specific players, teams, or request performance analysis!</p>
+        `);
+    } else {
+        addDashboardChatMessage('bot', "I see you're just getting started! Add some teams and players, then I can provide detailed performance analysis.");
+    }
+}
+
+// AI Assistant functions
+async function askAI(query) {
+    const chatContainer = document.getElementById('aiChatContainer');
+
+    // USER MESSAGE
+    addDashboardChatMessage('user', `<p class="text-white">${query}</p>`);
+
+    // TYPING INDICATOR
+    const typing = document.createElement('div');
+    typing.className = 'flex items-start';
+    typing.innerHTML = `
+        <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center mr-3">
+            <i class="fas fa-robot text-blue-400 text-sm"></i>
+        </div>
+        <div class="bg-gray-800/50 rounded-2xl rounded-tl-none p-4">
+            <span class="text-gray-400">Analyzing live data...</span>
+        </div>
+    `;
+    chatContainer.appendChild(typing);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+
+    try {
+        const res = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: query })
+        });
+
+        const data = await res.json();
+        typing.remove();
+
+        // Process and format the AI response
+        const formattedReply = formatAIResponse(data.reply || "Not enough data available.");
+
+        addDashboardChatMessage('bot', formattedReply);
+
+    } catch (err) {
+        console.error('AI request failed:', err);
+        typing.remove();
+        addDashboardChatMessage(
+            'bot',
+            `<div class="bg-red-900/20 border-l-4 border-red-500 p-4 rounded">
+                <p class="text-red-300 font-semibold">⚠️ Service Temporarily Unavailable</p>
+                <p class="text-red-400/80 text-sm mt-1">Please try again in a few moments.</p>
+            </div>`
+        );
+    }
+}
+
+/**
+ * Format AI response with proper HTML structure
+ */
+function formatAIResponse(text) {
+    if (!text) return '<p class="text-gray-300">No response received.</p>';
+
+    // Format markdown-like syntax
+    let formatted = text
+        // Bold text (asterisks)
+        .replace(/\*\*(.*?)\*\*/g, '<strong class="text-blue-300">$1</strong>')
+        // Bullet points with dashes
+        .replace(/^-\s+(.*?)$/gm, '<li class="mb-1">$1</li>')
+        // Section headers (ends with **)
+        .replace(/(.*?)\*\*\s*$/gm, '<h3 class="text-lg font-semibold text-blue-200 mt-4 mb-2">$1</h3>')
+        // New lines
+        .replace(/\n/g, '<br>');
+
+    // Wrap bullet points in a list if they exist
+    if (formatted.includes('<li')) {
+        formatted = formatted.replace(/(<li.*?<\/li>)/g, '<ul class="list-disc ml-6 mt-2 space-y-1 text-gray-300">$1</ul>');
+        // Fix duplicate wrapping
+        formatted = formatted.replace(/<ul[^>]*>(<ul[^>]*>)/g, '$1');
+        formatted = formatted.replace(/<\/ul><\/ul>/g, '</ul>');
+    }
+
+    // Add container styling
+    formatted = `
+        <div class="space-y-3">
+            ${formatted}
+            <div class="pt-4 mt-4 border-t border-gray-700/50">
+                <p class="text-sm text-gray-400 flex items-center gap-2">
+                    <i class="fas fa-lightbulb text-yellow-400"></i>
+                    <span>Based on current match data and player statistics</span>
+                </p>
+            </div>
+        </div>
+    `;
+
+    return formatted;
+}
+
+/**
+ * Enhanced addDashboardChatMessage with animations
+ */
+
+function addDashboardChatMessage(sender, content) {
+    const container = document.getElementById('aiChatContainer');
+    const isBot = sender === 'bot';
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `flex items-start ${isBot ? '' : 'justify-end'}`;
+
+    const avatar = isBot 
+        ? '<div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center mr-3 flex-shrink-0"><i class="fas fa-robot text-blue-400 text-sm"></i></div>'
+        : '<div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center ml-3 flex-shrink-0"><i class="fas fa-user text-white text-sm"></i></div>';
+
+    const bubble = `
+        <div class="${isBot ? 'bg-gray-800/50 rounded-2xl rounded-tl-none' : 'bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl rounded-tr-none'} p-4 max-w-[80%]">
+            ${content}
+        </div>
+    `;
+
+    messageDiv.innerHTML = isBot ? avatar + bubble : bubble + avatar;
+    container.appendChild(messageDiv);
+
+    // Auto-scroll to bottom
+    container.scrollTop = container.scrollHeight;
+}
+
+// Live updates
+function startLiveUpdates() {
+    // Clear any existing interval
+    if (liveUpdateInterval) {
+        clearInterval(liveUpdateInterval);
+    }
+    
+    // Update every 10 seconds
+    liveUpdateInterval = setInterval(async () => {
+        try {
+            await updateLiveSystemStatus();
+            
+            // Update performance data every 30 seconds
+            if (Date.now() % 30000 < 10000) {
+                await loadDashboardSummary();
+            }
+        } catch (error) {
+            console.error('Error in live update:', error);
+        }
+    }, 10000);
+}
+
+// Setup animations
+function setupStatsCardAnimations() {
+    const statsCards = document.querySelectorAll('.selection-highlight');
+    statsCards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            card.style.transform = 'translateY(-4px) scale(1.02)';
+            card.style.transition = 'transform 0.3s ease';
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+}
+
+// Show error state
+function showErrorState() {
+    const errorMsg = document.createElement('div');
+    errorMsg.className = 'fixed bottom-4 right-4 bg-red-500/90 text-white p-4 rounded-lg shadow-lg z-50';
+    errorMsg.innerHTML = `
+        <div class="flex items-center">
+            <i class="fas fa-exclamation-triangle mr-3"></i>
+            <div>
+                <p class="font-semibold">Connection Error</p>
+                <p class="text-sm">Some data may not load. Please check your connection.</p>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(errorMsg);
+    
+    setTimeout(() => errorMsg.remove(), 5000);
+}
+
+// Helper functions
+function getInitials(name) {
+    if (!name) return '??';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+}
+
+function calculateBattingRating(player) {
+    const runs = player.total_runs || 0;
+    const avg = player.batting_average || 0;
+    const sr = player.strike_rate || 0;
+
+    let rating = 4.0;
+
+    rating += Math.min(avg / 30, 2.5);
+    rating += Math.min(sr / 150, 2.5);
+    rating += Math.min(runs / 100, 1.5);
+
+    return Math.max(1, Math.min(rating, 10));
+}
+
+
+function calculateBowlingRating(player) {
+    const wickets = player.total_wickets || 0;
+    const avg = player.bowling_average || 50;
+    const econ = player.economy_rate || 10;
+
+    let rating = 4.0;
+
+    rating += Math.min(wickets * 0.6, 3);
+    rating += Math.min(20 / avg, 2);
+    rating += Math.min((8 - econ), 2);
+
+    return Math.max(1, Math.min(rating, 10));
+}
+
+
+function showNoDataState(containerId, type, isError = false) {
+    const container = document.getElementById(containerId);
+    const icon = isError ? 'fa-exclamation-triangle' : type === 'batting' ? 'fa-baseball-ball' : 'fa-bullseye';
+    const color = isError ? 'red' : 'gray';
+    
+    container.innerHTML = `
+        <div class="text-center py-8">
+            <i class="fas ${icon} text-3xl text-${color}-600 mb-3"></i>
+            <p class="text-${color}-500">${isError ? 'Error loading data' : 'No ' + type + ' data available'}</p>
+            <p class="text-gray-400 text-sm mt-2">${isError ? 'Please try again later' : 'Add ' + type + ' performances to see leaders'}</p>
+        </div>`;
+}
+
+function loadMoreActivity() {
+    // For now, just reload the activity
+    loadRecentActivity();
+}
+
+// Fallback functions for compatibility
+async function loadDashboardStats() {
+    try {
+        const response = await fetch('/api/dashboard/stats');
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                updateDashboardStats(data.stats);
+            }
+        }
+    } catch (error) {
+        console.error('Error loading dashboard stats:', error);
+    }
+}
+
+async function loadPerformanceLeaders() {
+    try {
+        const response = await fetch('/api/dashboard/leaders');
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                updatePerformanceLeaders(data);
+            }
+        }
+    } catch (error) {
+        console.error('Error loading performance leaders:', error);
+    }
+}
+
+async function loadRecentActivity() {
+    try {
+        const response = await fetch('/api/dashboard/summary');
+        if (response.ok) {
+            const data = await response.json();
+            if (data.success) {
+                updateRecentActivity(data.recent_activity);
+            }
+        }
+    } catch (error) {
+        console.error('Error loading recent activity:', error);
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', async function() {
+    await initializeDashboard();
+});
+
+// Clean up on page unload
+window.addEventListener('beforeunload', function() {
+    if (liveUpdateInterval) {
+        clearInterval(liveUpdateInterval);
+    }
+});
+</script>
+
+<style>
+/* Custom animations */
+@keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    33% { transform: translateY(-8px) rotate(1deg); }
+    66% { transform: translateY(-4px) rotate(-1deg); }
+}
+
+.floating {
+    animation: float 6s ease-in-out infinite;
+}
+
+/* Custom scrollbar for chat */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
+    border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, #2563eb, #7c3aed);
+}
+
+/* Glowing effects */
+.glow {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+}
+
+/* Selection highlight animation */
+@keyframes highlight-pulse {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.selection-highlight {
+    background: linear-gradient(90deg, 
+        rgba(59, 130, 246, 0.1) 0%, 
+        rgba(139, 92, 246, 0.1) 50%, 
+        rgba(59, 130, 246, 0.1) 100%);
+    background-size: 200% 100%;
+    animation: highlight-pulse 3s ease-in-out infinite;
+}
+
+/* Loading skeleton */
+.skeleton {
+    background: linear-gradient(90deg, 
+        rgba(255, 255, 255, 0.05) 25%, 
+        rgba(255, 255, 255, 0.1) 50%, 
+        rgba(255, 255, 255, 0.05) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .glass-panel {
+        backdrop-filter: blur(10px);
+    }
+    
+    .text-3xl {
+        font-size: 1.875rem;
+    }
+    
+    .grid-cols-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .lg\:grid-cols-3 {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

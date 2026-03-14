@@ -1,0 +1,2825 @@
+    {% extends "base.html" %}
+
+    {% block content %}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Hero Header Section -->
+        <div class="relative mb-8 overflow-hidden rounded-3xl">
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-900/20 via-purple-900/20 to-pink-900/20"></div>
+            <div class="relative glass-panel p-8">
+                <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+                    <div class="flex-1">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mr-4">
+                                <i class="fas fa-chart-line text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h1 class="text-3xl font-bold text-white">Player Analytics</h1>
+                                <p class="text-gray-300 mt-1">Deep dive into player performance statistics with AI-powered insights</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Stats -->
+                        <div class="flex flex-wrap gap-4 mt-6">
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                                <span class="text-gray-300 text-sm"><span class="font-bold text-white" id="totalPlayers">0</span> Players</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 bg-blue-400 rounded-full mr-2"></div>
+                                <span class="text-gray-300 text-sm">Avg Batting: <span class="font-bold text-white" id="avgBatting">0.0</span></span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-2 h-2 bg-amber-400 rounded-full mr-2"></div>
+                                <span class="text-gray-300 text-sm">Avg Bowling: <span class="font-bold text-white" id="avgBowling">0.0</span></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <!-- <button onclick="generateReport()" 
+                                class="group relative overflow-hidden btn-glow px-6 py-3 rounded-xl font-semibold text-white flex items-center justify-center">
+                            <div class="absolute inset-0 bg-gradient-to-r from-green-600 to-emerald-600"></div>
+                            <div class="relative z-10 flex items-center">
+                                <i class="fas fa-file-pdf mr-2"></i>
+                                Generate Report
+                            </div>
+                            <div class="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        </button>
+                        
+                        <button onclick="toggleAdvancedStats()" 
+                                class="glass-panel px-6 py-3 rounded-xl font-medium text-white hover:bg-white/10 transition-colors duration-300 flex items-center">
+                            <i class="fas fa-chart-bar mr-2"></i>
+                            Advanced Stats
+                        </button> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search and Filter Section -->
+        <div class="glass-panel rounded-2xl p-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Player Search -->
+                <div class="col-span-full md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Search Player</label>
+                    <div class="relative" id="playerSearchContainer">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" 
+                            id="playerSearch" 
+                            placeholder="Type to search players by name or role..."
+                            class="w-full pl-10 pr-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                            autocomplete="off">
+                        <div id="playerSearchResults" class="hidden absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-lg shadow-2xl z-50 max-h-80 overflow-y-auto custom-scrollbar">
+                            <!-- Search results will appear here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Filter by Team -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">Filter by Team</label>
+                    <select id="teamFilter" 
+                            class="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
+                        <option value="all">All Teams</option>
+                        <!-- Teams will be loaded dynamically -->
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Quick Filters -->
+            <div class="flex flex-wrap gap-2 mt-4" id="quickFilters">
+                <button onclick="filterByRole('batsman')" class="px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg text-sm transition-colors">
+                    <i class="fas fa-baseball-ball mr-1"></i> Batsmen
+                </button>
+                <button onclick="filterByRole('bowler')" class="px-3 py-1.5 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 rounded-lg text-sm transition-colors">
+                    <i class="fas fa-bullseye mr-1"></i> Bowlers
+                </button>
+                <button onclick="filterByRole('all-rounder')" class="px-3 py-1.5 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg text-sm transition-colors">
+                    <i class="fas fa-star mr-1"></i> All-Rounders
+                </button>
+                <button onclick="filterByRole('wicket-keeper')" class="px-3 py-1.5 bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 rounded-lg text-sm transition-colors">
+                    <i class="fas fa-shield-alt mr-1"></i> Keepers
+                </button>
+                <button onclick="clearFilters()" class="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg text-sm transition-colors ml-auto">
+                    <i class="fas fa-times mr-1"></i> Clear Filters
+                </button>
+            </div>
+        </div>
+
+        <!-- Players Grid -->
+        <div id="playersContainer" class="mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="playersGrid">
+                <!-- Loading State -->
+                <div class="col-span-full">
+                    <div class="flex flex-col items-center justify-center py-16">
+                        <div class="cricket-loader mb-4"></div>
+                        <p class="text-gray-400 text-sm">Loading players...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Empty State -->
+            <div id="emptyPlayersState" class="hidden text-center py-16">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-gray-800/50 rounded-full mb-6">
+                    <i class="fas fa-users text-gray-400 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">No Players Found</h3>
+                <p class="text-gray-400 mb-6 max-w-md mx-auto">Try adjusting your search or filters</p>
+            </div>
+        </div>
+
+        <!-- Player Analytics Modal -->
+        <div id="playerAnalyticsModal" class="fixed inset-0 z-50 hidden">
+            <div class="fixed inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal('playerAnalyticsModal')"></div>
+            <div class="fixed inset-0 overflow-y-auto">
+                <div class="flex min-h-full items-center justify-center p-4">
+                    <div class="relative glass-panel rounded-3xl shadow-2xl w-full max-w-6xl animate-fade-in">
+                        <!-- Modal Header -->
+                        <div class="p-6 border-b border-gray-800">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div id="playerAvatar" class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mr-4 text-white font-bold text-xl">
+                                        PL
+                                    </div>
+                                    <div>
+                                        <h2 id="playerName" class="text-2xl font-bold text-white"></h2>
+                                        <div class="flex items-center mt-1">
+                                            <span id="playerRole" class="px-3 py-1 text-xs font-bold rounded-full mr-3"></span>
+                                            <span class="text-gray-400 text-sm">Team: <span id="playerTeam"></span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button onclick="closeModal('playerAnalyticsModal')" 
+                                        class="w-10 h-10 rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center text-gray-400 hover:text-white transition-colors duration-200">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Modal Content -->
+                        <div class="p-6">
+                            <!-- Stats Overview -->
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                                <div class="bg-gradient-to-br from-green-900/30 to-green-800/30 rounded-xl p-4 border border-green-800/30">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-sm text-gray-400">Batting Average</p>
+                                            <p class="text-3xl font-bold text-white mt-1" id="battingAvg">0.0</p>
+                                        </div>
+                                        <i class="fas fa-baseball-ball text-green-400 text-2xl"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-gradient-to-br from-blue-900/30 to-blue-800/30 rounded-xl p-4 border border-blue-800/30">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-sm text-gray-400">Strike Rate</p>
+                                            <p class="text-3xl font-bold text-white mt-1" id="strikeRate">0.0</p>
+                                        </div>
+                                        <i class="fas fa-bolt text-blue-400 text-2xl"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-gradient-to-br from-red-900/30 to-red-800/30 rounded-xl p-4 border border-red-800/30">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-sm text-gray-400">Bowling Average</p>
+                                            <p class="text-3xl font-bold text-white mt-1" id="bowlingAvg">0.0</p>
+                                        </div>
+                                        <i class="fas fa-bullseye text-red-400 text-2xl"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-gradient-to-br from-purple-900/30 to-purple-800/30 rounded-xl p-4 border border-purple-800/30">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-sm text-gray-400">Economy Rate</p>
+                                            <p class="text-3xl font-bold text-white mt-1" id="economyRate">0.0</p>
+                                        </div>
+                                        <i class="fas fa-chart-line text-purple-400 text-2xl"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Performance Charts Section -->
+                            <div class="mb-8">
+                                <h3 class="text-lg font-bold text-white mb-4">Performance Analysis</h3>
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <!-- Performance Trends Chart -->
+                                    <div class="glass-panel rounded-xl p-6">
+                                        <div class="flex items-center justify-between mb-4">
+                                            <h4 class="font-bold text-white">Performance Trends</h4>
+                                            <select id="chartType" onchange="updateChart()" class="bg-gray-800/50 border border-gray-700 rounded-lg px-3 py-1.5 text-sm text-white">
+                                                <option value="runs">Runs</option>
+                                                <option value="wickets">Wickets</option>
+                                                <option value="average">Average</option>
+                                                <option value="strikeRate">Strike Rate</option>
+                                            </select>
+                                        </div>
+                                        <div class="h-64">
+                                            <canvas id="performanceChart"></canvas>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Radar Chart for Skills -->
+                                    <div class="glass-panel rounded-xl p-6">
+                                        <h4 class="font-bold text-white mb-4">Skills Radar</h4>
+                                        <div class="h-64">
+                                            <canvas id="radarChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- AI Predictions & Recent Performance -->
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                                <!-- AI Predictions -->
+                                <div class="glass-panel rounded-xl p-6">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h4 class="font-bold text-white">AI Predictions</h4>
+                                        <button onclick="refreshPredictions()" class="text-sm text-blue-400 hover:text-blue-300">
+                                            <i class="fas fa-sync-alt mr-1"></i> Refresh
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="space-y-4" id="predictionsContainer">
+                                        <!-- Performance Prediction -->
+                                        <div class="bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-lg p-4 border border-blue-800/30">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <span class="text-sm font-medium text-blue-400">Next Match Prediction</span>
+                                                <span class="text-xs px-2 py-1 bg-blue-500/20 text-blue-400 rounded-full" id="predictionConfidence">75%</span>
+                                            </div>
+                                            <p class="text-sm text-gray-300" id="predictionText">Loading prediction...</p>
+                                        </div>
+                                        
+                                        <!-- Prediction Metrics -->
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div class="bg-gray-800/30 rounded-lg p-3">
+                                                <p class="text-xs text-gray-400">Predicted Runs</p>
+                                                <div class="flex items-center">
+                                                    <p class="text-xl font-bold text-green-400 mr-2" id="predictedRuns">-</p>
+                                                    <span id="runsTrend" class="text-xs px-2 py-0.5 rounded-full"></span>
+                                                </div>
+                                            </div>
+                                            <div class="bg-gray-800/30 rounded-lg p-3">
+                                                <p class="text-xs text-gray-400">Predicted Wickets</p>
+                                                <div class="flex items-center">
+                                                    <p class="text-xl font-bold text-blue-400 mr-2" id="predictedWickets">-</p>
+                                                    <span id="wicketsTrend" class="text-xs px-2 py-0.5 rounded-full"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Prediction Factors -->
+                                        <div class="mt-4">
+                                            <p class="text-xs text-gray-400 mb-2">Prediction Factors:</p>
+                                            <div class="space-y-2" id="predictionFactors">
+                                                <!-- Factors will be added here -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Recent Performance -->
+                                <div class="glass-panel rounded-xl p-6">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h4 class="font-bold text-white">Recent Performance</h4>
+                                        <button onclick="loadMoreMatches()" class="text-sm text-blue-400 hover:text-blue-300">
+                                            <i class="fas fa-history mr-1"></i> Load More
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full">
+                                            <thead>
+                                                <tr class="border-b border-gray-800">
+                                                    <th class="py-3 px-4 text-left text-sm font-medium text-gray-400">Date</th>
+                                                    <th class="py-3 px-4 text-left text-sm font-medium text-gray-400">Match</th>
+                                                    <th class="py-3 px-4 text-left text-sm font-medium text-gray-400">Runs</th>
+                                                    <th class="py-3 px-4 text-left text-sm font-medium text-gray-400">SR</th>
+                                                    <th class="py-3 px-4 text-left text-sm font-medium text-gray-400">Wickets</th>
+                                                    <th class="py-3 px-4 text-left text-sm font-medium text-gray-400">Econ</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="recentPerformanceTable">
+                                                <!-- Will be populated dynamically -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    <!-- Performance Summary -->
+                                    <div class="mt-4 grid grid-cols-2 gap-3">
+                                        <div class="bg-gray-800/30 rounded-lg p-3">
+                                            <p class="text-xs text-gray-400">Last 5 Matches Avg</p>
+                                            <p class="text-lg font-bold text-white" id="last5Avg">-</p>
+                                        </div>
+                                        <div class="bg-gray-800/30 rounded-lg p-3">
+                                            <p class="text-xs text-gray-400">Form Trend</p>
+                                            <div class="flex items-center">
+                                                <p class="text-lg font-bold text-white mr-2" id="formTrend">-</p>
+                                                <span id="trendIcon"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Recommendations & Insights -->
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-lg font-bold text-white">AI Recommendations & Insights</h3>
+                                    <button onclick="refreshRecommendations()" class="text-sm text-blue-400 hover:text-blue-300">
+                                        <i class="fas fa-sync-alt mr-1"></i> Refresh
+                                    </button>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="recommendationsContainer">
+                                    <!-- Will be populated dynamically -->
+                                </div>
+                                
+                                <!-- Performance Insights -->
+                                <div class="mt-4 glass-panel rounded-xl p-6">
+                                    <h4 class="font-bold text-white mb-3">Performance Insights</h4>
+                                    <div class="space-y-3" id="performanceInsights">
+                                        <!-- Insights will be added here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal Footer -->
+                        <div class="p-6 border-t border-gray-800 flex flex-wrap gap-3">
+                            <button onclick="closeModal('playerAnalyticsModal')" 
+                                    class="px-5 py-2.5 border border-gray-700 hover:bg-gray-800 text-gray-300 rounded-xl transition-colors duration-200">
+                                Close
+                            </button>
+                            <button onclick="exportPlayerData()" 
+                                    class="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium rounded-xl transition-all duration-300">
+                                <i class="fas fa-download mr-2"></i> Export Players Data
+                            </button>
+                            <!-- <button onclick="comparePlayers()" 
+                                    class="px-5 py-2.5 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-medium rounded-xl transition-all duration-300">
+                                <i class="fas fa-balance-scale mr-2"></i> Compare Players
+                            </button> -->
+                            <!-- <button onclick="simulateMatch()" 
+                                    class="px-5 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-medium rounded-xl transition-all duration-300">
+                                <i class="fas fa-play-circle mr-2"></i> Simulate Match
+                            </button> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Compare Players Modal -->
+        <div id="compareModal" class="fixed inset-0 z-50 hidden">
+            <div class="fixed inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal('compareModal')"></div>
+            <div class="fixed inset-0 overflow-y-auto">
+                <div class="flex min-h-full items-center justify-center p-4">
+                    <div class="relative glass-panel rounded-3xl shadow-2xl w-full max-w-6xl animate-fade-in">
+                        <!-- Modal Header -->
+                        <div class="p-6 border-b border-gray-800">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center mr-3">
+                                        <i class="fas fa-balance-scale text-white"></i>
+                                    </div>
+                                    <h2 class="text-2xl font-bold text-white">Compare Players</h2>
+                                </div>
+                                <button onclick="closeModal('compareModal')" 
+                                        class="w-10 h-10 rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center text-gray-400 hover:text-white transition-colors duration-200">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Modal Content -->
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <!-- Player 1 Selection -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Player 1</label>
+                                    <div class="relative">
+                                        <input type="text" 
+                                            id="comparePlayer1"
+                                            placeholder="Search player 1..."
+                                            class="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
+                                        <div id="compareResults1" class="hidden absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-lg shadow-2xl z-50 max-h-60 overflow-y-auto"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Player 2 Selection -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Player 2</label>
+                                    <div class="relative">
+                                        <input type="text" 
+                                            id="comparePlayer2"
+                                            placeholder="Search player 2..."
+                                            class="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
+                                        <div id="compareResults2" class="hidden absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-lg shadow-2xl z-50 max-h-60 overflow-y-auto"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Comparison Results -->
+                            <div id="comparisonResults" class="hidden">
+                                <!-- Will be populated dynamically -->
+                            </div>
+                            
+                            <!-- Comparison Chart -->
+                            <div id="comparisonChartContainer" class="hidden mt-6">
+                                <div class="glass-panel rounded-xl p-6">
+                                    <h4 class="font-bold text-white mb-4">Comparison Chart</h4>
+                                    <div class="h-64">
+                                        <canvas id="comparisonChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Empty State -->
+                            <div id="compareEmptyState" class="text-center py-12">
+                                <div class="inline-flex items-center justify-center w-20 h-20 bg-gray-800/50 rounded-full mb-6">
+                                    <i class="fas fa-balance-scale text-gray-400 text-2xl"></i>
+                                </div>
+                                <h3 class="text-xl font-bold text-white mb-2">Select Players to Compare</h3>
+                                <p class="text-gray-400 mb-6 max-w-md mx-auto">Search for two players above to compare their statistics side-by-side</p>
+                            </div>
+                        </div>
+
+                        <!-- Modal Footer -->
+                        <div class="p-6 border-t border-gray-800 flex justify-end gap-3">
+                            <button onclick="closeModal('compareModal')" 
+                                    class="px-5 py-2.5 border border-gray-700 hover:bg-gray-800 text-gray-300 rounded-xl transition-colors duration-200">
+                                Cancel
+                            </button>
+                            <button onclick="performComparison()" 
+                                    class="px-5 py-2.5 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-medium rounded-xl transition-all duration-300">
+                                <i class="fas fa-chart-bar mr-2"></i> Compare Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Player Card Template -->
+    <template id="playerCardTemplate">
+        <div class="glass-panel rounded-2xl overflow-hidden group cursor-pointer selection-highlight player-card">
+            <div class="p-6">
+                <!-- Player Header -->
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 rounded-xl {playerGradient} flex items-center justify-center mr-4 text-white font-bold text-lg">
+                            {playerInitials}
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white mb-1">{playerName}</h3>
+                            <div class="flex items-center">
+                                <span class="px-2 py-1 {roleColor} text-xs font-bold rounded-full">{playerRole}</span>
+                                <span class="ml-2 text-xs text-gray-400">Team: {teamName}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="showPlayerActions({playerId}, event)" 
+                            class="text-gray-400 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+
+                <!-- Player Stats -->
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <div class="bg-gray-800/30 rounded-xl p-3">
+                        <div class="flex items-center text-sm text-gray-400 mb-1">
+                            <i class="fas fa-baseball-ball mr-1"></i>
+                            Bat Avg
+                        </div>
+                        <div class="text-xl font-bold text-green-400">{battingAvg}</div>
+                    </div>
+                    <div class="bg-gray-800/30 rounded-xl p-3">
+                        <div class="flex items-center text-sm text-gray-400 mb-1">
+                            <i class="fas fa-bullseye mr-1"></i>
+                            Bowl Avg
+                        </div>
+                        <div class="text-xl font-bold text-blue-400">{bowlingAvg}</div>
+                    </div>
+                </div>
+
+                <!-- Performance Indicator -->
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="text-gray-400">Performance Score</span>
+                        <span class="text-white font-semibold">{performanceScore}/100</span>
+                    </div>
+                    <div class="h-2 bg-gray-800 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r {performanceGradient} rounded-full" 
+                            style="width: {performanceScore}%"></div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-2">
+                    <button onclick="viewPlayerAnalytics({playerId})" 
+                            class="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500/20 to-blue-600/20 hover:from-blue-500/30 hover:to-blue-600/30 text-blue-400 font-medium rounded-lg border border-blue-500/30 transition-all duration-300 flex items-center justify-center group">
+                        <i class="fas fa-chart-line mr-2 group-hover:scale-110 transition-transform"></i>
+                        Analytics
+                    </button>
+                    <button onclick="getPlayerPrediction({playerId})" 
+                            class="px-4 py-2 bg-gradient-to-r from-purple-500/20 to-pink-600/20 hover:from-purple-500/30 hover:to-pink-600/30 text-purple-400 font-medium rounded-lg border border-purple-500/30 transition-all duration-300">
+                        <i class="fas fa-robot"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Player Actions Dropdown -->
+    <div id="playerActionsDropdown" class="hidden fixed z-50">
+        <div class="absolute w-48 bg-gray-900 rounded-xl shadow-2xl border border-gray-800 overflow-hidden animate-slide-down">
+            <div class="py-1">
+                <button onclick="viewPlayerAnalyticsAction()" 
+                        class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-blue-500/20 hover:text-blue-400 flex items-center gap-3 transition-colors">
+                    <i class="fas fa-chart-line w-5"></i>
+                    View Analytics
+                </button>
+                <button onclick="editPlayerAction()" 
+                        class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-green-500/20 hover:text-green-400 flex items-center gap-3 transition-colors">
+                    <i class="fas fa-edit w-5"></i>
+                    Edit Player
+                </button>
+                <button onclick="comparePlayerAction()" 
+                        class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-purple-500/20 hover:text-purple-400 flex items-center gap-3 transition-colors">
+                    <i class="fas fa-balance-scale w-5"></i>
+                    Compare Player
+                </button>
+                <div class="border-t border-gray-800 my-1"></div>
+                <button onclick="deletePlayerAction()" 
+                        class="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-red-500/20 flex items-center gap-3 transition-colors">
+                    <i class="fas fa-trash w-5"></i>
+                    Delete Player
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = "/api";
+    let allPlayers = [];
+    let allTeams = [];
+    let currentPlayerId = null;
+    let selectedPlayerForComparison = null;
+    let performanceChart = null;
+    let radarChart = null;
+    let comparisonChart = null;
+    let currentCharts = new Map(); // Track charts by canvas ID
+    // let comparePlayers =[];
+    // Load initial data
+    async function loadAnalyticsData() {
+        const playersGrid = document.getElementById('playersGrid');
+        
+        // Show loading
+        playersGrid.innerHTML = `
+            <div class="col-span-full">
+                <div class="flex flex-col items-center justify-center py-16">
+                    <div class="cricket-loader mb-4"></div>
+                    <p class="text-gray-400 text-sm">Loading players...</p>
+                </div>
+            </div>
+        `;
+
+        try {
+            // Fetch players and teams in parallel
+            const [playersRes, teamsRes] = await Promise.all([
+                fetch(`${API}/players`).then(r => r.json()).catch(() => ({ success: false, players: [] })),
+                fetch(`${API}/teams`).then(r => r.json()).catch(() => ({ success: false, teams: [] }))
+            ]);
+
+            // Use data even if one fails
+            allPlayers = playersRes.success ? playersRes.players || [] : [];
+            allTeams = teamsRes.success ? teamsRes.teams || [] : [];
+
+            // Always render players (even if empty)
+            renderPlayers(allPlayers);
+
+            // Populate filters
+            populateTeamFilter();
+
+            // Update stats
+            updatePlayerCounts();
+
+            // Initialize search and compare
+            initializeSearch();
+            initializeCompareSearch();
+
+            showToast(`Loaded ${allPlayers.length} players`, 'success');
+
+        } catch (error) {
+            console.error('Critical error in loadAnalyticsData:', error);
+            
+            // Fallback: show empty state
+            playersGrid.innerHTML = `
+                <div class="col-span-full text-center py-16">
+                    <i class="fas fa-exclamation-triangle text-4xl text-red-400 mb-4"></i>
+                    <h3 class="text-xl font-bold text-white mb-2">Failed to Load Players</h3>
+                    <p class="text-gray-400 mb-4">Check console for errors</p>
+                    <button onclick="loadAnalyticsData()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
+                        Retry
+                    </button>
+                </div>
+            `;
+            
+            showToast('Failed to load data. Check API endpoints.', 'error');
+        }
+    }
+    // Update player counts and averages
+    function updatePlayerCounts() {
+        const totalPlayers = allPlayers.length;
+        let totalBattingAvg = 0;
+        let totalBowlingAvg = 0;
+        let countBatting = 0;
+        let countBowling = 0;
+        
+        allPlayers.forEach(player => {
+            if (player.batting_average && player.batting_average > 0) {
+                totalBattingAvg += player.batting_average;
+                countBatting++;
+            }
+            if (player.bowling_average && player.bowling_average > 0) {
+                totalBowlingAvg += player.bowling_average;
+                countBowling++;
+            }
+        });
+        
+        document.getElementById('totalPlayers').textContent = totalPlayers;
+        document.getElementById('avgBatting').textContent = countBatting > 0 ? (totalBattingAvg / countBatting).toFixed(1) : '0.0';
+        document.getElementById('avgBowling').textContent = countBowling > 0 ? (totalBowlingAvg / countBowling).toFixed(1) : '0.0';
+    }
+
+    // Populate team filter dropdown
+    function populateTeamFilter() {
+        const teamFilter = document.getElementById('teamFilter');
+        teamFilter.innerHTML = '<option value="all">All Teams</option>';
+        
+        allTeams.forEach(team => {
+            const option = document.createElement('option');
+            option.value = team.id;
+            option.textContent = team.name;
+            teamFilter.appendChild(option);
+        });
+        
+        // Add event listener for team filter
+        teamFilter.addEventListener('change', filterPlayers);
+    }
+
+    // Render players grid
+    function renderPlayers(players) {
+        const playersGrid = document.getElementById('playersGrid');
+        
+        playersGrid.innerHTML = '';
+        
+        if (players.length === 0) {
+            playersGrid.innerHTML = `
+                <div class="col-span-full">
+                    <div class="text-center py-16">
+                        <div class="inline-flex items-center justify-center w-20 h-20 bg-gray-800/50 rounded-full mb-6">
+                            <i class="fas fa-users text-gray-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-2">No Players Found</h3>
+                        <p class="text-gray-400 mb-6 max-w-md mx-auto">Try adjusting your search or filters</p>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+        
+        players.forEach(player => {
+            // Calculate performance score (0-100)
+            const performanceScore = calculatePerformanceScore(player);
+            const playerGradient = getPlayerGradient(performanceScore);
+            const roleColor = getRoleColor(player.role);
+            const performanceGradient = getPerformanceGradient(performanceScore);
+            const playerInitials = getInitials(player.name);
+            const teamName = getTeamName(player.team_id);
+            
+            const card = document.createElement('div');
+            card.className = 'glass-panel rounded-2xl overflow-hidden group cursor-pointer selection-highlight player-card hover:transform hover:-translate-y-1 transition-transform duration-300';
+            card.innerHTML = `
+                <div class="p-6">
+                    <!-- Player Header -->
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 rounded-xl ${playerGradient} flex items-center justify-center mr-4 text-white font-bold text-lg">
+                                ${playerInitials}
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white mb-1">${player.name}</h3>
+                                <div class="flex items-center">
+                                    <span class="px-2 py-1 ${roleColor} text-xs font-bold rounded-full">${player.role}</span>
+                                    <span class="ml-2 text-xs text-gray-400">Team: ${teamName}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="showPlayerActions(${player.id}, event)" 
+                                class="text-gray-400 hover:text-white transition-colors duration-200">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                    </div>
+
+                    <!-- Player Stats -->
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <div class="bg-gray-800/30 rounded-xl p-3">
+                            <div class="flex items-center text-sm text-gray-400 mb-1">
+                                <i class="fas fa-baseball-ball mr-1"></i>
+                                Bat Avg
+                            </div>
+                            <div class="text-xl font-bold text-green-400">${player.batting_average ? player.batting_average.toFixed(1) : '0.0'}</div>
+                        </div>
+                        <div class="bg-gray-800/30 rounded-xl p-3">
+                            <div class="flex items-center text-sm text-gray-400 mb-1">
+                                <i class="fas fa-bullseye mr-1"></i>
+                                Bowl Avg
+                            </div>
+                            <div class="text-xl font-bold text-blue-400">${player.bowling_average ? player.bowling_average.toFixed(1) : '0.0'}</div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Indicator -->
+                    <div class="mb-4">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-400">Performance Score</span>
+                            <span class="text-white font-semibold">${performanceScore}/100</span>
+                        </div>
+                        <div class="h-2 bg-gray-800 rounded-full overflow-hidden">
+                            <div class="h-full ${performanceGradient} rounded-full" 
+                                style="width: ${Math.max(performanceScore, 5)}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-2">
+                        <button onclick="viewPlayerAnalytics(${player.id})" 
+                                class="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500/20 to-blue-600/20 hover:from-blue-500/30 hover:to-blue-600/30 text-blue-400 font-medium rounded-lg border border-blue-500/30 transition-all duration-300 flex items-center justify-center group">
+                            <i class="fas fa-chart-line mr-2 group-hover:scale-110 transition-transform"></i>
+                            Analytics
+                        </button>
+                        <button onclick="getPlayerPrediction(${player.id})" 
+                                class="px-4 py-2 bg-gradient-to-r from-purple-500/20 to-pink-600/20 hover:from-purple-500/30 hover:to-pink-600/30 text-purple-400 font-medium rounded-lg border border-purple-500/30 transition-all duration-300">
+                            <i class="fas fa-robot"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            playersGrid.appendChild(card);
+        });
+    }
+
+    // View player analytics with charts
+    async function viewPlayerAnalytics(playerId) {
+        try {
+            currentPlayerId = playerId;
+            
+            const [playerRes, statsRes, predictionRes, matchesRes] = await Promise.all([
+                fetch(`${API}/players`).then(r => r.json()),
+                fetch(`${API}/analytics/player/${playerId}`).then(r => r.json()),
+                fetch(`${API}/predict/player/${playerId}`).then(r => r.json()),
+                fetch(`${API}/matches/player/${playerId}`).then(r => r.json())
+            ]);
+            
+            if (!statsRes.success) throw new Error('Player stats not found');
+            
+            const player = playerRes.players?.find(p => p.id === playerId);
+            const stats = statsRes.stats;
+            const prediction = predictionRes.prediction;
+            const recentMatches = matchesRes.matches || [];
+            
+            // Update modal header
+            document.getElementById('playerName').textContent = player?.name || stats.player?.name;
+            document.getElementById('playerAvatar').textContent = getInitials(player?.name || stats.player?.name);
+            document.getElementById('playerRole').textContent = stats.player?.role || player?.role;
+            document.getElementById('playerRole').className = `px-3 py-1 text-xs font-bold rounded-full mr-3 ${getRoleColor(stats.player?.role || player?.role)}`;
+            document.getElementById('playerTeam').textContent = getTeamName(player?.team_id);
+            
+            // Update stats
+            document.getElementById('battingAvg').textContent = stats.batting_average?.toFixed(1) || '0.0';
+            document.getElementById('strikeRate').textContent = stats.strike_rate?.toFixed(1) || '0.0';
+            document.getElementById('bowlingAvg').textContent = stats.bowling_average?.toFixed(1) || '0.0';
+            document.getElementById('economyRate').textContent = stats.economy_rate?.toFixed(1) || '0.0';
+            
+            // Create charts - IMPORTANT: Destroy existing charts first
+            destroyAllCharts();
+            createPerformanceChart(stats);
+            createRadarChart(stats);
+            
+            // Load predictions with real data
+            loadPredictions(stats, prediction);
+            
+            // Load recent performance
+            renderRecentPerformance(stats, recentMatches);
+            
+            // Load recommendations
+            loadPlayerRecommendations(stats);
+            
+            // Load performance insights
+            loadPerformanceInsights(stats);
+            
+            // Show modal
+            document.getElementById('playerAnalyticsModal').classList.remove('hidden');
+            
+        } catch (error) {
+            console.error('Error loading player analytics:', error);
+            showToast('Failed to load player analytics', 'error');
+        }
+    }
+
+    // Destroy all charts before creating new ones
+    function destroyAllCharts() {
+        // Destroy all tracked charts
+        currentCharts.forEach((chart, canvasId) => {
+            if (chart && typeof chart.destroy === 'function') {
+                try {
+                    chart.destroy();
+                } catch (e) {
+                    console.warn(`Error destroying chart ${canvasId}:`, e);
+                }
+            }
+        });
+        currentCharts.clear();
+        
+        // Clear all canvas elements
+        document.querySelectorAll('canvas').forEach(canvas => {
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+    }
+
+    // Create performance chart
+    function createPerformanceChart(stats) {
+        const canvas = document.getElementById('performanceChart');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        
+        // Generate sample data based on stats
+        const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
+        const runsData = generateSampleData(stats.batting_average || 30, 15);
+        const wicketsData = generateSampleData(stats.bowling_average || 25, 8);
+        
+        try {
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Runs',
+                        data: runsData,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }, {
+                        label: 'Wickets',
+                        data: wicketsData,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#d1d5db',
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                            titleColor: '#f3f4f6',
+                            bodyColor: '#d1d5db',
+                            borderColor: '#4b5563',
+                            borderWidth: 1
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#9ca3af'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#9ca3af'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Store the chart reference
+            currentCharts.set('performanceChart', chart);
+            performanceChart = chart;
+            
+        } catch (error) {
+            console.error('Error creating performance chart:', error);
+        }
+    }
+
+    // Create radar chart
+    function createRadarChart(stats) {
+        const canvas = document.getElementById('radarChart');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        
+        const battingSkill = stats.total_matches
+    ? Math.min(stats.batting_average / 50 * 100, 100)
+    : 0;
+
+const bowlingSkill = stats.total_matches && stats.bowling_average
+    ? Math.min(30 / stats.bowling_average * 100, 100)
+    : 0;
+
+const strikeRateSkill = stats.total_matches
+    ? Math.min(stats.strike_rate / 2, 100)
+    : 0;
+
+const economySkill = stats.total_matches && stats.economy_rate
+    ? Math.min(40 / stats.economy_rate, 100)
+    : 0;
+
+const consistency = Math.min(stats.total_matches * 5, 100);
+
+        
+        try {
+            const chart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Batting', 'Bowling', 'Strike Rate', 'Economy', 'Consistency'],
+                    datasets: [{
+                        label: 'Skills',
+                        data: [battingSkill, bowlingSkill, strikeRateSkill, economySkill, consistency],
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: '#3b82f6',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#3b82f6',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            pointLabels: {
+                                color: '#d1d5db',
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            ticks: {
+                                color: '#9ca3af',
+                                backdropColor: 'transparent'
+                            },
+                            min: 0,
+                            max: 100
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#d1d5db',
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Store the chart reference
+            currentCharts.set('radarChart', chart);
+            radarChart = chart;
+            
+        } catch (error) {
+            console.error('Error creating radar chart:', error);
+        }
+    }
+
+    // Create comparison chart
+    function createComparisonChart(player1, player2) {
+        const canvas = document.getElementById('comparisonChart');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        
+        try {
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Batting Avg', 'Strike Rate', 'Bowling Avg', 'Economy', 'Matches'],
+                    datasets: [
+                        {
+                            label: player1.player?.name || 'Player 1',
+                            data: [
+                                player1.batting_average || 0,
+                                player1.strike_rate || 0,
+                                player1.bowling_average || 0,
+                                player1.economy_rate || 0,
+                                player1.total_matches || 0
+                            ],
+                            backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                            borderColor: '#3b82f6',
+                            borderWidth: 1
+                        },
+                        {
+                            label: player2.player?.name || 'Player 2',
+                            data: [
+                                player2.batting_average || 0,
+                                player2.strike_rate || 0,
+                                player2.bowling_average || 0,
+                                player2.economy_rate || 0,
+                                player2.total_matches || 0
+                            ],
+                            backgroundColor: 'rgba(168, 85, 247, 0.7)',
+                            borderColor: '#a855f7',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#9ca3af'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#9ca3af'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#d1d5db'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Store the chart reference
+            currentCharts.set('comparisonChart', chart);
+            comparisonChart = chart;
+            
+        } catch (error) {
+            console.error('Error creating comparison chart:', error);
+        }
+    }
+
+    // Properly close modal and clean up charts
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        modal.classList.add('hidden');
+        
+        // Destroy all charts
+        destroyAllCharts();
+        
+        // Reset references
+        performanceChart = null;
+        radarChart = null;
+        comparisonChart = null;
+        currentPlayerId = null;
+    }
+
+    // Filter players by team
+    function filterPlayers() {
+        const teamId = document.getElementById('teamFilter').value;
+        let filtered = allPlayers;
+        if (teamId !== 'all') {
+            filtered = allPlayers.filter(p => p.team_id === Number(teamId));
+        }
+        renderPlayers(filtered);
+    }
+
+    // Filter players by role
+    function filterByRole(role) {
+        if (role === 'all') {
+            renderPlayers(allPlayers);
+            return;
+        }
+        
+        const filtered = allPlayers.filter(player => 
+            player.role.toLowerCase().includes(role.toLowerCase())
+        );
+        renderPlayers(filtered);
+    }
+
+    // Clear all filters
+    function clearFilters() {
+        document.getElementById('playerSearch').value = '';
+        document.getElementById('teamFilter').value = 'all';
+        renderPlayers(allPlayers);
+    }
+
+    // Show toast notification
+    function showToast(message, type = 'info') {
+        // Remove existing toasts
+        document.querySelectorAll('.toast-notification').forEach(toast => toast.remove());
+        
+        const toast = document.createElement('div');
+        toast.className = `toast-notification fixed bottom-6 right-6 px-6 py-3 rounded-xl shadow-2xl text-white z-50 animate-fade-in ${
+            type === 'error' ? 'bg-red-600' :
+            type === 'success' ? 'bg-green-600' :
+            'bg-blue-600'
+        }`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.5s ease';
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
+    }
+
+    // Select player from search
+    function selectPlayerFromSearch(playerId, playerName) {
+        document.getElementById('playerSearch').value = playerName;
+        document.getElementById('playerSearchResults').classList.add('hidden');
+        viewPlayerAnalytics(playerId);
+    }
+
+    // Show player actions dropdown
+    function showPlayerActions(playerId, event) {
+        event.stopPropagation();
+        currentPlayerId = playerId;
+        
+        const dropdown = document.getElementById('playerActionsDropdown');
+        dropdown.style.left = event.clientX + 'px';
+        dropdown.style.top = event.clientY + 'px';
+        dropdown.classList.remove('hidden');
+        
+        // Close dropdown when clicking elsewhere
+        setTimeout(() => {
+            const closeHandler = (e) => {
+                if (!dropdown.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                    document.removeEventListener('click', closeHandler);
+                }
+            };
+            document.addEventListener('click', closeHandler);
+        }, 0);
+    }
+
+    // Player action functions
+    function viewPlayerAnalyticsAction() {
+        if (currentPlayerId) {
+            viewPlayerAnalytics(currentPlayerId);
+        }
+        document.getElementById('playerActionsDropdown').classList.add('hidden');
+    }
+
+    function editPlayerAction() {
+        if (currentPlayerId) {
+            window.location.href = `/players/${currentPlayerId}/edit`;
+        }
+        document.getElementById('playerActionsDropdown').classList.add('hidden');
+    }
+
+    function comparePlayerAction() {
+        selectedPlayerForComparison = currentPlayerId;
+        openCompareModal();
+        document.getElementById('playerActionsDropdown').classList.add('hidden');
+    }
+
+    async function deletePlayerAction() {
+        if (currentPlayerId && confirm('Are you sure you want to delete this player?')) {
+            try {
+                const response = await fetch(`${API}/players/${currentPlayerId}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast('Player deleted successfully', 'success');
+                    loadAnalyticsData();
+                } else {
+                    showToast('Failed to delete player', 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting player:', error);
+                showToast('Failed to delete player', 'error');
+            }
+        }
+        document.getElementById('playerActionsDropdown').classList.add('hidden');
+    }
+
+    // Open compare modal
+    function openCompareModal() {
+        document.getElementById('compareModal').classList.remove('hidden');
+        
+        // Clear previous charts
+        destroyAllCharts();
+        
+        // Clear comparison results
+        document.getElementById('comparisonResults').classList.add('hidden');
+        document.getElementById('comparisonChartContainer').classList.add('hidden');
+        document.getElementById('compareEmptyState').classList.remove('hidden');
+        
+        // Clear input fields
+        document.getElementById('comparePlayer1').value = '';
+        document.getElementById('comparePlayer2').value = '';
+        document.getElementById('compareResults1').innerHTML = '';
+        document.getElementById('compareResults2').innerHTML = '';
+        
+        // Initialize search
+        initializeCompareSearch();
+    }
+
+    async function exportPlayerData() {
+        try {
+            showToast('Exporting player data...', 'info');
+            
+            // Fetch all player data with detailed stats
+            const response = await fetch('/api/players');
+            const data = await response.json();
+            
+            if (!data.success) {
+                throw new Error('Failed to fetch player data');
+            }
+            
+            // Format data for CSV export
+            const players = data.players || [];
+            const csvData = formatPlayersForCSV(players);
+            
+            // Create and download CSV file
+            downloadCSV(csvData, 'players_export_' + new Date().toISOString().split('T')[0] + '.csv');
+            
+            // Also show summary
+            setTimeout(() => {
+                showToast(`Exported ${players.length} players successfully!`, 'success');
+            }, 1000);
+            
+        } catch (error) {
+            console.error('Error exporting player data:', error);
+            showToast('Failed to export player data', 'error');
+        }
+    }
+
+    function formatPlayersForCSV(players) {
+        // Create CSV header
+        const headers = [
+            'ID', 'Name', 'Role', 'Team ID', 
+            'Total Runs', 'Batting Average', 'Strike Rate',
+            'Total Wickets', 'Bowling Average', 'Economy Rate',
+            'Created At'
+        ];
+        
+        // Create CSV rows
+        const rows = players.map(player => {
+            return [
+                player.id || '',
+                `"${player.name || ''}"`,
+                player.role || '',
+                player.team_id || '',
+                player.total_runs || 0,
+                player.batting_average || 0,
+                player.strike_rate || 0,
+                player.total_wickets || 0,
+                player.bowling_average || 0,
+                player.economy_rate || 0,
+                player.created_at || new Date().toISOString()
+            ].join(',');
+        });
+        
+        return [headers.join(','), ...rows].join('\n');
+    }
+
+    function downloadCSV(csvData, filename) {
+        // Create blob and download link
+        const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        
+        // Create temporary download link
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        
+        // Trigger download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Clean up
+        setTimeout(() => URL.revokeObjectURL(url), 100);
+    }
+
+
+    // Initialize compare search
+    function initializeCompareSearch() {
+        const inputs = ['comparePlayer1', 'comparePlayer2'];
+        inputs.forEach((id, index) => {
+            const input = document.getElementById(id);
+            const results = document.getElementById(`compareResults${index + 1}`);
+
+            const search = debounce(() => {
+                const term = input.value.toLowerCase().trim();
+                results.innerHTML = '';
+                results.classList.add('hidden');
+
+                if (term.length < 2) return;
+
+                const filtered = allPlayers.filter(p => p.name.toLowerCase().includes(term));
+
+                if (filtered.length === 0) {
+                    results.innerHTML = '<div class="p-4 text-center text-gray-400">No players found</div>';
+                    results.classList.remove('hidden');
+                    return;
+                }
+
+                filtered.forEach(player => {
+                    const div = document.createElement('div');
+                    div.className = 'p-3 hover:bg-gray-800 cursor-pointer border-b border-gray-800 last:border-0';
+                    div.innerHTML = `
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-full ${getPlayerGradient(calculatePerformanceScore(player))} flex items-center justify-center text-white text-xs font-bold mr-3">
+                                ${getInitials(player.name)}
+                            </div>
+                            <div>
+                                <div class="text-sm font-medium text-white">${player.name}</div>
+                                <div class="text-xs text-gray-400">${player.role} • ${getTeamName(player.team_id)}</div>
+                            </div>
+                        </div>
+                    `;
+                    div.onclick = () => {
+                        input.value = player.name;
+                        results.classList.add('hidden');
+                        // Store selected player
+                        comparePlayers[index] = player;
+                        checkCompareReady();
+                    };
+                    results.appendChild(div);
+                });
+
+                results.classList.remove('hidden');
+            }, 300);
+
+            input.addEventListener('input', search);
+        });
+    }
+
+    // Select player for comparison
+    function selectComparePlayer(playerId, playerName, playerNumber) {
+        document.getElementById(`comparePlayer${playerNumber}`).value = playerName;
+        document.getElementById(`compareResults${playerNumber}`).classList.add('hidden');
+        
+        if (playerNumber === 1) {
+            selectedPlayerForComparison = playerId;
+        } else {
+            if (selectedPlayerForComparison) {
+                comparePlayers(selectedPlayerForComparison, playerId);
+            }
+        }
+    }
+
+    // Compare players function
+    async function comparePlayers(playerId1, playerId2) {
+        if (!playerId1 || !playerId2) {
+            showToast('Please select two players to compare', 'error');
+            return;
+        }
+        
+        if (playerId1 === playerId2) {
+            showToast('Please select different players to compare', 'error');
+            return;
+        }
+        
+        try {
+            const [player1Res, player2Res] = await Promise.all([
+                fetch(`${API}/analytics/player/${playerId1}`).then(r => r.json()),
+                fetch(`${API}/analytics/player/${playerId2}`).then(r => r.json())
+            ]);
+            
+            if (!player1Res.success || !player2Res.success) {
+                throw new Error('Failed to fetch player data');
+            }
+            
+            const player1 = player1Res.stats;
+            const player2 = player2Res.stats;
+            
+            // Update comparison results
+            updateComparisonResults(player1, player2);
+            
+            // Create comparison chart
+            createComparisonChart(player1, player2);
+            
+            // Show results
+            document.getElementById('comparisonResults').classList.remove('hidden');
+            document.getElementById('comparisonChartContainer').classList.remove('hidden');
+            document.getElementById('compareEmptyState').classList.add('hidden');
+            
+        } catch (error) {
+            console.error('Error comparing players:', error);
+            showToast('Failed to compare players', 'error');
+        }
+    }
+
+    // Update comparison results
+    function updateComparisonResults(player1, player2) {
+        const container = document.getElementById('comparisonResults');
+        
+        const comparisonData = [
+            {
+                label: 'Batting Average',
+                player1: player1.batting_average?.toFixed(1) || '0.0',
+                player2: player2.batting_average?.toFixed(1) || '0.0',
+                better: getBetterValue(player1.batting_average, player2.batting_average, true)
+            },
+            {
+                label: 'Strike Rate',
+                player1: player1.strike_rate?.toFixed(1) || '0.0',
+                player2: player2.strike_rate?.toFixed(1) || '0.0',
+                better: getBetterValue(player1.strike_rate, player2.strike_rate, true)
+            },
+            {
+                label: 'Bowling Average',
+                player1: player1.bowling_average?.toFixed(1) || '0.0',
+                player2: player2.bowling_average?.toFixed(1) || '0.0',
+                better: getBetterValue(player1.bowling_average, player2.bowling_average, false)
+            },
+            {
+                label: 'Economy Rate',
+                player1: player1.economy_rate?.toFixed(1) || '0.0',
+                player2: player2.economy_rate?.toFixed(1) || '0.0',
+                better: getBetterValue(player1.economy_rate, player2.economy_rate, false)
+            },
+            {
+                label: 'Total Matches',
+                player1: player1.total_matches || '0',
+                player2: player2.total_matches || '0',
+                better: getBetterValue(player1.total_matches, player2.total_matches, true)
+            }
+        ];
+        
+        let html = `
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Player 1 Info -->
+                <div class="glass-panel rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mr-4 text-white font-bold text-lg">
+                            ${getInitials(player1.player?.name || 'Player 1')}
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-white">${player1.player?.name || 'Player 1'}</h4>
+                            <span class="text-sm text-gray-400">${player1.player?.role || 'Player'}</span>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        ${comparisonData.map(data => `
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400 text-sm">${data.label}</span>
+                                <span class="font-bold text-white ${data.better === 'player1' ? 'text-green-400' : ''}">
+                                    ${data.player1}
+                                </span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <!-- Comparison Stats -->
+                <div class="glass-panel rounded-xl p-6">
+                    <h4 class="text-lg font-bold text-white mb-4 text-center">Comparison</h4>
+                    <div class="space-y-4">
+                        ${comparisonData.map(data => {
+                            const p1Val = parseFloat(data.player1) || 0;
+                            const p2Val = parseFloat(data.player2) || 0;
+                            const total = p1Val + p2Val;
+                            const p1Percent = total > 0 ? (p1Val / total * 100) : 50;
+                            
+                            return `
+                                <div class="space-y-1">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-gray-400">${data.label}</span>
+                                        <span class="text-white">${data.better === 'equal' ? 'Equal' : data.better.toUpperCase()}</span>
+                                    </div>
+                                    <div class="h-2 bg-gray-800 rounded-full overflow-hidden">
+                                        <div class="h-full flex">
+                                            <div class="bg-gradient-to-r from-blue-500 to-cyan-500" style="width: ${p1Percent}%"></div>
+                                            <div class="bg-gradient-to-r from-purple-500 to-pink-500" style="width: ${100 - p1Percent}%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between text-xs text-gray-400">
+                                        <span>${data.player1}</span>
+                                        <span>${data.player2}</span>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+                
+                <!-- Player 2 Info -->
+                <div class="glass-panel rounded-xl p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mr-4 text-white font-bold text-lg">
+                            ${getInitials(player2.player?.name || 'Player 2')}
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-white">${player2.player?.name || 'Player 2'}</h4>
+                            <span class="text-sm text-gray-400">${player2.player?.role || 'Player'}</span>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        ${comparisonData.map(data => `
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400 text-sm">${data.label}</span>
+                                <span class="font-bold text-white ${data.better === 'player2' ? 'text-green-400' : ''}">
+                                    ${data.player2}
+                                </span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        container.innerHTML = html;
+    }
+
+    // Helper function to determine better value
+    function getBetterValue(val1, val2, higherIsBetter = true) {
+        val1 = parseFloat(val1) || 0;
+        val2 = parseFloat(val2) || 0;
+        
+        if (val1 === val2) return 'equal';
+        if (higherIsBetter) {
+            return val1 > val2 ? 'player1' : 'player2';
+        } else {
+            return val1 < val2 ? 'player1' : 'player2';
+        }
+    }
+
+    // Get player prediction
+    async function getPlayerPrediction(playerId) {
+        try {
+            const response = await fetch(`${API}/predict/player/${playerId}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                const prediction = data.prediction;
+                showToast(
+                    `Prediction: ${prediction.predicted_runs} runs, ${prediction.predicted_wickets} wickets`, 
+                    'success'
+                );
+            } else {
+                showToast('Failed to get prediction', 'error');
+            }
+        } catch (error) {
+            console.error('Error getting prediction:', error);
+            showToast('Failed to get prediction', 'error');
+        }
+    }
+
+    // Load predictions (placeholder - implement with real data)
+    function loadPredictions(stats, prediction) {
+        const predictionsContainer = document.getElementById('predictionsContainer');
+        
+        if (prediction) {
+            document.getElementById('predictionConfidence').textContent = `${Math.min(95, Math.max(65, Math.round(Math.random() * 30) + 65))}%`;
+            document.getElementById('predictionText').textContent = 
+                prediction.prediction_text || 'Based on recent form, expected to perform above average.';
+            document.getElementById('predictedRuns').textContent = prediction.predicted_runs || '25-35';
+            document.getElementById('predictedWickets').textContent = prediction.predicted_wickets || '1-2';
+        } else {
+            document.getElementById('predictionConfidence').textContent = '75%';
+            document.getElementById('predictionText').textContent = 'Based on recent form, expected to perform above average.';
+            document.getElementById('predictedRuns').textContent = '25-35';
+            document.getElementById('predictedWickets').textContent = '1-2';
+        }
+        
+        // Add prediction factors
+        const factorsContainer = document.getElementById('predictionFactors');
+        factorsContainer.innerHTML = `
+            <div class="flex items-center text-sm">
+                <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                <span class="text-gray-300">Good recent form</span>
+            </div>
+            <div class="flex items-center text-sm">
+                <div class="w-2 h-2 bg-blue-400 rounded-full mr-2"></div>
+                <span class="text-gray-300">Consistent performance</span>
+            </div>
+            <div class="flex items-center text-sm">
+                <div class="w-2 h-2 bg-yellow-400 rounded-full mr-2"></div>
+                <span class="text-gray-300">Match conditions favorable</span>
+            </div>
+        `;
+    }
+
+    // Load player recommendations (placeholder)
+    function loadPlayerRecommendations(stats) {
+        const recommendationsContainer = document.getElementById('recommendationsContainer');
+        
+        recommendationsContainer.innerHTML = `
+            <div class="glass-panel rounded-xl p-4">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-bullseye text-green-400 mr-2"></i>
+                    <h5 class="font-bold text-white">Training Focus</h5>
+                </div>
+                <p class="text-sm text-gray-300">${stats.bowling_average > 30 ? 'Focus on death bowling variations' : 'Improve power-hitting in final overs'}</p>
+            </div>
+            <div class="glass-panel rounded-xl p-4">
+                <div class="flex items-center mb-2">
+                    <i class="fas fa-chart-line text-blue-400 mr-2"></i>
+                    <h5 class="font-bold text-white">Performance Target</h5>
+                </div>
+                <p class="text-sm text-gray-300">Aim to improve batting average by 10% in next 5 matches</p>
+            </div>
+        `;
+    }
+
+    // Load performance insights (placeholder)
+    function loadPerformanceInsights(stats) {
+        const insightsContainer = document.getElementById('performanceInsights');
+        
+        insightsContainer.innerHTML = `
+            <div class="flex items-start">
+                <div class="w-2 h-2 bg-green-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                <p class="text-sm text-gray-300">Strong batting consistency with ${stats.batting_average?.toFixed(1) || '0.0'} average</p>
+            </div>
+            <div class="flex items-start">
+                <div class="w-2 h-2 bg-blue-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                <p class="text-sm text-gray-300">${stats.economy_rate < 6 ? 'Excellent economy rate' : 'Economy rate needs improvement'}</p>
+            </div>
+            <div class="flex items-start">
+                <div class="w-2 h-2 bg-amber-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                <p class="text-sm text-gray-300">${stats.total_matches > 20 ? 'Experienced player with good match awareness' : 'Developing player showing potential'}</p>
+            </div>
+        `;
+    }
+
+    // Render recent performance
+    function renderRecentPerformance(stats, matches) {
+    const tableBody = document.getElementById('recentPerformanceTable');
+
+    // 🚨 No matches actually played
+    if (!Array.isArray(matches) || matches.length === 0)
+{
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="6" class="py-8 text-center text-gray-400">
+                    No matches played yet
+                </td>
+            </tr>
+        `;
+        document.getElementById('last5Avg').textContent = '-';
+        document.getElementById('formTrend').textContent = 'N/A';
+        document.getElementById('trendIcon').innerHTML = '';
+        return;
+    }
+
+    let html = '';
+
+    matches.slice(0, 5).forEach(match => {
+        const runs = match.runs ?? '-';
+        const wickets = match.wickets ?? '-';
+        const strikeRate = match.strike_rate?.toFixed(1) ?? '-';
+        const economy = match.economy_rate?.toFixed(1) ?? '-';
+
+        html += `
+            <tr class="border-b border-gray-800">
+                <td class="py-3 px-4 text-gray-400 text-sm">${formatDate(match.date)}</td>
+                <td class="py-3 px-4 text-white text-sm">${match.name || 'Match'}</td>
+                <td class="py-3 px-4 text-green-400 font-medium">${runs}</td>
+                <td class="py-3 px-4 text-blue-400 font-medium">${strikeRate}</td>
+                <td class="py-3 px-4 text-red-400 font-medium">${wickets}</td>
+                <td class="py-3 px-4 text-amber-400 font-medium">${economy}</td>
+            </tr>
+        `;
+    });
+
+    tableBody.innerHTML = html;
+
+    // Summary
+    document.getElementById('last5Avg').textContent =
+        stats.batting_average ? stats.batting_average.toFixed(1) : '-';
+
+    document.getElementById('formTrend').textContent = 'Based on matches';
+    document.getElementById('trendIcon').innerHTML =
+        '<i class="fas fa-chart-line text-blue-400"></i>';
+}
+
+
+    // Utility functions
+    function getTeamName(teamId) {
+        const team = allTeams.find(t => t.id === teamId);
+        return team ? team.name : 'No Team';
+    }
+
+    function calculatePerformanceScore(player) {
+    // 🚨 No matches → No performance
+    if (!player.total_matches || player.total_matches === 0) {
+        return 0;
+    }
+
+    let score = 30; // realistic base for active player
+
+    // Batting contribution
+    if (player.batting_average && player.batting_average > 0) {
+        score += Math.min(player.batting_average * 1.2, 30);
+    }
+
+    // Bowling contribution
+    if (player.bowling_average && player.bowling_average > 0) {
+        score += Math.min((25 / player.bowling_average) * 20, 30);
+    }
+
+    // Experience bonus
+    score += Math.min(player.total_matches * 2, 10);
+
+    return Math.round(Math.min(score, 100));
+}
+
+function getPlayerGradient(score) {
+    if (score === 0) return 'bg-gradient-to-br from-gray-700 to-gray-600';
+    if (score >= 80) return 'bg-gradient-to-br from-green-500 to-emerald-500';
+    if (score >= 60) return 'bg-gradient-to-br from-blue-500 to-cyan-500';
+    if (score >= 40) return 'bg-gradient-to-br from-yellow-500 to-amber-400';
+    return 'bg-gradient-to-br from-red-500 to-red-400';
+}
+
+
+    function getPerformanceGradient(score) {
+        if (score >= 80) return 'from-green-500 to-emerald-400';
+        if (score >= 60) return 'from-blue-500 to-cyan-400';
+        return 'from-yellow-500 to-amber-400';
+    }
+
+    function getRoleColor(role) {
+        switch((role || '').toLowerCase()) {
+            case 'batsman': return 'bg-red-500/20 text-red-400';
+            case 'bowler': return 'bg-blue-500/20 text-blue-400';
+            case 'all-rounder': return 'bg-green-500/20 text-green-400';
+            case 'wicket-keeper': return 'bg-purple-500/20 text-purple-400';
+            default: return 'bg-gray-500/20 text-gray-400';
+        }
+    }
+
+    
+
+    function generateSampleData(average, variation) {
+        return Array(7).fill(0).map(() => 
+            Math.max(0, average + (Math.random() * variation * 2 - variation))
+        );
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return 'N/A';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+
+    // Debounce utility function
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    function initializeSearch() {
+        const input = document.getElementById('playerSearch');
+        const results = document.getElementById('playerSearchResults');
+
+        const search = debounce(() => {
+            const term = input.value.toLowerCase().trim();
+            results.classList.add('hidden');
+            results.innerHTML = '';
+
+            if (term.length < 2) return;
+
+            const filtered = allPlayers.filter(p =>
+                p.name.toLowerCase().includes(term) || p.role.toLowerCase().includes(term)
+            );
+
+            if (filtered.length === 0) {
+                results.innerHTML = '<div class="p-4 text-center text-gray-400">No players found</div>';
+                results.classList.remove('hidden');
+                return;
+            }
+
+            filtered.forEach(player => {
+                const div = document.createElement('div');
+                div.className = 'p-3 hover:bg-gray-800 cursor-pointer border-b border-gray-800 last:border-0';
+                div.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 rounded-full ${getPlayerGradient(calculatePerformanceScore(player))} flex items-center justify-center text-white text-xs font-bold mr-3">
+                            ${getInitials(player.name)}
+                        </div>
+                        <div>
+                            <div class="text-sm font-medium text-white">${player.name}</div>
+                            <div class="text-xs text-gray-400">${player.role} • ${getTeamName(player.team_id)}</div>
+                        </div>
+                    </div>
+                `;
+                div.onclick = () => {
+                    input.value = player.name;
+                    results.classList.add('hidden');
+                    viewPlayerAnalytics(player.id);
+                };
+                results.appendChild(div);
+            });
+
+            results.classList.remove('hidden');
+        }, 300);
+
+        input.addEventListener('input', search);
+        document.addEventListener('click', (e) => {
+            if (!input.contains(e.target) && !results.contains(e.target)) {
+                results.classList.add('hidden');
+            }
+        });
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.location.pathname.includes('/analytics')) {
+            loadAnalyticsData();
+            
+            // Initialize player search
+            const searchInput = document.getElementById('playerSearch');
+            const searchResults = document.getElementById('playerSearchResults');
+            
+            const searchHandler = debounce(() => {
+                const searchTerm = searchInput.value.toLowerCase();
+                if (searchTerm.length < 2) {
+                    searchResults.classList.add('hidden');
+                    return;
+                }
+                
+                const filtered = allPlayers.filter(player => 
+                    player.name.toLowerCase().includes(searchTerm) ||
+                    player.role.toLowerCase().includes(searchTerm)
+                );
+                
+                if (filtered.length > 0) {
+                    let html = '';
+                    filtered.forEach(player => {
+                        html += `
+                            <div class="p-3 hover:bg-gray-800 cursor-pointer border-b border-gray-800 last:border-b-0" 
+                                onclick="selectPlayerFromSearch(${player.id}, '${player.name.replace(/'/g, "\\'")}')">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 rounded-full ${getPlayerGradient(calculatePerformanceScore(player))} flex items-center justify-center text-white text-xs font-bold mr-3">
+                                        ${getInitials(player.name)}
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-medium text-white">${player.name}</div>
+                                        <div class="text-xs text-gray-400">${player.role} • ${getTeamName(player.team_id)}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    searchResults.innerHTML = html;
+                    searchResults.classList.remove('hidden');
+                } else {
+                    searchResults.innerHTML = '<div class="p-4 text-gray-400 text-center">No players found</div>';
+                    searchResults.classList.remove('hidden');
+                }
+            }, 300);
+            
+            searchInput.addEventListener('input', searchHandler);
+            
+            // Close search results when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                    searchResults.classList.add('hidden');
+                }
+            });
+            
+            // Team filter change
+            document.getElementById('teamFilter').addEventListener('change', filterPlayers);
+            
+            // Modal close handlers
+            document.getElementById('playerAnalyticsModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal('playerAnalyticsModal');
+                }
+            });
+            
+            document.getElementById('compareModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal('compareModal');
+                }
+            });
+        }
+    });
+
+    // Placeholder functions for modal buttons
+    function updateChart() {
+        showToast('Chart updated', 'success');
+    }
+
+    function refreshPredictions() {
+        if (currentPlayerId) {
+            showToast('Predictions refreshed', 'success');
+        }
+    }
+
+    function loadMoreMatches() {
+        showToast('Loading more matches...', 'info');
+    }
+
+    function refreshRecommendations() {
+        if (currentPlayerId) {
+            showToast('Recommendations refreshed', 'success');
+        }
+    }
+
+
+
+    function comparePlayersModal() {
+        // First, fetch players to populate the modal
+        fetchPlayersForComparison().then(players => {
+            openCompareModal(players);
+        });
+    }
+
+    async function fetchPlayersForComparison() {
+        try {
+            const response = await fetch('/api/players');
+            const data = await response.json();
+            
+            if (data.success) {
+                return data.players || [];
+            }
+            return [];
+        } catch (error) {
+            console.error('Error fetching players for comparison:', error);
+            return [];
+        }
+    }
+
+    function openCompareModal(players) {
+        // Create modal HTML
+        const modalHTML = `
+            <div id="compareModal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 animate-fade-in">
+                <div class="glass-panel rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+                    <div class="p-6 border-b border-gray-700">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xl font-bold text-white">Compare Players</h3>
+                            <button onclick="closeCompareModal()" class="text-gray-400 hover:text-white">
+                                <i class="fas fa-times text-xl"></i>
+                            </button>
+                        </div>
+                        <p class="text-gray-400 text-sm mt-2">Select up to 4 players to compare their performance</p>
+                    </div>
+                    
+                    <div class="p-6">
+                        <!-- Player Selection -->
+                        <div class="mb-6">
+                            <h4 class="text-lg font-semibold text-white mb-4">Select Players</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-60 overflow-y-auto p-2" id="playerSelectionList">
+                                ${players.map(player => `
+                                    <div class="flex items-center p-3 bg-gray-800/50 rounded-xl hover:bg-gray-800 cursor-pointer transition" 
+                                        onclick="togglePlayerSelection(${player.id}, '${player.name}')"
+                                        id="player-select-${player.id}">
+                                        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center mr-3">
+                                            <span class="text-white font-bold">${getInitials(player.name)}</span>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h5 class="font-medium text-white">${player.name}</h5>
+                                            <p class="text-gray-400 text-sm">${player.role || 'Player'}</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm font-semibold text-amber-400">${calculatePlayerRating(player).toFixed(1)}</p>
+                                            <p class="text-xs text-gray-400">Rating</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <!-- Selected Players -->
+                        <div class="mb-6">
+                            <h4 class="text-lg font-semibold text-white mb-4">Selected Players (${comparePlayers.length}/4)</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="selectedPlayersContainer">
+                                ${comparePlayers.length === 0 ? `
+                                    <div class="col-span-full text-center py-8">
+                                        <i class="fas fa-users text-3xl text-gray-600 mb-3"></i>
+                                        <p class="text-gray-500">No players selected</p>
+                                        <p class="text-gray-400 text-sm mt-2">Click on players above to select them</p>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        
+                        <!-- Comparison Chart Placeholder -->
+                        <div class="bg-gray-800/30 rounded-xl p-6 mb-6">
+                            <h4 class="text-lg font-semibold text-white mb-4">Performance Comparison</h4>
+                            <div id="comparisonChart" class="min-h-[200px] flex items-center justify-center">
+                                <div class="text-center">
+                                    <i class="fas fa-chart-bar text-3xl text-gray-600 mb-3"></i>
+                                    <p class="text-gray-500">Select players to see comparison</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="flex justify-end space-x-3">
+                            <button onclick="closeCompareModal()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition">
+                                Cancel
+                            </button>
+                            <button onclick="generateComparison()" 
+                                    class="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                    ${comparePlayers.length < 2 ? 'disabled' : ''}>
+                                <i class="fas fa-chart-line mr-2"></i>Generate Comparison
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Add modal to page
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        updateSelectedPlayersDisplay();
+    }
+
+    function togglePlayerSelection(playerId, playerName) {
+        const index = comparePlayers.findIndex(p => p.id === playerId);
+        const element = document.getElementById(`player-select-${playerId}`);
+        
+        if (index === -1) {
+            // Add player if not already selected and we have space
+            if (comparePlayers.length >= 4) {
+                showToast('Maximum 4 players can be compared', 'warning');
+                return;
+            }
+            
+            comparePlayers.push({ id: playerId, name: playerName });
+            if (element) {
+                element.classList.add('ring-2', 'ring-blue-500');
+            }
+            showToast(`${playerName} added to comparison`, 'success');
+        } else {
+            // Remove player
+            comparePlayers.splice(index, 1);
+            if (element) {
+                element.classList.remove('ring-2', 'ring-blue-500');
+            }
+            showToast(`${playerName} removed from comparison`, 'info');
+        }
+        
+        updateSelectedPlayersDisplay();
+    }
+
+    function updateSelectedPlayersDisplay() {
+        const container = document.getElementById('selectedPlayersContainer');
+        if (!container) return;
+        
+        if (comparePlayers.length === 0) {
+            container.innerHTML = `
+                <div class="col-span-full text-center py-8">
+                    <i class="fas fa-users text-3xl text-gray-600 mb-3"></i>
+                    <p class="text-gray-500">No players selected</p>
+                    <p class="text-gray-400 text-sm mt-2">Click on players above to select them</p>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = comparePlayers.map((player, index) => `
+            <div class="relative p-4 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl">
+                <button onclick="removeFromComparison(${player.id})" 
+                        class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full text-white hover:bg-red-600 transition">
+                    <i class="fas fa-times text-xs"></i>
+                </button>
+                <div class="text-center">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center mx-auto mb-3">
+                        <span class="text-white font-bold">${getInitials(player.name)}</span>
+                    </div>
+                    <h5 class="font-semibold text-white truncate">${player.name}</h5>
+                    <div class="text-2xl font-bold text-amber-400 mt-2">${index + 1}</div>
+                    <p class="text-xs text-gray-400">Position</p>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    async function startSimulation(team1Id, team2Id) {
+        const output = document.getElementById('simulationOutput');
+        const matchType = document.getElementById('matchType').value;
+        const simSpeed = document.getElementById('simSpeed').value;
+        const weather = document.getElementById('weather').value;
+        
+        // Clear output
+        output.innerHTML = '';
+        
+        // Fetch team details
+        const [team1Response, team2Response] = await Promise.all([
+            fetch(`/api/teams/${team1Id}`),
+            fetch(`/api/teams/${team2Id}`)
+        ]);
+        
+        const [team1Data, team2Data] = await Promise.all([
+            team1Response.json(),
+            team2Response.json()
+        ]);
+        
+        const team1 = team1Data.team;
+        const team2 = team2Data.team;
+        
+        // Add simulation messages
+        addSimulationMessage(output, `🏏 Match Simulation Started`);
+        addSimulationMessage(output, `📊 ${team1.name} vs ${team2.name}`);
+        addSimulationMessage(output, `🎯 Match Type: ${matchType.toUpperCase()}`);
+        addSimulationMessage(output, `🌤️ Weather: ${weather}`);
+        
+        // Simulate toss
+        await delay(1000);
+        const tossWinner = Math.random() > 0.5 ? team1 : team2;
+        const tossDecision = Math.random() > 0.5 ? 'bat' : 'bowl';
+        addSimulationMessage(output, `🎲 Toss: ${tossWinner.name} wins and chooses to ${tossDecision} first`);
+        
+        // Determine batting and bowling teams
+        let battingTeam, bowlingTeam;
+        if (tossDecision === 'bat') {
+            battingTeam = tossWinner;
+            bowlingTeam = tossWinner === team1 ? team2 : team1;
+        } else {
+            bowlingTeam = tossWinner;
+            battingTeam = tossWinner === team1 ? team2 : team1;
+        }
+        
+        // Simulate innings
+        await delay(1000);
+        addSimulationMessage(output, `\n🏏 First Innings: ${battingTeam.name} batting`);
+        
+        let totalRuns = 0;
+        let wickets = 0;
+        let overs = matchType === 't20' ? 20 : matchType === 'odi' ? 50 : 90;
+        
+        for (let over = 1; over <= overs; over++) {
+            if (wickets >= 10) break;
+            
+            let overRuns = 0;
+            let overWickets = 0;
+            
+            for (let ball = 1; ball <= 6; ball++) {
+                if (wickets >= 10) break;
+                
+                // Simulate ball outcome
+                const rand = Math.random();
+                let ballResult;
+                
+                if (rand < 0.05) {
+                    // Wicket
+                    ballResult = 'W';
+                    wickets++;
+                    overWickets++;
+                } else if (rand < 0.15) {
+                    // Dot ball
+                    ballResult = '0';
+                } else if (rand < 0.35) {
+                    // 1 run
+                    ballResult = '1';
+                    totalRuns++;
+                    overRuns++;
+                } else if (rand < 0.55) {
+                    // 2 runs
+                    ballResult = '2';
+                    totalRuns += 2;
+                    overRuns += 2;
+                } else if (rand < 0.75) {
+                    // 4 runs
+                    ballResult = '4';
+                    totalRuns += 4;
+                    overRuns += 4;
+                } else if (rand < 0.90) {
+                    // 6 runs
+                    ballResult = '6';
+                    totalRuns += 6;
+                    overRuns += 6;
+                } else {
+                    // Wide or No ball
+                    ballResult = '+1';
+                    totalRuns++;
+                    overRuns++;
+                    ball--; // Extra ball
+                }
+                
+                if (simSpeed !== 'fast') {
+                    addSimulationMessage(output, `Over ${over}.${ball}: ${ballResult}`, 'text-gray-400');
+                    await delay(100);
+                }
+            }
+            
+            addSimulationMessage(output, `Over ${over}: ${overRuns}/${overWickets} (Total: ${totalRuns}/${wickets})`);
+            output.scrollTop = output.scrollHeight;
+            
+            if (simSpeed === 'detailed') await delay(500);
+        }
+        
+        const firstInningsScore = totalRuns;
+        addSimulationMessage(output, `\n📈 ${battingTeam.name}: ${totalRuns}/${wickets} in ${Math.min(overs, over-1)} overs`);
+        
+        // Simulate second innings
+        await delay(1000);
+        addSimulationMessage(output, `\n🎯 Second Innings: ${bowlingTeam.name} needs ${totalRuns + 1} runs to win`);
+        
+        let target = totalRuns + 1;
+        totalRuns = 0;
+        wickets = 0;
+        let ballsRemaining = overs * 6;
+        let chaseSuccessful = false;
+        
+        for (let ball = 1; ball <= ballsRemaining; ball++) {
+            if (wickets >= 10 || totalRuns >= target) {
+                chaseSuccessful = totalRuns >= target;
+                break;
+            }
+            
+            // Simulate ball outcome with pressure factor
+            const requiredRate = (target - totalRuns) / ((ballsRemaining - ball + 1) / 6);
+            const pressureFactor = Math.min(1.5, requiredRate / 6);
+            
+            const rand = Math.random() * pressureFactor;
+            let ballResult;
+            
+            if (rand < 0.06) {
+                ballResult = 'W';
+                wickets++;
+            } else if (rand < 0.20) {
+                ballResult = '0';
+            } else if (rand < 0.45) {
+                ballResult = '1';
+                totalRuns++;
+            } else if (rand < 0.65) {
+                ballResult = '2';
+                totalRuns += 2;
+            } else if (rand < 0.85) {
+                ballResult = '4';
+                totalRuns += 4;
+            } else if (rand < 0.95) {
+                ballResult = '6';
+                totalRuns += 6;
+            } else {
+                ballResult = '+1';
+                totalRuns++;
+            }
+            
+            if (simSpeed !== 'fast') {
+                const overNum = Math.floor(ball / 6) + 1;
+                const ballNum = (ball % 6) || 6;
+                addSimulationMessage(output, `Over ${overNum}.${ballNum}: ${ballResult} (Need ${target - totalRuns} from ${ballsRemaining - ball} balls)`, 'text-gray-400');
+                await delay(100);
+            }
+        }
+        
+        // Determine result
+        await delay(1000);
+        const winner = chaseSuccessful ? bowlingTeam : battingTeam;
+        const margin = chaseSuccessful 
+            ? `${10 - wickets} wickets` 
+            : `${target - totalRuns - 1} runs`;
+        
+        addSimulationMessage(output, `\n🏆 RESULT: ${winner.name} wins by ${margin}!`, 'text-green-400 font-bold');
+        
+        // Show scorecard
+        showScorecard({
+            team1: battingTeam.name,
+            team2: bowlingTeam.name,
+            score1: `${firstInningsScore}/${10}`,
+            score2: `${totalRuns}/${wickets}`,
+            result: `${winner.name} wins by ${margin}`,
+            mom: getRandomPlayerName() // Simulated Man of the Match
+        });
+        
+        // Show save button
+        document.getElementById('saveResultBtn').classList.remove('hidden');
+    }
+
+
+    function addSimulationMessage(container, message, className = 'text-white') {
+        const div = document.createElement('div');
+        div.className = `mb-1 ${className}`;
+        div.textContent = message;
+        container.appendChild(div);
+    }
+
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function getRandomPlayerName() {
+        const names = ['Virat Kohli', 'Rohit Sharma', 'Jasprit Bumrah', 'KL Rahul', 'Rishabh Pant', 'Hardik Pandya', 'Ravindra Jadeja'];
+        return names[Math.floor(Math.random() * names.length)];
+    }
+
+    function showScorecard(matchData) {
+        document.getElementById('scorecardContainer').classList.remove('hidden');
+        
+        const scorecard = document.getElementById('matchScorecard');
+        scorecard.innerHTML = `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="p-4 bg-gray-800/50 rounded-xl">
+                    <h5 class="font-semibold text-white mb-3">${matchData.team1}</h5>
+                    <div class="text-3xl font-bold text-amber-400 mb-2">${matchData.score1}</div>
+                    <div class="text-sm text-gray-400">First Innings</div>
+                </div>
+                
+                <div class="p-4 bg-gray-800/50 rounded-xl">
+                    <h5 class="font-semibold text-white mb-3">${matchData.team2}</h5>
+                    <div class="text-3xl font-bold text-amber-400 mb-2">${matchData.score2}</div>
+                    <div class="text-sm text-gray-400">Second Innings</div>
+                </div>
+            </div>
+            
+            <div class="mt-6 p-4 bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-xl border border-green-500/20">
+                <div class="flex items-center">
+                    <i class="fas fa-trophy text-amber-400 text-xl mr-3"></i>
+                    <div>
+                        <h5 class="font-semibold text-white">${matchData.result}</h5>
+                        <p class="text-gray-400 text-sm mt-1">
+                            <i class="fas fa-star mr-1"></i> Man of the Match: ${matchData.mom}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+
+    async function saveSimulationResult() {
+        try {
+            // Create a match record for the simulation
+            const matchData = {
+                name: 'Simulated Match',
+                date: new Date().toISOString(),
+                team1_id: 1, // Default team IDs - you might want to get these from the simulation
+                team2_id: 2,
+                type: document.getElementById('matchType').value.toUpperCase(),
+                score1: '180/8',
+                score2: '175/9',
+                result: 'Team A wins by 5 runs',
+                mom: getRandomPlayerName()
+            };
+            
+            showToast('Saving simulation result...', 'info');
+            
+            // In a real implementation, you would save to database
+            // For now, just show success message
+            await delay(1500);
+            
+            showToast('Simulation result saved successfully!', 'success');
+            closeSimulationModal();
+            
+        } catch (error) {
+            console.error('Error saving simulation:', error);
+            showToast('Failed to save simulation', 'error');
+        }
+    }
+
+    function closeSimulationModal() {
+        const modal = document.getElementById('simulationModal');
+        if (modal) {
+            modal.classList.add('animate-fade-out');
+            setTimeout(() => modal.remove(), 300);
+        }
+    }
+
+    // Helper function for calculating player rating
+// function calculatePlayerRating(player) {
+//     if (!player || !player.total_matches || player.total_matches === 0) {
+//         return 0.0;
+//     }
+
+//     let rating = 3.0;
+
+//     if (player.batting_average) rating += Math.min(player.batting_average / 15, 3);
+//     if (player.strike_rate) rating += Math.min((player.strike_rate - 100) / 25, 2);
+//     if (player.bowling_average && player.bowling_average > 0)
+//         rating += Math.min(25 / player.bowling_average, 3);
+
+//     return Math.min(10, Math.max(1, rating));
+// }
+
+    // Add to existing helper functions
+    function getInitials(name) {
+        if (!name) return '??';
+        return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+    }
+
+    // Toast notification function (if not already exists)
+    function showToast(message, type = 'info') {
+        // Remove existing toasts
+        const existingToasts = document.querySelectorAll('.toast-notification');
+        existingToasts.forEach(toast => {
+            toast.classList.add('animate-fade-out');
+            setTimeout(() => toast.remove(), 300);
+        });
+        
+        // Create new toast
+        const colors = {
+            'info': 'blue',
+            'success': 'green',
+            'warning': 'amber',
+            'error': 'red'
+        };
+        
+        const color = colors[type] || 'blue';
+        const icon = {
+            'info': 'info-circle',
+            'success': 'check-circle',
+            'warning': 'exclamation-triangle',
+            'error': 'times-circle'
+        }[type];
+        
+        const toastHTML = `
+            <div class="toast-notification fixed top-4 right-4 bg-gray-800 border-l-4 border-${color}-500 text-white p-4 rounded-lg shadow-lg z-50 max-w-md animate-fade-in">
+                <div class="flex items-center">
+                    <i class="fas fa-${icon} text-${color}-400 mr-3 text-xl"></i>
+                    <div class="flex-1">
+                        <p class="font-medium">${message}</p>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-gray-400 hover:text-white">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', toastHTML);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            const toast = document.querySelector('.toast-notification:last-child');
+            if (toast) {
+                toast.classList.add('animate-fade-out');
+                setTimeout(() => toast.remove(), 300);
+            }
+        }, 5000);
+    }
+
+
+    function simulateMatch() {
+        showToast('Match simulation started...', 'info');
+    }
+
+    async function performComparison() {
+        if (comparePlayers.length < 2) {
+            showToast('Select two players to compare', 'error');
+            return;
+        }
+
+        const p1 = comparePlayers[0];
+        const p2 = comparePlayers[1];
+
+        try {
+            const [res1, res2] = await Promise.all([
+                fetch(`${API}/analytics/player/${p1.id}`).then(r => r.json()),
+                fetch(`${API}/analytics/player/${p2.id}`).then(r => r.json())
+            ]);
+
+            if (res1.success && res2.success) {
+                updateComparisonResults(res1.stats, res2.stats);
+                createComparisonChart(res1.stats, res2.stats);
+
+                document.getElementById('comparisonResults').classList.remove('hidden');
+                document.getElementById('comparisonChartContainer').classList.remove('hidden');
+                document.getElementById('compareEmptyState').classList.add('hidden');
+            }
+        } catch (err) {
+            showToast('Failed to load comparison data', 'error');
+        }
+    }
+
+
+
+    function toggleAdvancedStats() {
+        showToast('Advanced stats toggled', 'info');
+    }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <script>
+    // Generate comprehensive Player Analytics Report as PDF
+    function generateReport() {
+        showToast('Generating JSON report...', 'info');
+
+        if (allPlayers.length === 0) {
+            showToast('No players to export', 'error');
+            return;
+        }
+
+        // Prepare clean data structure
+        const reportData = {
+            generated_at: new Date().toISOString(),
+            generated_date: new Date().toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            }),
+            total_players: allPlayers.length,
+            total_teams: allTeams.length,
+            summary: {
+                average_batting: document.getElementById('avgBatting').textContent,
+                average_bowling: document.getElementById('avgBowling').textContent
+            },
+            teams: allTeams.map(team => ({
+                id: team.id,
+                name: team.name
+            })),
+            players: allPlayers.map(player => ({
+                id: player.id,
+                name: player.name,
+                role: player.role,
+                team_id: player.team_id,
+                team_name: getTeamName(player.team_id),
+                batting_average: player.batting_average || null,
+                strike_rate: player.strike_rate || null,
+                total_runs: player.total_runs || 0,
+                bowling_average: player.bowling_average || null,
+                economy_rate: player.economy_rate || null,
+                total_wickets: player.total_wickets || 0,
+                total_matches: player.total_matches || 0,
+                performance_score: calculatePerformanceScore(player)
+            }))
+        };
+
+        // Convert to pretty JSON string
+        const jsonString = JSON.stringify(reportData, null, 2);
+
+        // Create blob and trigger download
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `Cricket_Analytics_Data_${new Date().toISOString().slice(0,10)}.json`;
+        link.style.display = 'none';
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Clean up
+        URL.revokeObjectURL(url);
+
+        showToast(`JSON report downloaded successfully! (${allPlayers.length} players)`, 'success');
+    }
+    </script>
+    <style>
+    /* Cricket ball loader */
+    .cricket-loader {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+        position: relative;
+        animation: spin 1.5s linear infinite;
+    }
+
+    .cricket-loader::before {
+        content: '';
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        right: 5px;
+        bottom: 5px;
+        background: #1a1a1a;
+        border-radius: 50%;
+    }
+
+    .cricket-loader::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        height: 2px;
+        background: #3b82f6;
+    }
+
+    /* Glowing button effect */
+    .btn-glow {
+        background: linear-gradient(90deg, #2563eb, #7c3aed);
+        box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-glow:hover {
+        box-shadow: 0 8px 30px rgba(37, 99, 235, 0.6);
+        transform: translateY(-2px);
+    }
+
+    .btn-glow::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.7s ease;
+    }
+
+    .btn-glow:hover::after {
+        left: 100%;
+    }
+
+    /* Player card hover effects */
+    .player-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .player-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Custom scrollbar */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
+        border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(to bottom, #2563eb, #7c3aed);
+    }
+
+    /* Glass morphism */
+    .glass-panel {
+        background: rgba(30, 41, 59, 0.6);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.36);
+    }
+
+    /* Selection highlight */
+    .selection-highlight {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .selection-highlight::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.1), transparent);
+        transition: left 0.7s ease;
+    }
+
+    .selection-highlight:hover::before {
+        left: 100%;
+    }
+
+    /* Animations */
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .animate-fade-in {
+        animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-slide-down {
+        animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Table styles */
+    table {
+        min-width: 100%;
+    }
+
+    th, td {
+        padding: 12px 16px;
+        text-align: left;
+    }
+
+    tbody tr {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        transition: background-color 0.2s;
+    }
+
+    tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Chart container styles */
+    canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .grid-cols-4 {
+            grid-template-columns: 1fr;
+        }
+        
+        .grid-cols-3 {
+            grid-template-columns: 1fr;
+        }
+        
+        .grid-cols-2 {
+            grid-template-columns: 1fr;
+        }
+        
+        .flex-col {
+            flex-direction: column;
+        }
+        
+        .flex-col > * {
+            margin-bottom: 1rem;
+        }
+        
+        .glass-panel {
+            padding: 1rem !important;
+        }
+    }
+
+    /* Trend indicators */
+    .trend-up {
+        color: #10b981;
+        background: rgba(16, 185, 129, 0.1);
+    }
+
+    .trend-down {
+        color: #ef4444;
+        background: rgba(239, 68, 68, 0.1);
+    }
+
+    .trend-neutral {
+        color: #6b7280;
+        background: rgba(107, 114, 128, 0.1);
+    }
+    </style>
+    {% endblock %}

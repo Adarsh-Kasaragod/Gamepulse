@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block title %}Create New Match{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <div class="glass-panel rounded-2xl p-8 shadow-2xl border border-white/10">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-white mb-4">Create New Match</h1>
+            <p class="text-gray-300">Set up a new cricket match between two teams</p>
+        </div>
+        
+        <form id="createMatchForm" class="space-y-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="matchName" class="block text-sm font-medium text-gray-300 mb-2">
+                        Match Name <span class="text-red-400">*</span>
+                    </label>
+                    <input type="text" 
+                           id="matchName" 
+                           required 
+                           placeholder="e.g., Final Match, League Game #5"
+                           class="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                </div>
+                
+                <div>
+                    <label for="matchDate" class="block text-sm font-medium text-gray-300 mb-2">
+                        Match Date <span class="text-red-400">*</span>
+                    </label>
+                    <input type="date" 
+                           id="matchDate" 
+                           required
+                           class="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="team1" class="block text-sm font-medium text-gray-300 mb-2">
+                        Team 1 <span class="text-red-400">*</span>
+                    </label>
+                    <select id="team1" required 
+                            class="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                        <option value="" disabled selected>Select Team 1</option>
+                        {% for team in teams %}
+                        <option value="{{ team.id }}">{{ team.name }}</option>
+                        {% endfor %}
+                        {% if teams|length == 0 %}
+                        <option value="" disabled>No teams available</option>
+                        {% endif %}
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="team2" class="block text-sm font-medium text-gray-300 mb-2">
+                        Team 2 <span class="text-red-400">*</span>
+                    </label>
+                    <select id="team2" required 
+                            class="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                        <option value="" disabled selected>Select Team 2</option>
+                        {% for team in teams %}
+                        <option value="{{ team.id }}">{{ team.name }}</option>
+                        {% endfor %}
+                        {% if teams|length == 0 %}
+                        <option value="" disabled>No teams available</option>
+                        {% endif %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="pt-4">
+                <button type="submit" 
+                        id="submitBtn"
+                        class="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 flex items-center justify-center gap-3">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Create Match</span>
+                    <i class="fas fa-spinner fa-spin hidden"></i>
+                </button>
+            </div>
+        </form>
+        
+        <div id="resultMessage" class="mt-6"></div>
+    </div>
+</div>
+
+<script>
+// Simple notification function
+function showNotification(message, type = 'info') {
+    const resultDiv = document.getElementById('resultMessage');
+    const colors = {
+        success: 'from-green-600 to-emerald-700 border-green-500/50',
+        error: 'from-red-600 to-pink-700 border-red-500/50',
+        info: 'from-blue-600 to-indigo-700 border-blue-500/50'
+    };
+
+    resultDiv.innerHTML = `
+        <div class="p-4 rounded-xl bg-gradient-to-r ${colors[type]} border text-white font-medium text-center shadow-lg">
+            ${message}
+        </div>
+    `;
+}
+
+document.getElementById('createMatchForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const name = document.getElementById('matchName').value.trim();
+    const date = document.getElementById('matchDate').value;
+    const team1_id = document.getElementById('team1').value;
+    const team2_id = document.getElementById('team2').value;
+    const submitBtn = document.getElementById('submitBtn');
+    const originalText = submitBtn.innerHTML;
+
+    // Client-side validation
+    if (!name || !date || !team1_id || !team2_id) {
+        showNotification('Please fill all fields', 'error');
+        return;
+    }
+
+    if (team1_id === team2_id) {
+        showNotification('Please select two different teams', 'error');
+        return;
+    }
+
+    // Show loading state
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Match...';
+
+    try {
+        const res = await fetch('/api/matches', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: name,
+                date: date,
+                team1_id: parseInt(team1_id),
+                team2_id: parseInt(team2_id)
+            })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+           showNotification('Match created successfully! Taking you to record performances...', 'success');
+            setTimeout(() => {
+    window.location.href = '/manage-data';  // Go straight to performance entry!
+}, 1500);
+        } else {
+            showNotification(data.error || 'Failed to create match', 'error');
+        }
+    } catch (err) {
+        console.error('Error:', err);
+        showNotification('Network error. Please try again.', 'error');
+    } finally {
+        // Restore button
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+    }
+});
+</script>
+{% endblock %}

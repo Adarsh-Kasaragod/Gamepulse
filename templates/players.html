@@ -1,0 +1,1299 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Hero Header Section -->
+    <div class="relative mb-8 overflow-hidden rounded-3xl">
+        <div class="absolute inset-0 bg-gradient-to-r from-green-900/20 via-emerald-900/20 to-cyan-900/20"></div>
+        <div class="relative glass-panel p-8">
+            <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+                <div class="flex-1">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center mr-4">
+                            <i class="fas fa-users text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold text-white">Players Database</h1>
+                            <p class="text-gray-300 mt-1">Track and analyze player performances with AI-powered insights</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Stats -->
+                    <div class="flex flex-wrap gap-4 mt-6">
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                            <span class="text-gray-300 text-sm"><span class="font-bold text-white" id="activePlayersCount">0</span> Active</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-blue-400 rounded-full mr-2"></div>
+                            <span class="text-gray-300 text-sm"><span class="font-bold text-white" id="topBatsmenCount">0</span> Batsmen</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-red-400 rounded-full mr-2"></div>
+                            <span class="text-gray-300 text-sm"><span class="font-bold text-white" id="topBowlersCount">0</span> Bowlers</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-2 h-2 bg-amber-400 rounded-full mr-2"></div>
+                            <span class="text-gray-300 text-sm">Avg Rating: <span class="font-bold text-white" id="avgPlayerRating">0.0</span></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="/manage-data"
+                       class="group relative overflow-hidden btn-glow px-6 py-3 rounded-xl font-semibold text-white flex items-center justify-center">
+                        <div class="absolute inset-0 bg-gradient-to-r from-green-600 to-emerald-600"></div>
+                        <div class="relative z-10 flex items-center">
+                            <i class="fas fa-user-plus mr-2"></i>
+                            Add Player
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </a>
+                    
+                    <button onclick="toggleFilters()" 
+                            class="glass-panel px-6 py-3 rounded-xl font-medium text-white hover:bg-white/10 transition-colors duration-300 flex items-center">
+                        <i class="fas fa-sliders-h mr-2"></i>
+                        Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Panel -->
+    <div id="filtersPanel" class="glass-panel rounded-2xl p-6 mb-6 hidden animate-slide-down">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">Search Players</label>
+                <div class="relative">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" 
+                           id="playerSearch" 
+                           placeholder="Search by name..." 
+                           class="w-full pl-10 pr-4 py-2.5 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition">
+                </div>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">Role</label>
+                <select id="playerRole" class="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition">
+                    <option value="all">All Roles</option>
+                    <option value="batsman">Batsmen</option>
+                    <option value="bowler">Bowlers</option>
+                    <option value="allrounder">All-rounders</option>
+                    <option value="wicketkeeper">Wicket Keepers</option>
+                </select>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">Sort By</label>
+                <select id="playerSort" class="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition">
+                    <option value="name">Name (A-Z)</option>
+                    <option value="rating">Rating (High-Low)</option>
+                    <option value="batting">Batting Average</option>
+                    <option value="bowling">Bowling Average</option>
+                    <option value="recent">Recently Added</option>
+                </select>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2">&nbsp;</label>
+                <button onclick="applyPlayerFilters()" class="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-medium py-2.5 rounded-lg transition-all duration-300 flex items-center justify-center">
+                    <i class="fas fa-check mr-2"></i>
+                    Apply Filters
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="glass-panel rounded-xl p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-gray-400 mb-1">Total Players</p>
+                    <p class="text-2xl font-bold text-white" id="playersCount">0</p>
+                </div>
+                <div class="w-10 h-10 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-users text-green-400"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="glass-panel rounded-xl p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-gray-400 mb-1">Avg Batting</p>
+                    <p class="text-2xl font-bold text-white" id="avgBatting">0.0</p>
+                </div>
+                <div class="w-10 h-10 bg-gradient-to-br from-red-500/20 to-pink-500/20 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-baseball-ball text-red-400"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="glass-panel rounded-xl p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-gray-400 mb-1">Avg Bowling</p>
+                    <p class="text-2xl font-bold text-white" id="avgBowling">0.0</p>
+                </div>
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-bullseye text-blue-400"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="glass-panel rounded-xl p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs text-gray-400 mb-1">AI Predictions</p>
+                    <p class="text-2xl font-bold text-white" id="aiPredictions">0</p>
+                </div>
+                <div class="w-10 h-10 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-robot text-purple-400"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Players Grid -->
+    <div id="playersContainer">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="playersGrid">
+            <!-- Loading State -->
+            <div class="col-span-full">
+                <div class="flex flex-col items-center justify-center py-16">
+                    <div class="cricket-loader mb-4"></div>
+                    <p class="text-gray-400 text-sm">Loading players...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div id="playersEmptyState" class="hidden">
+        <div class="text-center py-16">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-green-900/30 to-emerald-900/30 rounded-full mb-6">
+                <i class="fas fa-users text-green-400 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">No Players Found</h3>
+            <p class="text-gray-400 mb-6 max-w-md mx-auto">Add players to start tracking performances and generating insights</p>
+            <a href="/manage-data" 
+               class="btn-glow px-6 py-3 rounded-xl font-semibold text-white inline-flex items-center">
+                <i class="fas fa-user-plus mr-2"></i>
+                Add First Player
+            </a>
+        </div>
+    </div>
+
+    <!-- Player Card Template -->
+    <template id="playerCardTemplate">
+        <div class="glass-panel rounded-2xl overflow-hidden group cursor-pointer selection-highlight hover:transform hover:-translate-y-1 transition-all duration-300">
+            <div class="p-5">
+                <!-- Player Header -->
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center">
+                        <div class="relative mr-3">
+                            <div class="w-14 h-14 rounded-xl {playerGradient} flex items-center justify-center text-white font-bold text-lg">
+                                {playerInitials}
+                            </div>
+                            <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 border-gray-900 flex items-center justify-center {roleBadgeColor}">
+                                <i class="fas {roleIcon} text-xs"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white mb-1">{playerName}</h3>
+                            <div class="flex items-center">
+                                <span class="px-2 py-1 {roleColor} text-xs font-bold rounded-full mr-2">{playerRole}</span>
+                                <span class="text-xs text-gray-400">ID: {playerId}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="showPlayerActions({playerId}, event)" 
+                            class="text-gray-400 hover:text-white transition-colors duration-200">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <div class="bg-gray-800/30 rounded-xl p-3">
+                        <div class="flex items-center text-sm text-gray-400 mb-1">
+                            <i class="fas fa-baseball-ball mr-1"></i>
+                            Batting
+                        </div>
+                        <div class="text-xl font-bold text-green-400">{battingAvg}</div>
+                    </div>
+                    <div class="bg-gray-800/30 rounded-xl p-3">
+                        <div class="flex items-center text-sm text-gray-400 mb-1">
+                            <i class="fas fa-bullseye mr-1"></i>
+                            Bowling
+                        </div>
+                        <div class="text-xl font-bold text-blue-400">{bowlingAvg}</div>
+                    </div>
+                </div>
+
+                <!-- Rating Bar -->
+                <div class="mb-4">
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="text-gray-400">Player Rating</span>
+                        <span class="text-white font-semibold">{playerRating}/10</span>
+                    </div>
+                    <div class="h-2 bg-gray-800 rounded-full overflow-hidden">
+                        <div class="h-full {ratingGradient} rounded-full" style="width: {ratingPercent}%"></div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-2">
+                    <button onclick="viewPlayerDetails({playerId})" 
+                            class="flex-1 px-4 py-2 bg-gradient-to-r from-green-500/20 to-emerald-600/20 hover:from-green-500/30 hover:to-emerald-600/30 text-green-400 font-medium rounded-lg border border-green-500/30 transition-all duration-300 flex items-center justify-center group">
+                        <i class="fas fa-chart-line mr-2 group-hover:scale-110 transition-transform"></i>
+                        Analytics
+                    </button>
+                    <button onclick="quickAction('edit_player', {playerId})" 
+                            class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg border border-gray-700 transition-colors duration-200">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+</div>
+
+<!-- Enhanced Player Details Modal -->
+<div id="playerModal" class="fixed inset-0 z-50 hidden">
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal('playerModal')"></div>
+    <div class="fixed inset-0 overflow-y-auto">
+        <div class="flex min-h-full items-center justify-center p-4">
+            <div class="relative glass-panel rounded-3xl shadow-2xl w-full max-w-4xl animate-fade-in">
+                <!-- Modal Header -->
+                <div class="p-6 border-b border-gray-800">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="relative mr-4">
+                                <div id="playerModalAvatar" class="w-16 h-16 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white font-bold text-xl">
+                                    PM
+                                </div>
+                                <div id="playerModalRoleBadge" class="absolute -bottom-2 -right-2 w-8 h-8 rounded-full border-2 border-gray-900 flex items-center justify-center bg-green-500">
+                                    <i class="fas fa-user text-xs"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h2 id="playerModalTitle" class="text-2xl font-bold text-white"></h2>
+                                <div class="flex items-center mt-1">
+                                    <span id="playerModalRole" class="px-3 py-1 text-xs font-bold rounded-full mr-3"></span>
+                                    <span class="text-gray-400 text-sm">Player ID: <span id="playerModalId"></span></span>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="closeModal('playerModal')" 
+                                class="w-10 h-10 rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center text-gray-400 hover:text-white transition-colors duration-200">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Modal Content -->
+                <div class="p-6">
+                    <!-- Stats Overview -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                        <div class="bg-gradient-to-br from-green-900/30 to-emerald-800/30 rounded-xl p-4 border border-emerald-800/30">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-400">Batting Avg</p>
+                                    <p class="text-3xl font-bold text-white mt-1" id="playerModalBatAvg">0.0</p>
+                                </div>
+                                <i class="fas fa-baseball-ball text-green-400 text-2xl"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-blue-900/30 to-cyan-800/30 rounded-xl p-4 border border-cyan-800/30">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-400">Bowling Avg</p>
+                                    <p class="text-3xl font-bold text-white mt-1" id="playerModalBowlAvg">0.0</p>
+                                </div>
+                                <i class="fas fa-bullseye text-blue-400 text-2xl"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-purple-900/30 to-purple-800/30 rounded-xl p-4 border border-purple-800/30">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-400">Matches</p>
+                                    <p class="text-3xl font-bold text-white mt-1" id="playerModalMatches">0</p>
+                                </div>
+                                <i class="fas fa-calendar-alt text-purple-400 text-2xl"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-amber-900/30 to-yellow-800/30 rounded-xl p-4 border border-yellow-800/30">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-400">Rating</p>
+                                    <p class="text-3xl font-bold text-white mt-1" id="playerModalRating">0.0</p>
+                                </div>
+                                <i class="fas fa-star text-yellow-400 text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Charts -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                        <!-- Batting Performance -->
+                        <div class="glass-panel rounded-xl p-5">
+                            <div class="flex items-center mb-4">
+                                <div class="w-10 h-10 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-baseball-ball text-green-400"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-white">Batting Stats</h3>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-400">Total Runs</span>
+                                    <span id="playerModalTotalRuns" class="text-lg font-bold text-white">0</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-400">Highest Score</span>
+                                    <span id="playerModalHighScore" class="text-lg font-bold text-white">0</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-400">Strike Rate</span>
+                                    <span id="playerModalSR" class="text-lg font-bold text-white">0.0</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-400">50s/100s</span>
+                                    <span id="playerModalMilestones" class="text-lg font-bold text-white">0/0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bowling Performance -->
+                        <div class="glass-panel rounded-xl p-5">
+                            <div class="flex items-center mb-4">
+                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-bullseye text-blue-400"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-white">Bowling Stats</h3>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-400">Total Wickets</span>
+                                    <span id="playerModalTotalWickets" class="text-lg font-bold text-white">0</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-400">Best Bowling</span>
+                                    <span id="playerModalBestBowling" class="text-lg font-bold text-white">0/0</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-400">Economy Rate</span>
+                                    <span id="playerModalEcon" class="text-lg font-bold text-white">0.0</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-400">5-wicket Hauls</span>
+                                    <span id="playerModalFiveWickets" class="text-lg font-bold text-white">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Performance & AI Prediction -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Recent Matches -->
+                        <div class="glass-panel rounded-xl p-5">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-bold text-white">Recent Performance</h3>
+                                <span class="text-xs text-gray-400" id="playerModalForm">Form: -</span>
+                            </div>
+                            <div id="playerModalHistory" class="space-y-3">
+                                <!-- Performance history will be loaded here -->
+                            </div>
+                        </div>
+
+                        <!-- AI Insights -->
+                        <div class="glass-panel rounded-xl p-5">
+                            <div class="flex items-center mb-4">
+                                <div class="w-10 h-10 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-robot text-purple-400"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-white">AI Insights</h3>
+                            </div>
+                            <div id="aiPredictionSection" class="hidden">
+                                <div class="space-y-3">
+                                    <div class="flex items-start gap-3">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                                            <i class="fas fa-lightbulb text-green-400"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-sm font-medium text-white mb-1">Performance Prediction</h4>
+                                            <p id="aiPredictionText" class="text-sm text-gray-400"></p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start gap-3">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                                            <i class="fas fa-chart-line text-blue-400"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-sm font-medium text-white mb-1">Trend Analysis</h4>
+                                            <p id="aiTrendText" class="text-sm text-gray-400"></p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start gap-3">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-amber-500/20 to-yellow-500/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                                            <i class="fas fa-star text-amber-400"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-sm font-medium text-white mb-1">Recommended Role</h4>
+                                            <p id="aiRoleText" class="text-sm text-gray-400"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="aiLoading" class="text-center py-8">
+                                <div class="inline-flex items-center justify-center w-12 h-12 bg-gray-800/50 rounded-full mb-3">
+                                    <i class="fas fa-spinner fa-spin text-gray-400"></i>
+                                </div>
+                                <p class="text-sm text-gray-400">Loading AI insights...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="p-6 border-t border-gray-800 flex flex-wrap gap-3">
+                    <button onclick="closeModal('playerModal')" 
+                            class="px-5 py-2.5 border border-gray-700 hover:bg-gray-800 text-gray-300 rounded-xl transition-colors duration-200">
+                        Close
+                    </button>
+                    <button onclick="viewPlayerAnalytics()" 
+                            class="px-5 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-medium rounded-xl transition-all duration-300">
+                        <i class="fas fa-chart-line mr-2"></i> Full Analytics
+                    </button>
+                    <button onclick="addPlayerPerformance()" 
+                            class="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white font-medium rounded-xl transition-all duration-300">
+                        <i class="fas fa-plus-circle mr-2"></i> Add Performance
+                    </button>
+                    <button onclick="editCurrentPlayer()" 
+                            class="px-5 py-2.5 bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-white font-medium rounded-xl transition-all duration-300">
+                        <i class="fas fa-edit mr-2"></i> Edit Player
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Match Template -->
+<template id="recentMatchTemplate">
+    <div class="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg border border-gray-700 hover:border-green-500/30 transition-colors duration-200">
+        <div class="flex items-center">
+            <div class="w-10 h-10 rounded-lg {matchColor} flex items-center justify-center mr-3">
+                <i class="fas {matchIcon} text-white"></i>
+            </div>
+            <div>
+                <h4 class="font-medium text-white">{matchVs}</h4>
+                <div class="flex items-center mt-1">
+                    <span class="text-xs {resultColor} font-bold mr-2">{result}</span>
+                    <span class="text-xs text-gray-400">{matchDate}</span>
+                </div>
+            </div>
+        </div>
+        <div class="text-right">
+            <div class="text-sm font-bold text-white">{performance}</div>
+            <div class="text-xs text-gray-400">{performanceType}</div>
+        </div>
+    </div>
+</template>
+
+<!-- Player Actions Dropdown -->
+<div id="playerActionsDropdown" class="hidden fixed z-50">
+    <div class="absolute w-48 bg-gray-900 rounded-xl shadow-2xl border border-gray-800 overflow-hidden animate-slide-down">
+        <div class="py-1">
+            <button onclick="viewPlayerDetailsAction()" 
+                    class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-green-500/20 hover:text-green-400 flex items-center gap-3 transition-colors">
+                <i class="fas fa-chart-line w-5"></i>
+                View Analytics
+            </button>
+            <button onclick="editPlayerAction()" 
+                    class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-blue-500/20 hover:text-blue-400 flex items-center gap-3 transition-colors">
+                <i class="fas fa-edit w-5"></i>
+                Edit Player
+            </button>
+            <button onclick="addPerformanceAction()" 
+                    class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-purple-500/20 hover:text-purple-400 flex items-center gap-3 transition-colors">
+                <i class="fas fa-plus-circle w-5"></i>
+                Add Performance
+            </button>
+            <button onclick="getAIRecs()" 
+                    class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-amber-500/20 hover:text-amber-400 flex items-center gap-3 transition-colors">
+                <i class="fas fa-robot w-5"></i>
+                AI Recommendations
+            </button>
+            <div class="border-t border-gray-800 my-1"></div>
+            <button onclick="deletePlayerAction()" 
+                    class="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-red-500/20 flex items-center gap-3 transition-colors">
+                <i class="fas fa-trash w-5"></i>
+                Delete Player
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+const API = "/api";
+let currentPlayerId = null;
+let allPlayers = [];
+
+// Enhanced Players Loading
+async function loadPlayers() {
+    try {
+        const playersGrid = document.getElementById('playersGrid');
+        playersGrid.innerHTML = `
+            <div class="col-span-full">
+                <div class="flex flex-col items-center justify-center py-16">
+                    <div class="cricket-loader mb-4"></div>
+                    <p class="text-gray-400 text-sm">Loading players...</p>
+                </div>
+            </div>
+        `;
+        
+        const res = await fetch(`${API}/players`);
+        const data = await res.json();
+        allPlayers = data.players || [];
+        
+        if (allPlayers.length === 0) {
+            showPlayersEmptyState();
+            return;
+        }
+        
+        // Update counters
+        const batsmen = allPlayers.filter(p => p.role === 'batsman').length;
+        const bowlers = allPlayers.filter(p => p.role === 'bowler').length;
+        const avgBatting = allPlayers.reduce((sum, p) => sum + (p.batting_average || 0), 0) / allPlayers.length;
+        const avgBowling = allPlayers.filter(p => p.bowling_average > 0).reduce((sum, p) => sum + (p.bowling_average || 0), 0) / Math.max(1, allPlayers.filter(p => p.bowling_average > 0).length);
+        const avgRating = allPlayers.reduce((sum, p) => sum + calculatePlayerRating(p), 0) / allPlayers.length;
+        
+        document.getElementById('activePlayersCount').textContent = allPlayers.length;
+        document.getElementById('topBatsmenCount').textContent = batsmen;
+        document.getElementById('topBowlersCount').textContent = bowlers;
+        document.getElementById('avgPlayerRating').textContent = avgRating.toFixed(1);
+        document.getElementById('playersCount').textContent = allPlayers.length;
+        document.getElementById('avgBatting').textContent = avgBatting.toFixed(1);
+        document.getElementById('avgBowling').textContent = avgBowling.toFixed(1);
+        document.getElementById('aiPredictions').textContent = Math.floor(allPlayers.length / 2); // Simulated
+        
+        renderPlayers(allPlayers);
+        
+    } catch (error) {
+        console.error('Error loading players:', error);
+        showToast('Failed to load players', 'error');
+        showPlayersEmptyState();
+    }
+}
+
+function renderPlayers(players) {
+    const playersGrid = document.getElementById('playersGrid');
+    playersGrid.innerHTML = '';
+    
+    players.forEach(player => {
+        const rating = calculatePlayerRating(player);
+        const ratingPercent = (rating / 10) * 100;
+        const playerGradient = getPlayerGradient(rating);
+        const ratingGradient = getRatingGradient(rating);
+        const roleIcon = getRoleIcon(player.role);
+        const roleColor = getRoleColor(player.role);
+        const roleBadgeColor = getRoleBadgeColor(player.role);
+        
+        const card = document.createElement('div');
+        card.innerHTML = `
+            <div class="glass-panel rounded-2xl overflow-hidden group cursor-pointer selection-highlight hover:transform hover:-translate-y-1 transition-all duration-300">
+                <div class="p-5">
+                    <!-- Player Header -->
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="relative mr-3">
+                                <div class="w-14 h-14 rounded-xl ${playerGradient} flex items-center justify-center text-white font-bold text-lg">
+                                    ${getInitials(player.name)}
+                                </div>
+                                <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 border-gray-900 flex items-center justify-center ${roleBadgeColor}">
+                                    <i class="fas ${roleIcon} text-xs"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white mb-1">${player.name}</h3>
+                                <div class="flex items-center">
+                                    <span class="px-2 py-1 ${roleColor} text-xs font-bold rounded-full mr-2">${player.role}</span>
+                                    <span class="text-xs text-gray-400">ID: ${player.id}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="showPlayerActions(${player.id}, event)" 
+                                class="text-gray-400 hover:text-white transition-colors duration-200">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <div class="bg-gray-800/30 rounded-xl p-3">
+                            <div class="flex items-center text-sm text-gray-400 mb-1">
+                                <i class="fas fa-baseball-ball mr-1"></i>
+                                Batting
+                            </div>
+                            <div class="text-xl font-bold text-green-400">${(player.batting_average || 0).toFixed(1)}</div>
+                        </div>
+                        <div class="bg-gray-800/30 rounded-xl p-3">
+                            <div class="flex items-center text-sm text-gray-400 mb-1">
+                                <i class="fas fa-bullseye mr-1"></i>
+                                Bowling
+                            </div>
+                            <div class="text-xl font-bold text-blue-400">${(player.bowling_average || 0).toFixed(1)}</div>
+                        </div>
+                    </div>
+
+                    <!-- Rating Bar -->
+                    <div class="mb-4">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-400">Player Rating</span>
+                            <span class="text-white font-semibold">${rating.toFixed(1)}/10</span>
+                        </div>
+                        <div class="h-2 bg-gray-800 rounded-full overflow-hidden">
+                            <div class="h-full ${ratingGradient} rounded-full" style="width: ${ratingPercent}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-2">
+                        <button onclick="viewPlayerDetails(${player.id})" 
+                                class="flex-1 px-4 py-2 bg-gradient-to-r from-green-500/20 to-emerald-600/20 hover:from-green-500/30 hover:to-emerald-600/30 text-green-400 font-medium rounded-lg border border-green-500/30 transition-all duration-300 flex items-center justify-center group">
+                            <i class="fas fa-chart-line mr-2 group-hover:scale-110 transition-transform"></i>
+                            Analytics
+                        </button>
+                        <button onclick="editPlayer(${player.id})" 
+                                class="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg border border-gray-700 transition-colors duration-200">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        playersGrid.appendChild(card);
+    });
+}
+
+// Enhanced Player Details Modal
+async function viewPlayerDetails(playerId) {
+    try {
+        currentPlayerId = playerId;
+        
+        const [statsRes, predRes, matchesRes] = await Promise.all([
+            fetch(`${API}/analytics/player/${playerId}`).then(r => r.json()),
+            fetch(`${API}/predict/player/${playerId}`).then(r => r.json()),
+            fetch(`${API}/matches/player/${playerId}`).then(r => r.json())
+        ]);
+
+        if (!statsRes.success) throw new Error('Player not found');
+
+        const player = statsRes.player;
+        const stats = statsRes.stats || {};
+        const pred = predRes.prediction || {};
+        const matches = matchesRes.matches || [];
+
+        // Update modal header
+        document.getElementById('playerModalTitle').textContent = player.name;
+        document.getElementById('playerModalId').textContent = player.id;
+        
+        const roleIcon = getRoleIcon(player.role);
+        const roleColor = getRoleColor(player.role);
+        const roleBadgeColor = getRoleBadgeColor(player.role);
+        const playerGradient = getPlayerGradient(calculatePlayerRating(player));
+        
+        document.getElementById('playerModalAvatar').className = `w-16 h-16 rounded-xl ${playerGradient} flex items-center justify-center text-white font-bold text-xl`;
+        document.getElementById('playerModalAvatar').textContent = getInitials(player.name);
+        document.getElementById('playerModalRoleBadge').className = `absolute -bottom-2 -right-2 w-8 h-8 rounded-full border-2 border-gray-900 flex items-center justify-center ${roleBadgeColor}`;
+        document.getElementById('playerModalRoleBadge').innerHTML = `<i class="fas ${roleIcon} text-xs"></i>`;
+        document.getElementById('playerModalRole').className = `px-3 py-1 text-xs font-bold rounded-full mr-3 ${roleColor}`;
+        document.getElementById('playerModalRole').textContent = player.role;
+
+        // Update stats
+        document.getElementById('playerModalBatAvg').textContent = (stats.batting_average || player.batting_average || 0).toFixed(1);
+        document.getElementById('playerModalBowlAvg').textContent = (stats.bowling_average || player.bowling_average || 0).toFixed(1);
+        document.getElementById('playerModalMatches').textContent = stats.total_matches || 0;
+        const modalRating = calculatePlayerRatingFromStats(stats, player.role);
+document.getElementById('playerModalRating').textContent =
+    modalRating === 0 ? 'Not Rated' : modalRating.toFixed(1);
+
+        document.getElementById('playerModalTotalRuns').textContent = stats.total_runs || 0;
+        document.getElementById('playerModalHighScore').textContent = stats.highest_score || 0;
+        document.getElementById('playerModalSR').textContent = (stats.strike_rate || 0).toFixed(1);
+        document.getElementById('playerModalMilestones').textContent = `${stats.fifties || 0}/${stats.hundreds || 0}`;
+        document.getElementById('playerModalTotalWickets').textContent = stats.total_wickets || 0;
+        document.getElementById('playerModalBestBowling').textContent = `${stats.best_wickets || 0}/${stats.best_runs || 0}`;
+        document.getElementById('playerModalEcon').textContent = (stats.economy_rate || 0).toFixed(1);
+        document.getElementById('playerModalFiveWickets').textContent = stats.five_wickets || 0;
+
+        // Calculate form (simplified)
+const recentRuns = stats.recent_runs || [];
+
+// ✅ Define once (important)
+let formScore = null;
+let formText = 'Not Available';
+
+if (stats.total_matches && stats.total_matches > 0 && recentRuns.length > 0) {
+    formScore = recentRuns.reduce((a, b) => a + b, 0) / recentRuns.length;
+
+    if (formScore > 40) formText = 'Excellent';
+    else if (formScore > 25) formText = 'Good';
+    else if (formScore > 10) formText = 'Average';
+    else formText = 'Poor';
+}
+
+// ✅ Safe UI update
+document.getElementById('playerModalForm').textContent = `Form: ${formText}`;
+
+        // Load recent matches
+        let historyHtml = '';
+
+if (matches.length === 0) {
+    historyHtml = `
+        <div class="text-center py-8 text-gray-500">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-800/50 rounded-full mb-3">
+                <i class="fas fa-gamepad text-gray-400 text-xl"></i>
+            </div>
+            <p class="text-sm">No matches played yet</p>
+        </div>`;
+} else {
+    matches.forEach(match => {
+        let performance = '';
+        let performanceType = '';
+
+        if (match.runs !== null && match.runs !== undefined) {
+            performance = `${match.runs} runs`;
+            performanceType = 'Batting';
+        } else if (match.wickets !== null && match.wickets !== undefined) {
+            performance = `${match.wickets}/${match.runs_conceded}`;
+            performanceType = 'Bowling';
+        }
+
+        historyHtml += `
+        <div class="flex items-center justify-between p-3 bg-gray-800/30 rounded-lg border border-gray-700">
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center mr-3">
+                    <i class="fas fa-gamepad text-white"></i>
+                </div>
+                <div>
+                    <h4 class="font-medium text-white">${match.name}</h4>
+                    <span class="text-xs text-gray-400">${formatDate(match.date)}</span>
+                </div>
+            </div>
+            <div class="text-right">
+                <div class="text-sm font-bold text-white">${performance}</div>
+                <div class="text-xs text-gray-400">${performanceType}</div>
+            </div>
+        </div>`;
+    });
+}
+
+document.getElementById('playerModalHistory').innerHTML = historyHtml;
+
+
+        // Load AI insights
+        document.getElementById('aiLoading').classList.add('hidden');
+        document.getElementById('aiPredictionSection').classList.remove('hidden');
+        
+        const aiPrediction = pred.explanation || `Based on current form and statistics, ${player.name} is expected to maintain ${formText.toLowerCase()} performance in upcoming matches.`;
+        const aiTrend =
+    formScore === null
+        ? 'No trend available (insufficient data).'
+        : `Trending ${
+              formScore > 30
+                  ? 'upward'
+                  : formScore > 20
+                  ? 'steady'
+                  : 'downward'
+          } based on recent performances.`;
+
+        const aiRole = `Ideal as a ${player.role}${player.role === 'allrounder' ? ' with balanced capabilities' : player.role === 'batsman' ? ' in middle order' : player.role === 'bowler' ? ' for powerplay or death overs' : ' for the team'}.`;
+        
+        document.getElementById('aiPredictionText').textContent = aiPrediction;
+        document.getElementById('aiTrendText').textContent = aiTrend;
+        document.getElementById('aiRoleText').textContent = aiRole;
+
+        // Show modal
+        document.getElementById('playerModal').classList.remove('hidden');
+    } catch (error) {
+        console.error('Player details error:', error);
+        showToast('Error loading player details', 'error');
+    }
+}
+
+// Player Actions Dropdown
+function showPlayerActions(playerId, event) {
+    event.stopPropagation();
+    currentPlayerId = playerId;
+    
+    const dropdown = document.getElementById('playerActionsDropdown');
+    dropdown.classList.remove('hidden');
+    
+    // Position dropdown
+    const rect = event.target.getBoundingClientRect();
+    dropdown.style.top = `${rect.bottom + window.scrollY}px`;
+    dropdown.style.left = `${rect.right - 200}px`;
+    
+    // Close on outside click
+    const closeDropdown = (e) => {
+        if (!dropdown.contains(e.target) && !event.target.contains(e.target)) {
+            dropdown.classList.add('hidden');
+            document.removeEventListener('click', closeDropdown);
+        }
+    };
+    
+    setTimeout(() => document.addEventListener('click', closeDropdown), 10);
+}
+
+// Player Actions Functions
+function viewPlayerDetailsAction() {
+    document.getElementById('playerActionsDropdown').classList.add('hidden');
+    viewPlayerDetails(currentPlayerId);
+}
+
+function editPlayerAction() {
+    document.getElementById('playerActionsDropdown').classList.add('hidden');
+    editPlayer(currentPlayerId);
+}
+
+function addPerformanceAction() {
+    document.getElementById('playerActionsDropdown').classList.add('hidden');
+    addPlayerPerformance(currentPlayerId);
+}
+
+function getAIRecs() {
+    document.getElementById('playerActionsDropdown').classList.add('hidden');
+    getPlayerRecommendations(currentPlayerId);
+}
+
+function deletePlayerAction() {
+    document.getElementById('playerActionsDropdown').classList.add('hidden');
+    deletePlayer(currentPlayerId);
+}
+
+// Other Functions
+function quickAction(action, data) {
+    switch(action) {
+        case 'edit_player':
+            window.location.href = `/manage-data?player=${data}`;
+            break;
+    }
+}
+
+function toggleFilters() {
+    const panel = document.getElementById('filtersPanel');
+    panel.classList.toggle('hidden');
+}
+
+function applyPlayerFilters() {
+    const search = document.getElementById('playerSearch').value.toLowerCase();
+    const role = document.getElementById('playerRole').value;
+    const sort = document.getElementById('playerSort').value;
+    
+    let filtered = [...allPlayers];
+    
+    // Apply filters
+    if (search) {
+        filtered = filtered.filter(player => 
+            player.name.toLowerCase().includes(search)
+        );
+    }
+    
+    if (role !== 'all') {
+        filtered = filtered.filter(player => 
+            player.role === role
+        );
+    }
+    
+    // Apply sorting
+    filtered.sort((a, b) => {
+        switch(sort) {
+            case 'name':
+                return a.name.localeCompare(b.name);
+            case 'rating':
+                return calculatePlayerRating(b) - calculatePlayerRating(a);
+            case 'batting':
+                return (b.batting_average || 0) - (a.batting_average || 0);
+            case 'bowling':
+                return (a.bowling_average || 999) - (b.bowling_average || 999);
+            case 'recent':
+                return new Date(b.created_at) - new Date(a.created_at);
+            default:
+                return 0;
+        }
+    });
+    
+    renderPlayers(filtered);
+    
+    if (filtered.length === 0) {
+        showPlayersEmptyState();
+    } else {
+        document.getElementById('playersEmptyState').classList.add('hidden');
+    }
+    
+    showToast(`Found ${filtered.length} players`, 'success');
+}
+
+function showPlayersEmptyState() {
+    document.getElementById('playersGrid').innerHTML = '';
+    document.getElementById('playersEmptyState').classList.remove('hidden');
+}
+
+// Utility Functions
+function calculatePlayerRating(player) {
+    // 🚨 FIX: No matches → no rating
+    if (!player.total_matches || player.total_matches === 0) {
+        return 0.0;
+    }
+
+    const batAvg = player.batting_average || 0;
+    const bowlAvg = player.bowling_average || 0;
+
+    let rating = 3.0;
+
+    if (player.role === 'batsman') {
+        rating += Math.min(batAvg / 15, 4.0);
+        if (batAvg > 40) rating += 1;
+        if (batAvg > 50) rating += 0.5;
+    } 
+    else if (player.role === 'bowler') {
+        rating += Math.min((30 - bowlAvg) / 5, 4.0);
+        if (bowlAvg < 25) rating += 1;
+        if (bowlAvg < 20) rating += 0.5;
+    } 
+    else if (player.role === 'allrounder') {
+        rating += (batAvg / 30) + ((30 - bowlAvg) / 10);
+        if (batAvg > 30 && bowlAvg < 30) rating += 1;
+    } 
+    else if (player.role === 'wicketkeeper') {
+        rating += Math.min(batAvg / 20, 3.0);
+        rating += 1.5;
+    }
+
+    return Math.min(10, Math.max(1, rating));
+}
+
+function calculatePlayerRatingFromStats(stats, role) {
+    if (!stats || stats.total_matches === 0) {
+        return 0.0;
+    }
+
+    const batAvg = stats.batting_average || 0;
+    const bowlAvg = stats.bowling_average || 0;
+
+    let rating = 3.0;
+
+    if (role === 'batsman') {
+        rating += Math.min(batAvg / 15, 4.0);
+        if (batAvg > 40) rating += 1;
+        if (batAvg > 50) rating += 0.5;
+    }
+    else if (role === 'bowler') {
+        rating += Math.min((30 - bowlAvg) / 5, 4.0);
+        if (bowlAvg < 25) rating += 1;
+        if (bowlAvg < 20) rating += 0.5;
+    }
+    else if (role === 'allrounder') {
+        rating += (batAvg / 30) + ((30 - bowlAvg) / 10);
+        if (batAvg > 30 && bowlAvg < 30) rating += 1;
+    }
+    else if (role === 'wicketkeeper') {
+        rating += Math.min(batAvg / 20, 3.0);
+        rating += 1.5;
+    }
+
+    return Math.min(10, Math.max(1, rating));
+}
+
+
+function getPlayerGradient(rating) {
+    if (rating >= 8) return 'bg-gradient-to-br from-green-500 to-emerald-400';
+    if (rating >= 6) return 'bg-gradient-to-br from-blue-500 to-cyan-400';
+    if (rating >= 4) return 'bg-gradient-to-br from-amber-500 to-yellow-400';
+    return 'bg-gradient-to-br from-gray-600 to-gray-500';
+}
+
+function getRatingGradient(rating) {
+    if (rating >= 8) return 'bg-gradient-to-r from-green-500 to-emerald-400';
+    if (rating >= 6) return 'bg-gradient-to-r from-blue-500 to-cyan-400';
+    if (rating >= 4) return 'bg-gradient-to-r from-amber-500 to-yellow-400';
+    return 'bg-gradient-to-r from-gray-600 to-gray-500';
+}
+
+function getRoleIcon(role) {
+    switch(role.toLowerCase()) {
+        case 'batsman': return 'fa-baseball-ball';
+        case 'bowler': return 'fa-bullseye';
+        case 'allrounder': return 'fa-exchange-alt';
+        case 'wicketkeeper': return 'fa-shield-alt';
+        default: return 'fa-user';
+    }
+}
+
+function getRoleColor(role) {
+    switch(role.toLowerCase()) {
+        case 'batsman': return 'bg-red-500/20 text-red-400';
+        case 'bowler': return 'bg-blue-500/20 text-blue-400';
+        case 'allrounder': return 'bg-green-500/20 text-green-400';
+        case 'wicketkeeper': return 'bg-purple-500/20 text-purple-400';
+        default: return 'bg-gray-500/20 text-gray-400';
+    }
+}
+
+function getRoleBadgeColor(role) {
+    switch(role.toLowerCase()) {
+        case 'batsman': return 'bg-red-500';
+        case 'bowler': return 'bg-blue-500';
+        case 'allrounder': return 'bg-green-500';
+        case 'wicketkeeper': return 'bg-purple-500';
+        default: return 'bg-gray-600';
+    }
+}
+
+function getInitials(name) {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric' 
+    });
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.add('hidden');
+    currentPlayerId = null;
+}
+
+function viewPlayerAnalytics() {
+    if (currentPlayerId) {
+        window.location.href = `/analytics?player=${currentPlayerId}`;
+    }
+}
+
+function addPlayerPerformance(playerId = null) {
+    const targetId = playerId || currentPlayerId;
+    if (targetId) {
+        window.location.href = `/manage-data?player=${targetId}`;
+    } else {
+        window.location.href = '/manage-data';
+    }
+}
+
+function getPlayerRecommendations(playerId) {
+    showToast('AI recommendations feature coming soon!', 'info');
+}
+
+function editCurrentPlayer() {
+    if (currentPlayerId) {
+        window.location.href = `/manage-data?player=${currentPlayerId}`;
+    }
+}
+
+async function editPlayer(playerId) {
+    window.location.href = `/manage-data?player=${playerId}`;
+}
+
+async function deletePlayer(playerId) {
+    if (!confirm('Are you sure you want to delete this player? This action cannot be undone.')) return;
+    
+    try {
+        const res = await fetch(`${API}/players/${playerId}`, {
+            method: 'DELETE'
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            showToast('Player deleted successfully', 'success');
+            loadPlayers(); // Refresh the list
+        } else {
+            throw new Error(data.error || 'Failed to delete player');
+        }
+    } catch (error) {
+        showToast('Error deleting player', 'error');
+    }
+}
+
+function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `fixed top-4 right-4 px-4 py-3 rounded-xl shadow-2xl z-50 transform transition-all duration-300 translate-x-0 opacity-100 ${type === 'success' ? 'bg-gradient-to-r from-green-500/20 to-emerald-600/20 border border-green-500/30 text-green-400' : 'bg-gradient-to-r from-red-500/20 to-red-600/20 border border-red-500/30 text-red-400'}`;
+    toast.innerHTML = `
+        <div class="flex items-center gap-3">
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+            <span class="text-sm font-medium">${message}</span>
+        </div>
+    `;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.location.pathname === '/players') {
+        loadPlayers();
+        
+        // Add search functionality
+        const searchInput = document.getElementById('playerSearch');
+        if (searchInput) {
+            searchInput.addEventListener('input', debounce(() => {
+                applyPlayerFilters();
+            }, 300));
+        }
+        
+        // Add filter change listeners
+        document.getElementById('playerRole').addEventListener('change', applyPlayerFilters);
+        document.getElementById('playerSort').addEventListener('change', applyPlayerFilters);
+    }
+});
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+</script>
+
+<style>
+/* Cricket ball loader */
+.cricket-loader {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #10b981, #059669);
+    position: relative;
+    animation: spin 1.5s linear infinite;
+}
+
+.cricket-loader::before {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    background: #1a1a1a;
+    border-radius: 50%;
+}
+
+.cricket-loader::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 2px;
+    background: #10b981;
+}
+
+/* Glowing button effect */
+.btn-glow {
+    background: linear-gradient(90deg, #059669, #047857);
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-glow:hover {
+    box-shadow: 0 8px 30px rgba(16, 185, 129, 0.6);
+    transform: translateY(-2px);
+}
+
+.btn-glow::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.7s ease;
+}
+
+.btn-glow:hover::after {
+    left: 100%;
+}
+
+/* Player card hover effects */
+.hover\:-translate-y-1:hover {
+    transform: translateY(-0.25rem);
+}
+
+/* Glass morphism */
+.glass-panel {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.36);
+}
+
+/* Selection highlight */
+.selection-highlight {
+    position: relative;
+    overflow: hidden;
+}
+
+.selection-highlight::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.1), transparent);
+    transition: left 0.7s ease;
+}
+
+.selection-highlight:hover::before {
+    left: 100%;
+}
+
+/* Animations */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-down {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+{% endblock %}

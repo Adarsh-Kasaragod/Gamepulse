@@ -1,0 +1,1050 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="relative mb-8 overflow-hidden rounded-3xl">
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-900/20 via-purple-900/20 to-pink-900/20"></div>
+        <div class="relative glass-panel p-8">
+            <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+                <div class="flex-1">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mr-4">
+                            <i class="fas fa-edit text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold text-white" id="teamTitle">Edit Team</h1>
+                            <p class="text-gray-300 mt-1">Update team details and manage squad</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Team ID Badge -->
+                    <div class="flex items-center mt-2">
+                        <span class="px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-bold rounded-full">
+                            ID: <span id="teamIdDisplay">...</span>
+                        </span>
+                        <span class="ml-3 px-3 py-1 bg-gray-800 text-gray-300 text-xs font-medium rounded-full" id="teamStatusDisplay">
+                            Loading...
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button onclick="saveTeam()" 
+                            class="group relative overflow-hidden btn-glow px-6 py-3 rounded-xl font-semibold text-white flex items-center justify-center">
+                        <div class="absolute inset-0 bg-gradient-to-r from-green-600 to-emerald-600"></div>
+                        <div class="relative z-10 flex items-center">
+                            <i class="fas fa-save mr-2"></i>
+                            Save Changes
+                        </div>
+                        <div class="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    </button>
+                    
+                    <button onclick="goBack()" 
+                            class="glass-panel px-6 py-3 rounded-xl font-medium text-white hover:bg-white/10 transition-colors duration-300 flex items-center">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Back
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Form -->
+    <div class="glass-panel rounded-2xl p-6 mb-6">
+        <h2 class="text-xl font-bold text-white mb-6">Team Information</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Left Column -->
+            <div class="space-y-6">
+                <!-- Team Name -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                        Team Name <span class="text-red-400">*</span>
+                    </label>
+                    <div class="relative">
+                        <i class="fas fa-users absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" 
+                               id="teamName"
+                               placeholder="Enter team name"
+                               class="w-full pl-10 pr-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
+                    </div>
+                    <p class="mt-1 text-xs text-gray-500">Choose a unique name for your team</p>
+                </div>
+                
+                <!-- Team Status -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                        Team Status
+                    </label>
+                    <select id="teamStatus" 
+                            class="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="training">In Training</option>
+                        <option value="development">Development</option>
+                    </select>
+                    <p class="mt-1 text-xs text-gray-500">Current status of the team</p>
+                </div>
+                
+                <!-- Team Description -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                        Description
+                    </label>
+                    <textarea id="teamDescription"
+                              rows="3"
+                              placeholder="Describe the team, playing style, or any notes..."
+                              class="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-none"></textarea>
+                </div>
+            </div>
+            
+            <!-- Right Column -->
+            <div class="space-y-6">
+                <!-- Team Rating -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                        Team Rating (1-10)
+                    </label>
+                    <div class="relative">
+                        <div class="flex items-center">
+                            <input type="range" 
+                                   id="teamRating"
+                                   min="1" 
+                                   max="10" 
+                                   step="0.5"
+                                   value="5"
+                                   class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-gradient-to-r [&::-webkit-slider-thumb]:from-blue-500 [&::-webkit-slider-thumb]:to-purple-500">
+                        </div>
+                        <div class="flex justify-between mt-2">
+                            <span class="text-xs text-gray-500">1.0</span>
+                            <span class="text-sm font-bold text-white" id="ratingValue">5.0</span>
+                            <span class="text-xs text-gray-500">10.0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Created Date -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-2">
+                        Created On
+                    </label>
+                    <div class="relative">
+                        <i class="fas fa-calendar-alt absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" 
+                               id="createdDate"
+                               readonly
+                               class="w-full pl-10 pr-4 py-3 bg-gray-800/30 border border-gray-700 rounded-lg text-gray-300 cursor-not-allowed">
+                    </div>
+                </div>
+                
+                <!-- Team Stats -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-gray-800/30 rounded-xl p-4">
+                        <div class="flex items-center text-sm text-gray-400 mb-1">
+                            <i class="fas fa-users mr-1"></i>
+                            Players
+                        </div>
+                        <div class="text-xl font-bold text-white" id="playerCount">0</div>
+                    </div>
+                    <div class="bg-gray-800/30 rounded-xl p-4">
+                        <div class="flex items-center text-sm text-gray-400 mb-1">
+                            <i class="fas fa-calendar-alt mr-1"></i>
+                            Matches
+                        </div>
+                        <div class="text-xl font-bold text-white" id="matchCount">0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Squad Management -->
+    <div class="glass-panel rounded-2xl p-6 mb-6">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold text-white">Team Squad</h2>
+            <button onclick="addPlayerModal()" 
+                    class="group relative overflow-hidden px-4 py-2 rounded-lg font-medium text-white flex items-center">
+                <div class="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-600"></div>
+                <div class="relative z-10 flex items-center">
+                    <i class="fas fa-user-plus mr-2"></i>
+                    Add Player
+                </div>
+            </button>
+        </div>
+        
+        <!-- Players List -->
+        <div id="playersContainer" class="space-y-3 max-h-96 overflow-y-auto custom-scrollbar">
+            <!-- Loading State -->
+            <div class="text-center py-8">
+                <div class="cricket-loader mb-4 mx-auto"></div>
+                <p class="text-gray-400 text-sm">Loading players...</p>
+            </div>
+        </div>
+        
+        <!-- Empty State -->
+        <div id="emptyPlayersState" class="hidden text-center py-12">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gray-800/50 rounded-full mb-6">
+                <i class="fas fa-users text-gray-400 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">No Players Yet</h3>
+            <p class="text-gray-400 mb-6 max-w-md mx-auto">Add players to build your cricket team</p>
+            <button onclick="addPlayerModal()" 
+                    class="btn-glow px-6 py-3 rounded-xl font-semibold text-white inline-flex items-center">
+                <i class="fas fa-user-plus mr-2"></i>
+                Add First Player
+            </button>
+        </div>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="glass-panel rounded-2xl p-6 border border-red-500/30 bg-red-500/5">
+        <h2 class="text-xl font-bold text-white mb-4">Danger Zone</h2>
+        <p class="text-gray-300 mb-4">These actions are irreversible. Please proceed with caution.</p>
+        
+        <div class="flex flex-wrap gap-4">
+            <button onclick="deleteTeam()" 
+                    class="px-5 py-2.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 font-medium rounded-xl border border-red-500/30 transition-colors duration-200 flex items-center">
+                <i class="fas fa-trash mr-2"></i>
+                Delete Team
+            </button>
+            
+            <button onclick="resetTeam()" 
+                    class="px-5 py-2.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 font-medium rounded-xl border border-amber-500/30 transition-colors duration-200 flex items-center">
+                <i class="fas fa-redo mr-2"></i>
+                Reset Stats
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Add Player Modal -->
+<div id="addPlayerModal" class="fixed inset-0 z-50 hidden">
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal('addPlayerModal')"></div>
+    <div class="fixed inset-0 overflow-y-auto">
+        <div class="flex min-h-full items-center justify-center p-4">
+            <div class="relative glass-panel rounded-3xl shadow-2xl w-full max-w-md animate-fade-in">
+                <!-- Modal Header -->
+                <div class="p-6 border-b border-gray-800">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center mr-3">
+                                <i class="fas fa-user-plus text-white"></i>
+                            </div>
+                            <h2 class="text-xl font-bold text-white">Add New Player</h2>
+                        </div>
+                        <button onclick="closeModal('addPlayerModal')" 
+                                class="w-8 h-8 rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center text-gray-400 hover:text-white transition-colors duration-200">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Modal Content -->
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">
+                                Player Name <span class="text-red-400">*</span>
+                            </label>
+                            <input type="text" 
+                                   id="newPlayerName"
+                                   placeholder="Enter player name"
+                                   class="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">
+                                Role <span class="text-red-400">*</span>
+                            </label>
+                            <select id="newPlayerRole" 
+                                    class="w-full bg-gray-800/50 border border-gray-700 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
+                                <option value="batsman">Batsman</option>
+                                <option value="bowler">Bowler</option>
+                                <option value="all-rounder">All-Rounder</option>
+                                <option value="wicket-keeper">Wicket Keeper</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">
+                                Specialization
+                            </label>
+                            <input type="text" 
+                                   id="newPlayerSpecialty"
+                                   placeholder="e.g., Fast bowler, Opening batsman"
+                                   class="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="p-6 border-t border-gray-800 flex justify-end gap-3">
+                    <button onclick="closeModal('addPlayerModal')" 
+                            class="px-5 py-2.5 border border-gray-700 hover:bg-gray-800 text-gray-300 rounded-xl transition-colors duration-200">
+                        Cancel
+                    </button>
+                    <button onclick="addPlayer()" 
+                            class="px-5 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-medium rounded-xl transition-all duration-300">
+                        Add Player
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteConfirmModal" class="fixed inset-0 z-50 hidden">
+    <div class="fixed inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal('deleteConfirmModal')"></div>
+    <div class="fixed inset-0 overflow-y-auto">
+        <div class="flex min-h-full items-center justify-center p-4">
+            <div class="relative glass-panel rounded-3xl shadow-2xl w-full max-w-md animate-fade-in">
+                <!-- Modal Header -->
+                <div class="p-6 border-b border-red-500/30">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center mr-3">
+                            <i class="fas fa-exclamation-triangle text-red-400"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-white">Confirm Deletion</h2>
+                    </div>
+                </div>
+
+                <!-- Modal Content -->
+                <div class="p-6">
+                    <p class="text-gray-300 mb-4">Are you sure you want to delete <span class="font-bold text-white" id="deleteTeamName">this team</span>?</p>
+                    <p class="text-sm text-gray-400 mb-6">This action cannot be undone. All team data, including players and match history, will be permanently deleted.</p>
+                    
+                    <div class="bg-red-500/10 border border-red-500/20 rounded-xl p-4 mb-4">
+                        <div class="flex items-start">
+                            <i class="fas fa-exclamation-circle text-red-400 mt-0.5 mr-2"></i>
+                            <p class="text-sm text-red-300">
+                                <span class="font-bold">Warning:</span> This will delete <span class="font-bold" id="deletePlayerCount">0</span> players and <span class="font-bold" id="deleteMatchCount">0</span> matches associated with this team.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center mb-4">
+                        <input type="checkbox" id="confirmDelete" class="mr-2 rounded border-gray-700 bg-gray-800/50 text-red-500 focus:ring-red-500">
+                        <label for="confirmDelete" class="text-sm text-gray-300">I understand this action is irreversible</label>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="p-6 border-t border-gray-800 flex justify-end gap-3">
+                    <button onclick="closeModal('deleteConfirmModal')" 
+                            class="px-5 py-2.5 border border-gray-700 hover:bg-gray-800 text-gray-300 rounded-xl transition-colors duration-200">
+                        Cancel
+                    </button>
+                    <button onclick="confirmDeleteTeam()" 
+                            class="px-5 py-2.5 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-medium rounded-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                            id="confirmDeleteBtn"
+                            disabled>
+                        Delete Team
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Player Card Template -->
+<template id="playerCardTemplate">
+    <div class="flex items-center justify-between p-4 bg-gray-800/30 rounded-xl border border-gray-700 hover:border-blue-500/50 transition-colors duration-300 group player-card">
+        <div class="flex items-center">
+            <div class="relative mr-4">
+                <div class="w-12 h-12 rounded-full {playerGradient} flex items-center justify-center text-white font-bold text-lg">
+                    {playerInitials}
+                </div>
+                <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-gray-900 flex items-center justify-center {roleBadgeColor}">
+                    <i class="fas {roleIcon} text-xs"></i>
+                </div>
+            </div>
+            <div class="flex-1">
+                <div class="flex items-center">
+                    <h4 class="font-bold text-white group-hover:text-blue-300 transition-colors">{playerName}</h4>
+                    <span class="ml-2 px-2 py-0.5 text-xs font-bold {roleColor} rounded-full">{playerRole}</span>
+                </div>
+                <p class="text-xs text-gray-400 mt-1">#{playerId} • {playerSpecialty}</p>
+            </div>
+        </div>
+        
+        <div class="flex items-center space-x-2">
+            <div class="text-right mr-4">
+                <div class="text-sm font-bold text-green-400">{battingAvg}</div>
+                <div class="text-xs text-gray-500">Bat Avg</div>
+            </div>
+            <div class="text-right mr-4">
+                <div class="text-sm font-bold text-blue-400">{bowlingAvg}</div>
+                <div class="text-xs text-gray-500">Bowl Avg</div>
+            </div>
+            
+            <div class="flex items-center space-x-1">
+                <button onclick="editPlayer({playerId})" 
+                        class="w-8 h-8 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 flex items-center justify-center transition-colors">
+                    <i class="fas fa-edit text-xs"></i>
+                </button>
+                <button onclick="removePlayer({playerId}, '{playerName}')" 
+                        class="w-8 h-8 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 flex items-center justify-center transition-colors">
+                    <i class="fas fa-trash text-xs"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+const API = "/api";
+let currentTeamId = null;
+let teamData = null;
+let players = [];
+
+// Get team ID from URL
+function getTeamIdFromUrl() {
+    const path = window.location.pathname;
+    const match = path.match(/\/edit-team\/(\d+)/);
+    return match ? parseInt(match[1]) : null;
+}
+
+// Load team data
+async function loadTeamData() {
+    try {
+        currentTeamId = getTeamIdFromUrl();
+        if (!currentTeamId) {
+            showToast('Invalid team ID', 'error');
+            window.location.href = '/teams';
+            return;
+        }
+
+        // Load team details
+        const teamRes = await fetch(`${API}/teams/${currentTeamId}`);
+        const teamJson = await teamRes.json();
+        
+        if (!teamJson.success) {
+            throw new Error(teamJson.error || 'Team not found');
+        }
+        
+        teamData = teamJson.team;
+        updateTeamForm(teamData);
+        
+        // Load players
+        await loadPlayers();
+        
+    } catch (error) {
+        console.error('Error loading team data:', error);
+        showToast('Failed to load team data', 'error');
+        setTimeout(() => window.location.href = '/teams', 2000);
+    }
+}
+
+// Update form with team data
+function updateTeamForm(data) {
+    document.getElementById('teamTitle').textContent = `Edit ${data.name}`;
+    document.getElementById('teamIdDisplay').textContent = data.id;
+    document.getElementById('teamName').value = data.name;
+    document.getElementById('teamStatus').value = data.status || 'active';
+    document.getElementById('teamDescription').value = data.description || '';
+    document.getElementById('teamRating').value = data.rating || 5;
+    document.getElementById('ratingValue').textContent = (data.rating || 5).toFixed(1);
+    document.getElementById('createdDate').value = formatDate(data.created_at);
+    document.getElementById('playerCount').textContent = data.player_count || 0;
+    document.getElementById('matchCount').textContent = data.match_count || 0;
+    
+    // Update status display
+    const statusColor = getStatusColor(data.status || 'active');
+    document.getElementById('teamStatusDisplay').className = `ml-3 px-3 py-1 ${statusColor} text-xs font-medium rounded-full`;
+    document.getElementById('teamStatusDisplay').textContent = data.status || 'Active';
+}
+
+// Load players
+async function loadPlayers() {
+    try {
+        const res = await fetch(`${API}/players?team_id=${currentTeamId}`);
+        const data = await res.json();
+        
+        players = data.players || [];
+        
+        if (players.length === 0) {
+            document.getElementById('playersContainer').classList.add('hidden');
+            document.getElementById('emptyPlayersState').classList.remove('hidden');
+            return;
+        }
+        
+        document.getElementById('emptyPlayersState').classList.add('hidden');
+        document.getElementById('playersContainer').classList.remove('hidden');
+        
+        const container = document.getElementById('playersContainer');
+        const template = document.getElementById('playerCardTemplate');
+        
+        container.innerHTML = '';
+        
+        players.forEach(player => {
+            const card = document.createElement('div');
+            const role = player.role || 'player';
+            const roleIcon = getRoleIcon(role);
+            const roleColor = getRoleColor(role);
+            const roleBadgeColor = getRoleBadgeColor(role);
+            const playerGradient = getPlayerGradient(player.rating || 5);
+            const battingAvg = player.batting_average ? player.batting_average.toFixed(1) : '0.0';
+            const bowlingAvg = player.bowling_average ? player.bowling_average.toFixed(1) : '0.0';
+            const playerInitials = getInitials(player.name);
+            const specialty = player.specialization || role;
+            
+            card.innerHTML = `
+                <div class="flex items-center justify-between p-4 bg-gray-800/30 rounded-xl border border-gray-700 hover:border-blue-500/50 transition-colors duration-300 group player-card">
+                    <div class="flex items-center">
+                        <div class="relative mr-4">
+                            <div class="w-12 h-12 rounded-full ${playerGradient} flex items-center justify-center text-white font-bold text-lg">
+                                ${playerInitials}
+                            </div>
+                            <div class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-gray-900 flex items-center justify-center ${roleBadgeColor}">
+                                <i class="fas ${roleIcon} text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center">
+                                <h4 class="font-bold text-white group-hover:text-blue-300 transition-colors">${player.name}</h4>
+                                <span class="ml-2 px-2 py-0.5 text-xs font-bold ${roleColor} rounded-full">${role}</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">#${player.id} • ${specialty}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-2">
+                        <div class="text-right mr-4">
+                            <div class="text-sm font-bold text-green-400">${battingAvg}</div>
+                            <div class="text-xs text-gray-500">Bat Avg</div>
+                        </div>
+                        <div class="text-right mr-4">
+                            <div class="text-sm font-bold text-blue-400">${bowlingAvg}</div>
+                            <div class="text-xs text-gray-500">Bowl Avg</div>
+                        </div>
+                        
+                        <div class="flex items-center space-x-1">
+                            <button onclick="editPlayer(${player.id})" 
+                                    class="w-8 h-8 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 flex items-center justify-center transition-colors">
+                                <i class="fas fa-edit text-xs"></i>
+                            </button>
+                            <button onclick="removePlayer(${player.id}, '${player.name.replace(/'/g, "\\'")}')" 
+                                    class="w-8 h-8 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 flex items-center justify-center transition-colors">
+                                <i class="fas fa-trash text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(card);
+        });
+        
+    } catch (error) {
+        console.error('Error loading players:', error);
+        document.getElementById('playersContainer').innerHTML = `
+            <div class="text-center py-8 text-red-400">
+                <i class="fas fa-exclamation-circle text-2xl mb-2"></i>
+                <p class="text-sm">Failed to load players</p>
+            </div>
+        `;
+    }
+}
+
+// Save team
+async function saveTeam() {
+    try {
+        const name = document.getElementById('teamName').value.trim();
+        if (!name) {
+            showToast('Team name is required', 'error');
+            return;
+        }
+
+        const updateData = {
+            name: name,
+            status: document.getElementById('teamStatus').value,
+            description: document.getElementById('teamDescription').value,
+            rating: parseFloat(document.getElementById('teamRating').value)
+        };
+
+        const res = await fetch(`${API}/teams/${currentTeamId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updateData)
+        });
+
+        const data = await res.json();
+        
+        if (data.success) {
+            showToast('Team updated successfully!', 'success');
+            // Update local data
+            teamData.name = updateData.name;
+            teamData.status = updateData.status;
+            teamData.description = updateData.description;
+            teamData.rating = updateData.rating;
+            
+            // Update header
+            document.getElementById('teamTitle').textContent = `Edit ${updateData.name}`;
+            const statusColor = getStatusColor(updateData.status);
+            document.getElementById('teamStatusDisplay').className = `ml-3 px-3 py-1 ${statusColor} text-xs font-medium rounded-full`;
+            document.getElementById('teamStatusDisplay').textContent = updateData.status;
+            
+        } else {
+            throw new Error(data.error || 'Failed to update team');
+        }
+    } catch (error) {
+        console.error('Error saving team:', error);
+        showToast('Failed to save changes', 'error');
+    }
+}
+
+// Add player
+function addPlayerModal() {
+    document.getElementById('addPlayerModal').classList.remove('hidden');
+    document.getElementById('newPlayerName').value = '';
+    document.getElementById('newPlayerRole').value = 'batsman';
+    document.getElementById('newPlayerSpecialty').value = '';
+    document.getElementById('newPlayerName').focus();
+}
+
+async function addPlayer() {
+    try {
+        const name = document.getElementById('newPlayerName').value.trim();
+        if (!name) {
+            showToast('Player name is required', 'error');
+            return;
+        }
+
+        const playerData = {
+            name: name,
+            role: document.getElementById('newPlayerRole').value,
+            team_id: currentTeamId,
+            specialization: document.getElementById('newPlayerSpecialty').value.trim() || document.getElementById('newPlayerRole').value
+        };
+
+        const res = await fetch(`${API}/players`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(playerData)
+        });
+
+        const data = await res.json();
+        
+        if (data.success) {
+            showToast('Player added successfully!', 'success');
+            closeModal('addPlayerModal');
+            await loadPlayers();
+            
+            // Update player count
+            const playerCount = parseInt(document.getElementById('playerCount').textContent) + 1;
+            document.getElementById('playerCount').textContent = playerCount;
+            teamData.player_count = playerCount;
+            
+        } else {
+            throw new Error(data.error || 'Failed to add player');
+        }
+    } catch (error) {
+        console.error('Error adding player:', error);
+        showToast('Failed to add player', 'error');
+    }
+}
+
+// Edit player (placeholder - would navigate to player edit page)
+function editPlayer(playerId) {
+    showToast(`Edit player #${playerId} - Feature coming soon!`, 'info');
+    // In future: window.location.href = `/edit-player/${playerId}`;
+}
+
+// Remove player
+async function removePlayer(playerId, playerName) {
+    if (!confirm(`Remove ${playerName} from the team?`)) return;
+    
+    try {
+        // This endpoint would need to be created in your API
+        const res = await fetch(`${API}/players/${playerId}`, {
+            method: 'DELETE'
+        });
+        
+        const data = await res.json();
+        
+        if (data.success) {
+            showToast('Player removed successfully!', 'success');
+            await loadPlayers();
+            
+            // Update player count
+            const playerCount = Math.max(0, parseInt(document.getElementById('playerCount').textContent) - 1);
+            document.getElementById('playerCount').textContent = playerCount;
+            teamData.player_count = playerCount;
+            
+        } else {
+            throw new Error(data.error || 'Failed to remove player');
+        }
+    } catch (error) {
+        console.error('Error removing player:', error);
+        showToast('Failed to remove player', 'error');
+    }
+}
+
+// Delete team
+function deleteTeam() {
+    if (!teamData) return;
+    
+    document.getElementById('deleteTeamName').textContent = teamData.name;
+    document.getElementById('deletePlayerCount').textContent = teamData.player_count || 0;
+    document.getElementById('deleteMatchCount').textContent = teamData.match_count || 0;
+    
+    document.getElementById('deleteConfirmModal').classList.remove('hidden');
+    document.getElementById('confirmDelete').checked = false;
+    document.getElementById('confirmDeleteBtn').disabled = true;
+}
+
+// Confirm delete
+function confirmDeleteTeam() {
+    if (!document.getElementById('confirmDelete').checked) {
+        showToast('Please confirm deletion', 'error');
+        return;
+    }
+    
+    closeModal('deleteConfirmModal');
+    performDeleteTeam();
+}
+
+async function performDeleteTeam() {
+    try {
+        const res = await fetch(`${API}/teams/${currentTeamId}`, {
+            method: 'DELETE'
+        });
+        
+        const data = await res.json();
+        
+        if (data.success) {
+            showToast('Team deleted successfully!', 'success');
+            setTimeout(() => {
+                window.location.href = '/teams';
+            }, 1500);
+        } else {
+            throw new Error(data.error || 'Failed to delete team');
+        }
+    } catch (error) {
+        console.error('Error deleting team:', error);
+        showToast('Failed to delete team', 'error');
+    }
+}
+
+// Reset team (placeholder)
+function resetTeam() {
+    if (!confirm('Reset all team statistics? This will clear all performance data but keep the team and players.')) return;
+    showToast('Reset feature coming soon!', 'info');
+}
+
+// Utility functions
+function getStatusColor(status) {
+    switch(status) {
+        case 'active': return 'bg-green-500/20 text-green-400';
+        case 'inactive': return 'bg-gray-500/20 text-gray-400';
+        case 'training': return 'bg-blue-500/20 text-blue-400';
+        case 'development': return 'bg-amber-500/20 text-amber-400';
+        default: return 'bg-gray-500/20 text-gray-400';
+    }
+}
+
+function getRoleIcon(role) {
+    switch(role.toLowerCase()) {
+        case 'batsman': return 'fa-baseball-ball';
+        case 'bowler': return 'fa-bullseye';
+        case 'all-rounder': return 'fa-star';
+        case 'wicket-keeper': return 'fa-shield-alt';
+        default: return 'fa-user';
+    }
+}
+
+function getRoleColor(role) {
+    switch(role.toLowerCase()) {
+        case 'batsman': return 'bg-red-500/20 text-red-400';
+        case 'bowler': return 'bg-blue-500/20 text-blue-400';
+        case 'all-rounder': return 'bg-green-500/20 text-green-400';
+        case 'wicket-keeper': return 'bg-purple-500/20 text-purple-400';
+        default: return 'bg-gray-500/20 text-gray-400';
+    }
+}
+
+function getRoleBadgeColor(role) {
+    switch(role.toLowerCase()) {
+        case 'batsman': return 'bg-red-500';
+        case 'bowler': return 'bg-blue-500';
+        case 'all-rounder': return 'bg-green-500';
+        case 'wicket-keeper': return 'bg-purple-500';
+        default: return 'bg-gray-600';
+    }
+}
+
+function getPlayerGradient(rating) {
+    if (rating >= 8) return 'bg-gradient-to-br from-green-500 to-emerald-400';
+    if (rating >= 6) return 'bg-gradient-to-br from-blue-500 to-cyan-400';
+    return 'bg-gradient-to-br from-gray-600 to-gray-500';
+}
+
+function getInitials(name) {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+    });
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.add('hidden');
+}
+
+function goBack() {
+    window.history.back();
+}
+
+function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `fixed top-4 right-4 px-4 py-3 rounded-xl shadow-2xl z-50 transform transition-all duration-300 translate-x-0 opacity-100 ${type === 'success' ? 'bg-gradient-to-r from-green-500/20 to-emerald-600/20 border border-green-500/30 text-green-400' : 'bg-gradient-to-r from-red-500/20 to-red-600/20 border border-red-500/30 text-red-400'}`;
+    toast.innerHTML = `
+        <div class="flex items-center gap-3">
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+            <span class="text-sm font-medium">${message}</span>
+        </div>
+    `;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// Event Listeners
+document.addEventListener('DOMContentLoaded', function() {
+    loadTeamData();
+    
+    // Rating slider
+    const ratingSlider = document.getElementById('teamRating');
+    const ratingValue = document.getElementById('ratingValue');
+    
+    ratingSlider.addEventListener('input', function() {
+        ratingValue.textContent = parseFloat(this.value).toFixed(1);
+    });
+    
+    // Delete confirmation checkbox
+    const confirmDeleteCheckbox = document.getElementById('confirmDelete');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    
+    confirmDeleteCheckbox.addEventListener('change', function() {
+        confirmDeleteBtn.disabled = !this.checked;
+    });
+    
+    // Enter key to save
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.key === 's') {
+            e.preventDefault();
+            saveTeam();
+        }
+    });
+});
+</script>
+
+<style>
+/* Cricket ball loader */
+.cricket-loader {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+    position: relative;
+    animation: spin 1.5s linear infinite;
+}
+
+.cricket-loader::before {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    background: #1a1a1a;
+    border-radius: 50%;
+}
+
+.cricket-loader::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 2px;
+    background: #3b82f6;
+}
+
+/* Glowing button effect */
+.btn-glow {
+    background: linear-gradient(90deg, #2563eb, #7c3aed);
+    box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-glow:hover {
+    box-shadow: 0 8px 30px rgba(37, 99, 235, 0.6);
+    transform: translateY(-2px);
+}
+
+.btn-glow::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.7s ease;
+}
+
+.btn-glow:hover::after {
+    left: 100%;
+}
+
+/* Player card hover effects */
+.player-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player-card:hover {
+    transform: translateX(4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, #2563eb, #7c3aed);
+}
+
+/* Glass morphism */
+.glass-panel {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.36);
+}
+
+/* Range slider customization */
+input[type="range"] {
+    -webkit-appearance: none;
+    height: 8px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    border-radius: 4px;
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    cursor: pointer;
+    border: 2px solid #1a1a1a;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    cursor: pointer;
+    border: 2px solid #1a1a1a;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Animations */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Checkbox styling */
+input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #374151;
+    border-radius: 4px;
+    background: rgba(30, 41, 59, 0.5);
+    cursor: pointer;
+    position: relative;
+}
+
+input[type="checkbox"]:checked {
+    background-color: #ef4444;
+    border-color: #ef4444;
+}
+
+input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .grid-cols-2 {
+        grid-template-columns: 1fr;
+    }
+    
+    .player-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .player-card > div:last-child {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+</style>
+{% endblock %}
